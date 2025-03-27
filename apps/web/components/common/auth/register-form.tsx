@@ -10,17 +10,18 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Register } from "@/app/services/authService/authService";
 import { registerSchema } from "@/lib/validations/registerSchema";
 import { toast } from "sonner";
+import { Register } from "@/lib/actions/auth/register";
+import { useActionState } from "react";
 
 export default function RegisterForm() {
-    const [isLoading, setIsLoading] = useState(false);
     const nameInputRef = useRef<HTMLInputElement>(null);
+    const [state, formAction, isPending] = useActionState(Register, undefined);
 
     useEffect(() => {
         if (nameInputRef.current) {
@@ -37,35 +38,25 @@ export default function RegisterForm() {
         },
     });
 
-    const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-        setIsLoading(true);
-        try {
-            const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("username", data.username);
-            formData.append("password", data.password);
-
-            const result = await Register({}, formData);
-            console.log("Error:", result.error);
-            console.log("Message:", result.message);
-
-            if (result.error) {
-                console.log("Entering error toast path");
-                toast("Validation Error");
-            } else if (result.message) {
-                console.log("Entering message toast path");
-                toast("Registration Error");
-            }
-        } catch (err) {
-            toast("Registration Failure");
-        } finally {
-            setIsLoading(false);
+    useEffect(() => {
+        if (state?.error) {
+            Object.entries(state.error).forEach(([key, errors]) => {
+                form.setError(key as keyof z.infer<typeof registerSchema>, {
+                    message: errors[0],
+                });
+            });
+            toast("Validation Error");
+        } else if (state?.message) {
+            toast.error(state.message);
+        } else if (state?.success) {
+            toast.success("Đăng ký thành công!");
+            window.location.href = "/dashboard"; 
         }
-    };
+    }, [state, form]);
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form action={formAction} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="name"
@@ -99,7 +90,7 @@ export default function RegisterForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Mật khẩu</FormLabel>
+                            <FormLabel>Password</FormLabel>
                             <FormControl>
                                 <Input type="password" {...field} />
                             </FormControl>
@@ -122,8 +113,12 @@ export default function RegisterForm() {
                     )}
                 /> */}
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Đang xử lý..." : "Đăng ký"}
+                <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={form.formState.isSubmitting}
+                >
+                    {isPending ? "Loading..." : "Sign up"}
                 </Button>
             </form>
         </Form>

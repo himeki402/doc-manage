@@ -1,9 +1,6 @@
 export type FormState = {
-    error?:
-    | {
-        name? : string[];
-        username? : string[];
-        password? : string[];
-    }
-    message? : string;
-}
+    error?: Record<string, string[]>;
+    message?: string;
+    success?: boolean;
+    data?: any;
+} | undefined
