@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "@repo/ui/globals.css";
-import Header from "@/components/common/layout/header";
+import { Header } from "@/components/common/layout/header";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/themes/theme-provider";
-import { ModeToggle } from "@/components/ui/themeToggle";
 
-const geistSans = localFont({
-    src: "./fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-});
-const geistMono = localFont({
-    src: "./fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
+const inter = Inter({
+    subsets: ["latin", "vietnamese"],
+    display: "swap",
+    variable: "--font-inter",
+    preload: true,
+    fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -27,15 +25,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
+            <body className={`${inter.variable} font-sans antialiased`}>
+                <ThemeProvider>
                     <Header />
-                    
+
                     {children}
                     <Toaster position="top-right" expand closeButton />
                 </ThemeProvider>

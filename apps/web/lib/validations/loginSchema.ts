@@ -3,7 +3,7 @@ import { z } from "zod";
 export const loginSchema = z.object({
     username: z
         .string()
-        .min(4, "Username must have at least 6 characters")
+        .min(6, "Username must have at least 6 characters")
         .trim(),
     password: z
         .string()

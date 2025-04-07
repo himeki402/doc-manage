@@ -6,5 +6,4 @@ export async function Login(
     formData: FormData
 ): Promise<FormState> {
     return authService.login(formData);
-    console.log(state)
 }
