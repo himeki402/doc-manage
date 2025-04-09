@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@repo/ui/globals.css";
 import { Header } from "@/components/common/layout/header";
+import { SidebarNav } from "@/components/common/layout/sidebar-nav";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/themes/theme-provider";
+import { Footer } from "@/components/common/layout/footer";
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -27,9 +29,13 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body className={`${inter.variable} font-sans antialiased`}>
                 <ThemeProvider>
-                    <Header />
-
-                    {children}
+                    <div className="flex h-svh">                       
+                        <div className="flex-1 flex flex-col">                                               
+                            <main className="flex-1 overflow-auto">
+                                {children}
+                            </main>                            
+                        </div>
+                    </div>
                     <Toaster position="top-right" expand closeButton />
                 </ThemeProvider>
             </body>

@@ -32,7 +32,7 @@ export function Header() {
                         <span className="sr-only">Toggle menu</span>
                     </Button>
                     <div className="hidden md:flex items-center gap-2">
-                        <div className="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center">
+                        <div className="bg-primary w-8 h-8 rounded-full flex items-center justify-center">
                             <svg
                                 width="16"
                                 height="16"
@@ -60,26 +60,26 @@ export function Header() {
                                 />
                             </svg>
                         </div>
-                        <span className="font-semibold text-lg">
+                        <span className="font-semibold text-lg text-foreground">
                             KMA Document
                         </span>
                     </div>
                     <nav className="hidden md:flex items-center gap-6">
                         <Link
                             href="#"
-                            className="text-sm font-medium text-slate-900 hover:text-blue-500 transition-colors"
+                            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                             Dashboard
                         </Link>
                         <Link
                             href="#"
-                            className="text-sm font-medium text-slate-900 hover:text-blue-500 transition-colors"
+                            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                             Documents
                         </Link>
                         <Link
                             href="#"
-                            className="text-sm font-medium text-slate-900 hover:text-blue-500 transition-colors"
+                            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                             Projects
                         </Link>
@@ -89,10 +89,10 @@ export function Header() {
                                     variant="ghost"
                                     className="h-8 gap-1 px-2"
                                 >
-                                    <span className="text-sm font-medium">
+                                    <span className="text-sm font-medium text-muted-foreground">
                                         More
                                     </span>
-                                    <ChevronDown className="h-4 w-4 text-slate-500" />
+                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -106,18 +106,18 @@ export function Header() {
 
                 <div className="flex items-center gap-4">
                     <div className="relative hidden md:flex items-center">
-                        <Search className="absolute left-2.5 h-4 w-4 text-slate-500" />
+                        <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="search"
                             placeholder="Search documents..."
-                            className="w-64 pl-8 rounded-full bg-slate-100 border-slate-200 focus-visible:ring-blue-500"
+                            className="w-64 pl-8 rounded-full bg-accent border-input focus-visible:ring-primary"
                         />
                     </div>
 
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-500"
+                        className="text-muted-foreground"
                     >
                         <HelpCircle className="h-5 w-5" />
                         <span className="sr-only">Help</span>
@@ -126,7 +126,7 @@ export function Header() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-500"
+                        className="text-muted-foreground"
                     >
                         <Bell className="h-5 w-5" />
                         <span className="sr-only">Notifications</span>
@@ -137,7 +137,7 @@ export function Header() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="rounded-full h-8 w-8 bg-blue-100 text-blue-500"
+                        className="rounded-full h-8 w-8 bg-primary/10 text-primary"
                     >
                         <Plus className="h-5 w-5" />
                         <span className="sr-only">Create</span>
@@ -154,7 +154,7 @@ export function Header() {
                                         src="/placeholder.svg"
                                         alt="User"
                                     />
-                                    <AvatarFallback className="bg-sky-200 text-sky-800">
+                                    <AvatarFallback className="bg-primary/10 text-primary">
                                         JD
                                     </AvatarFallback>
                                 </Avatar>
