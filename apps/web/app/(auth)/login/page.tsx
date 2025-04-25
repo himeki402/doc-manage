@@ -8,7 +8,7 @@ export default function LoginPage() {
             <div className="lg:p-8 lg:pr-0">
                 <div className="mx-auto flex w-full flex-col justify-start max-w-md pb-12">
                     <div className="flex items-start mb-8">
-                        <div className="bg-primary w-12 h-12 rounded-lg flex items-center justify-center">
+                        <div className="bg-red-500 w-12 h-12 rounded-lg flex items-center justify-center">
                             <svg
                                 width="24"
                                 height="24"

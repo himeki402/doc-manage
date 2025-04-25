@@ -1,7 +1,7 @@
-import { Header } from "@/components/common/layout/header";
 import { Footer } from "@/components/common/layout/footer";
+import { Header } from "@/components/common/layout/header";
 
-export default function DashboardLayout({
+export default function MainLayout({
     children,
 }: {
     children: React.ReactNode;

@@ -35,6 +35,7 @@ export default function RegisterForm() {
             name: "",
             username: "",
             password: "",
+            confirmPassword: "",
         },
     });
 
@@ -62,9 +63,10 @@ export default function RegisterForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Họ và tên</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input {...field} 
+                                placeholder="Nhập họ tên"/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -76,9 +78,10 @@ export default function RegisterForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Tên đăng nhập</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input {...field} 
+                                placeholder="Nhập tên đăng nhập"/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -90,35 +93,36 @@ export default function RegisterForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Mật khẩu</FormLabel>
                             <FormControl>
-                                <Input type="password" {...field} />
+                                <Input type="password" {...field} 
+                                placeholder="Nhập mật khẩu"/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
-                {/* <FormField
+                <FormField
                     control={form.control}
                     name="confirmPassword"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Xác nhận mật khẩu</FormLabel>
                             <FormControl>
-                                <Input type="password" {...field} />
+                                <Input type="password" {...field}
+                                placeholder="Nhập lại mật khẩu" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
-                /> */}
-
+                />
                 <Button
                     type="submit"
                     className="w-full"
                     disabled={form.formState.isSubmitting}
                 >
-                    {isPending ? "Loading..." : "Sign up"}
+                    {isPending ? "Loading..." : "Đăng ký"}
                 </Button>
             </form>
         </Form>

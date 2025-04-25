@@ -19,39 +19,29 @@ const config: AxiosRequestConfig = {
   },
   withCredentials: true,
 };
-
-// Tạo instance của axios
 const apiClient: AxiosInstance = axios.create(config);
 
 // Request interceptor
-// apiClient.interceptors.request.use(
-//   (config) => {
-//     // Lấy token từ localStorage hoặc cookies
-//     if (typeof window !== 'undefined') {
-//       const token = localStorage.getItem('authToken');
-//       if (token) {
-//         config.headers = config.headers || {};
-//         config.headers.Authorization = `Bearer ${token}`;
-//       }
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
+apiClient.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-// // Response interceptor
+// Response interceptor
 // apiClient.interceptors.response.use(
 //   (response: AxiosResponse): any => {
-//     return response.data;
+//     return response;
 //   },
 //   (error) => {
 //     if (error.response?.status === 401) {
 //       // Xử lý khi token hết hạn
 //       if (typeof window !== 'undefined') {
-//         localStorage.removeItem('authToken');
-//         // window.location.href = '/login';
+//         // Chuyển hướng đến trang đăng nhập
+//         window.location.href = '/login';
 //       }
 //     }
 //     return Promise.reject(error);

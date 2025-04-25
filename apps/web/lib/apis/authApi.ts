@@ -13,6 +13,8 @@ export interface LoginResponse {
     id: string;
     name: string;
     username: string;
+    role: string;
+    email: string;
 }
 
 export interface ApiError {
@@ -62,14 +64,52 @@ const authApi = {
                 };
                 throw apiError;
             }
-
-            // Lỗi không phải từ response
             throw {
                 status: 500,
                 message: error.message || "Server Internal Error",
             } as ApiError;
         }
     },
+    logout: async (): Promise<void> => {
+        try {
+            await apiClient.post("/auth/logout");
+        } catch (error: any) {
+            if (error.response) {
+                const apiError: ApiError = {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Logout failed",
+                    errors: error.response.data.errors,
+                };
+                throw apiError;
+            }
+            throw {
+                status: 500,
+                message: error.message || "Server Internal Error",
+            } as ApiError;
+        }
+    },
+    getMe: async (): Promise<any> => {
+        try {
+            const response = await apiClient.get("/auth/me");
+            console.log("response", response);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                const apiError: ApiError = {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Get user failed",
+                    errors: error.response.data.errors,
+                };
+                throw apiError;
+            }
+            throw {
+                status: 500,
+                message: error.message || "Server Internal Error",
+            } as ApiError;
+        }
+    }
 };
 
 export default authApi;

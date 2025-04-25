@@ -2,8 +2,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useActionState, useEffect, useRef, startTransition } from "react";
-import { Login } from "@/lib/actions/auth/login";
+import { useEffect, useRef } from "react";
 import {
     Form,
     FormField,
@@ -18,14 +17,15 @@ import { loginSchema } from "@/lib/validations/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authContext";
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
     const usernameInputRef = useRef<HTMLInputElement>(null);
-    const [state, formAction, isPending] = useActionState(Login, undefined);
     const router = useRouter();
+    const { login, isLoading, error } = useAuth();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -35,46 +35,45 @@ export function LoginForm({
         },
     });
 
+    // Focus vào field username khi component mount
     useEffect(() => {
         if (usernameInputRef.current) {
             usernameInputRef.current.focus();
         }
     }, []);
 
+    // Xử lý lỗi từ AuthContext
     useEffect(() => {
-        if (state) {
-            if (state.error) {
-                Object.entries(state.error).forEach(([key, errors]) => {
-                    if (Array.isArray(errors) && errors.length > 0) {
-                        form.setError(
-                            key as keyof z.infer<typeof loginSchema>,
-                            {
-                                message: errors[0],
-                            }
-                        );
-                    }
-                });
-                toast.error("Vui lòng kiểm tra lại thông tin đăng nhập");
-            } else if (!state.success && state.message) {
-                toast.error(state.message);
-            } else if (state.success) {
-                toast.success("Đăng nhập thành công");
-                setTimeout(() => {
-                    router.push("/");
-                    router.refresh();
-                }, 1000);
-            }
+        if (error) {
+            toast.error(error);
         }
-    }, [state, form, router]);
+    }, [error]);
 
-    function onSubmit(data: z.infer<typeof loginSchema>) {
-        const formData = new FormData();
-        formData.append("username", data.username);
-        formData.append("password", data.password);
+    async function onSubmit(data: z.infer<typeof loginSchema>) {
+        try {
+            const result = await login(data);
 
-        startTransition(() => {
-            formAction(formData);
-        });
+            if (result) {
+                if (result.success) {
+                    toast.success("Đăng nhập thành công");
+                        router.push("/");              
+                } else if (result.error) {
+                    Object.entries(result.error).forEach(([key, errors]) => {
+                        if (Array.isArray(errors) && errors.length > 0) {
+                            form.setError(
+                                key as keyof z.infer<typeof loginSchema>,
+                                {
+                                    message: errors[0],
+                                }
+                            );
+                        }
+                    });
+                    toast.error("Vui lòng kiểm tra lại thông tin đăng nhập");
+                } else if (result.message) {
+                    toast.error(result.message);
+                }
+            }
+        } catch (error: any) {}
     }
 
     return (
@@ -94,7 +93,7 @@ export function LoginForm({
                                     <Input
                                         {...field}
                                         ref={usernameInputRef}
-                                        disabled={isPending}
+                                        disabled={isLoading}
                                         placeholder="Nhập tên đăng nhập"
                                         autoComplete="username"
                                     />
@@ -121,7 +120,7 @@ export function LoginForm({
                                 <FormControl>
                                     <Input
                                         {...field}
-                                        disabled={isPending}
+                                        disabled={isLoading}
                                         type="password"
                                         placeholder="Nhập mật khẩu"
                                         autoComplete="current-password"
@@ -133,10 +132,10 @@ export function LoginForm({
                     />
                     <Button
                         type="submit"
-                        className="w-full"
-                        disabled={isPending}
+                        className="w-full bg-red-600 hover:bg-red-700"
+                        disabled={isLoading}
                     >
-                        {isPending ? "Đang đăng nhập..." : "Đăng nhập"}
+                        {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                     </Button>
                 </form>
             </Form>
@@ -152,7 +151,7 @@ export function LoginForm({
                 </div>
             </div>
 
-            <Button variant="outline" type="button" disabled={isPending}>
+            <Button variant="outline" type="button" disabled={isLoading}>
                 <svg
                     className="mr-2 h-4 w-4"
                     aria-hidden="true"

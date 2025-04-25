@@ -10,8 +10,6 @@ const authService = {
             username: formData.get("username"),
             password: formData.get("password"),
         });
-
-        // If validation fails, return the validation errors
         if (!validationFields.success) {
             return {
                 error: validationFields.error.flatten().fieldErrors,
@@ -21,7 +19,6 @@ const authService = {
         }
 
         try {
-            // Call API through the API layer
             const result = await authApi.register(validationFields.data);
 
             return {
@@ -32,7 +29,6 @@ const authService = {
         } catch (error) {
             const apiError = error as ApiError;
 
-            // Handle specific error cases
             if (apiError.status === 409) {
                 return {
                     success: false,
@@ -40,7 +36,6 @@ const authService = {
                 };
             }
 
-            // Return backend validation errors if present
             if (apiError.errors) {
                 return {
                     success: false,
@@ -49,7 +44,6 @@ const authService = {
                 };
             }
 
-            // General error case
             return {
                 success: false,
                 message:
@@ -95,6 +89,56 @@ const authService = {
             };
         }
     },
+    logout: async (): Promise<FormState> => {
+        try {
+            await authApi.logout();
+            return {
+                success: true,
+                message: "Logout successful",
+            };
+        } catch (error) {
+            const apiError = error as ApiError;
+            // Return backend validation errors if present
+            if (apiError.errors) {
+                return {
+                    success: false,
+                    error: apiError.errors,
+                    message: apiError.message,
+                };
+            }
+            return {
+                success: false,
+                message:
+                    apiError.message ||
+                    "An unexpected error occurred. Please try again later.",
+            };
+        }
+    },
+    getMe: async (): Promise<FormState> => {
+        try {
+            const result = await authApi.getMe();
+            return {
+                success: true,
+                data: result,
+                message: "Get user info successful",
+            };
+        } catch (error) {
+            const apiError = error as ApiError;
+            if (apiError.errors) {
+                return {
+                    success: false,
+                    error: apiError.errors,
+                    message: apiError.message,
+                };
+            }
+            return {
+                success: false,
+                message:
+                    apiError.message ||
+                    "An unexpected error occurred. Please try again later.",
+            };
+        }
+    }
 };
 
 export default authService;
