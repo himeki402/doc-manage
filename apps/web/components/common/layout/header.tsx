@@ -14,10 +14,7 @@ import { ModeToggle } from "@/components/ui/themeToggle";
 import { useAuth } from "@/contexts/authContext";
 import {
     Bell,
-    ChevronDown,
-    HelpCircle,
     LogIn,
-    LogOut,
     Menu,
     Search,
     User,
@@ -25,6 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import logo from "@/public/logo.svg";
 
 interface MainHeaderProps {
     showSearch?: boolean;
@@ -135,7 +133,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>
-                                        Tài khoản
+                                        {user?.name || "Người dùng"}
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem asChild>

@@ -28,7 +28,9 @@ async function getDocumentByCategory(categoryId: string): Promise<Document[]> {
 
 export default async function Page({ params }: { params: { slug: string } }) {
     const category = await getCategoryBySlug(params.slug);
-    const documents = await getDocumentByCategory(category.id);
+    const documents = category 
+    ? await getDocumentByCategory(category.id)
+    : await getDocumentByCategory(params.slug);
     return (
         <div className="flex flex-col gap-4">
             {documents.map((document) => (

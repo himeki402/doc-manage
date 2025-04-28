@@ -57,36 +57,6 @@ export default function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Tổng khóa học</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">156</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-emerald-500 flex items-center">
-                <ArrowUpRight className="mr-1 h-4 w-4" />
-                +4% so với tháng trước
-              </span>
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Lượt truy cập</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">28,429</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-red-500 flex items-center">
-                <ArrowDownRight className="mr-1 h-4 w-4" />
-                -2% so với tháng trước
-              </span>
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">

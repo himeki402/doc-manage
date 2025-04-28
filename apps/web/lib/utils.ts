@@ -18,3 +18,10 @@ export function formatDateToDDMMMM(isoDateString: string): string {
 
   return `${day} ${month}`;
 }
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[\s\W-]+/g, "-");
+}

@@ -1,97 +1,126 @@
-"use client"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { BarChart3, BookOpen, FileText, Home, LayoutDashboard, Library, Settings, Users } from "lucide-react"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+"use client";
 
-const sidebarItems = [
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboardIcon,
+  UsersIcon,
+  FileTextIcon,
+  FolderIcon,
+  BarChartIcon,
+  SettingsIcon,
+  LogOutIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+const sidebarLinks = [
   {
-    title: "Tổng quan",
+    title: "Admin Dashboard",
     href: "/admin",
-    icon: LayoutDashboard,
+    icon: LayoutDashboardIcon,
   },
   {
-    title: "Người dùng",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "Tài liệu",
+    title: "Documents",
     href: "/admin/documents",
-    icon: FileText,
+    icon: FileTextIcon,
   },
   {
-    title: "Khóa học",
-    href: "/admin/courses",
-    icon: BookOpen,
+    title: "Users",
+    href: "/admin/users",
+    icon: UsersIcon,
   },
   {
-    title: "Tài liệu tham khảo",
-    href: "/admin/references",
-    icon: Library,
+    title: "Categories",
+    href: "/admin/categories",
+    icon: FolderIcon,
   },
   {
-    title: "Phân tích",
+    title: "Analytics",
     href: "/admin/analytics",
-    icon: BarChart3,
+    icon: BarChartIcon,
   },
   {
-    title: "Cài đặt",
+    title: "Settings",
     href: "/admin/settings",
-    icon: Settings,
+    icon: SettingsIcon,
   },
-]
+];
 
 export function AdminSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
-    <SidebarProvider defaultOpen>
-      <Sidebar className="border-r border-gray-200">
-        <SidebarHeader className="border-b border-gray-200 py-4">
-          <div className="flex items-center px-4">
-            <Link href="/admin" className="flex items-center gap-2">
-              <FileText className="h-6 w-6" />
-              <span className="text-xl font-bold">Admin Dashboard</span>
+    <div className="group/sidebar relative flex h-full w-[80px] flex-col border-r bg-card transition-all duration-300 ease-in-out hover:w-64 md:w-64">
+      <div className="flex h-16 items-center justify-center border-b px-4">
+        <span className="inline-flex items-center gap-2 font-semibold">
+        <Link href="/" className="flex items-center gap-2">
+                            <div className="bg-red-500 w-8 h-8 rounded-full flex items-center justify-center">
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M12 4L4 8L12 12L20 8L12 4Z"
+                                        fill="white"
+                                    />
+                                    <path
+                                        d="M4 12L12 16L20 12"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M4 16L12 20L20 16"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                            <span className="font-semibold text-lg text-foreground">
+                                KMA Document
+                            </span>{" "}
+                        </Link>
+        </span>
+      </div>
+      <div className="flex-1 overflow-auto py-4">
+        <nav className="grid items-start gap-2 px-2 text-sm">
+          {sidebarLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "group/link flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-all hover:bg-accent hover:text-accent-foreground",
+                pathname === link.href || pathname.startsWith(link.href + "/")
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              )}
+            >
+              <link.icon className="h-5 w-5" />
+              <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                {link.title}
+              </span>
             </Link>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {sidebarItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                  <Link href={item.href} className="flex items-center">
-                    <item.icon className="mr-2 h-5 w-5" />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter className="border-t border-gray-200 p-4">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Trang chủ">
-                <Link href="/" className="flex items-center">
-                  <Home className="mr-2 h-5 w-5" />
-                  <span>Quay lại trang chủ</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      </Sidebar>
-    </SidebarProvider>
-  )
+          ))}
+        </nav>
+      </div>
+      <div className="flex flex-col gap-4 p-4 border-t">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start gap-3 px-3"
+        >
+          <LogOutIcon className="h-5 w-5" />
+          <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+            Log out
+          </span>
+        </Button>
+      </div>
+    </div>
+  );
 }

@@ -50,7 +50,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-100">
+    <div className="flex flex-col min-h-screen bg-slate-100 max-w-screen-2xl mx-auto">
       <div className="flex-1 p-4 md:p-6 space-y-6">
         {/* Welcome Section */}
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">

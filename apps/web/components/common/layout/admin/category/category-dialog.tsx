@@ -1,0 +1,225 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import type { Category } from "@/lib/types/document";
+import { slugify } from "@/lib/utils";
+
+const categorySchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    slug: z.string().min(2, "Slug must be at least 2 characters"),
+    description: z.string().optional(),
+});
+
+type CategoryFormValues = z.infer<typeof categorySchema>;
+
+interface CategoryDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSave: (category: Category) => void;
+    category?: Category | null;
+}
+
+export function CategoryDialog({
+    open,
+    onOpenChange,
+    onSave,
+    category = null,
+}: CategoryDialogProps) {
+    const [isGeneratingSlug, setIsGeneratingSlug] = useState(true);
+
+    const form = useForm<CategoryFormValues>({
+        resolver: zodResolver(categorySchema),
+        defaultValues: {
+            name: "",
+            slug: "",
+            description: "",
+        },
+    });
+
+    // Reset form when dialog opens/closes or when editing a different category
+    useEffect(() => {
+        if (open) {
+            if (category) {
+                form.reset({
+                    name: category.name,
+                    slug: category.slug,
+                    description: category.description || "",
+                });
+                setIsGeneratingSlug(false);
+            } else {
+                form.reset({
+                    name: "",
+                    slug: "",
+                    description: "",
+                });
+                setIsGeneratingSlug(true);
+            }
+        }
+    }, [open, category, form]);
+
+    // Auto-generate slug from name if enabled
+    useEffect(() => {
+        const subscription = form.watch((value, { name }) => {
+            if (name === "name" && isGeneratingSlug) {
+                form.setValue("slug", slugify(value.name || ""));
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [form, isGeneratingSlug]);
+
+    const onSubmit = (data: CategoryFormValues) => {
+        onSave({
+            id: category?.id || "",
+            name: data.name,
+            slug: data.slug,
+            description: data.description || "",
+            documentCount: category?.documentCount || 0,
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                    <DialogTitle>
+                        {category ? "Edit Category" : "Add Category"}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {category
+                            ? "Edit the details for this category."
+                            : "Create a new category for organizing documents."}
+                    </DialogDescription>
+                </DialogHeader>
+
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Category name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="slug"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel>Slug</FormLabel>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 text-xs"
+                                            onClick={() => {
+                                                setIsGeneratingSlug(
+                                                    !isGeneratingSlug
+                                                );
+                                                if (
+                                                    isGeneratingSlug === false
+                                                ) {
+                                                    form.setValue(
+                                                        "slug",
+                                                        slugify(
+                                                            form.getValues(
+                                                                "name"
+                                                            )
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            {isGeneratingSlug
+                                                ? "Edit manually"
+                                                : "Generate from name"}
+                                        </Button>
+                                    </div>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="category-slug"
+                                            {...field}
+                                            readOnly={isGeneratingSlug}
+                                            className={
+                                                isGeneratingSlug
+                                                    ? "bg-muted cursor-not-allowed"
+                                                    : ""
+                                            }
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="Brief description of this category (optional)"
+                                            className="resize-none"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => onOpenChange(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit">
+                                {category ? "Save changes" : "Create category"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}

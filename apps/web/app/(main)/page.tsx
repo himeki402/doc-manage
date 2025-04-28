@@ -10,8 +10,9 @@ import thumbnailNN from "@/public/ngoaingu_thumb.png";
 import documentApi from "@/lib/apis/documentApi";
 import { Category, Document } from "@/lib/types/document";
 import { formatDateToDDMMMM } from "@/lib/utils";
+import categoriesApi from "@/lib/apis/categoriesApi";
 
-async function getDocuments(): Promise<Document[]> {
+async function getPublicDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getPublicDocuments({
             page: 1,
@@ -25,8 +26,8 @@ async function getDocuments(): Promise<Document[]> {
 }
 async function getCategories(): Promise<Category[]> {
     try {
-        const response = await documentApi.getCategories();
-        console.log("categorygory", response.data);
+        const response = await categoriesApi.getCategories();
+
         return response.data;
     } catch (error) {
         console.error("Không thể lấy danh sách danh mục:", error);
@@ -35,7 +36,7 @@ async function getCategories(): Promise<Category[]> {
 }
 
 export default async function HomePage() {
-    const documents = await getDocuments();
+    const documents = await getPublicDocuments();
     const categories = await getCategories();
     return (
         <div className="flex flex-col min-h-screen">

@@ -1,4 +1,4 @@
-import { Category, GetCategoryResponse, GetDocumentsResponse } from "../types/document";
+import {  GetDocumentsResponse } from "../types/document";
 import apiClient from "./config";
 
 export interface DocumentQueryParams {
@@ -8,6 +8,7 @@ export interface DocumentQueryParams {
   sortBy?: string;
   sortOrder?: 'ASC' | 'DESC';
   categoryId?: string;
+  slug?: string;
 }
 
 const documentApi = {
@@ -28,25 +29,7 @@ const documentApi = {
         message: error.message || "Lỗi máy chủ nội bộ",
       };
     }
-  },
-  getCategories: async (): Promise<GetCategoryResponse> => {
-    try {
-      const response = await apiClient.get("/categories");
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        throw {
-          status: error.response.status,
-          message: error.response.data.message || "Không thể lấy danh sách danh mục",
-          errors: error.response.data.errors,
-        };
-      }
-      throw {
-        status: 500,
-        message: error.message || "Lỗi máy chủ nội bộ",
-      };
-    }
-  },
+  }, 
   getDocumentByCategory: async (params: DocumentQueryParams = {}): Promise<GetDocumentsResponse> => {
     try {
       const response = await apiClient.get("/documents/by-categoryId", { params });
