@@ -36,7 +36,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import type { Category } from "@/lib/types/document"
+import type { Category } from "@/lib/types/category"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -123,7 +123,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     },
     {
       accessorKey: "description",
-      header: "Description",
+      header: "Mô tả",
       cell: ({ row }) => <div className="line-clamp-1">{row.original.description}</div>,
     },
     {
@@ -149,6 +149,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     {
       id: "actions",
       enableHiding: false,
+      header: "Hành động",
       cell: ({ row }) => {
         const category = row.original
 

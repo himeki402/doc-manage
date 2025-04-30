@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, {
     createContext,
     useContext,
@@ -11,13 +11,13 @@ import { Login } from "@/lib/actions/auth/login";
 import { FormState } from "@/lib/types/formState";
 import authService from "@/app/services/authService/authService";
 
-// Định nghĩa kiểu dữ liệu cho user
 export interface User {
     id: string;
     name: string;
     email: string;
     role: string;
-    // Thêm các thuộc tính khác của user nếu cần
+    avatar: string;
+    documentsUploaded: number;
 }
 
 // Định nghĩa kiểu dữ liệu cho AuthContext
@@ -30,10 +30,8 @@ interface AuthContextType {
     error: string | null;
 }
 
-// Tạo context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Hook để sử dụng AuthContext
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
@@ -42,12 +40,10 @@ export const useAuth = () => {
     return context;
 };
 
-// Props cho AuthProvider
 interface AuthProviderProps {
     children: ReactNode;
 }
 
-// AuthProvider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -61,18 +57,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             })
             .finally(() => {
                 setIsLoading(false);
+                
             });
     }, []);
 
-    // Hàm fetch thông tin user
     const fetchUserInfo = async (): Promise<User | null> => {
         try {
             setIsLoading(true);
             const result = await authService.getMe();
-            if (result && result.success) {
-                const userData = result.data as User;
-                setUser(userData);
-                return userData;
+            if (result) {
+                setUser(result.data.data as User);
+                return result.data.data as User;
             } else {
                 setUser(null);
                 return null;
@@ -125,7 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         try {
             const result = await authService.logout();
-            
+
             if (result?.success) {
                 setUser(null);
             } else {

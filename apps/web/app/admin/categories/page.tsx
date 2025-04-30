@@ -6,9 +6,9 @@ import { PlusIcon } from "lucide-react";
 import { DashboardHeader } from "@/components/common/layout/admin/admin-dashboard-header";
 import { CategoryDialog } from "@/components/common/layout/admin/category/category-dialog";
 import { CategoriesTable } from "@/components/common/layout/admin/category/category-table";
-import { Category } from "@/lib/types/document";
 import categoriesApi from "@/lib/apis/categoriesApi";
 import { toast } from "sonner";
+import { Category } from "@/lib/types/category";
 
 export default function CategoriesPage() {
     const [showCategoryDialog, setShowCategoryDialog] = useState(false);
@@ -26,7 +26,7 @@ export default function CategoriesPage() {
     const fetchCategories = async () => {
         try {
             setIsLoading(true);
-            const response = await categoriesApi.getCategories();
+            const response = await categoriesApi.getCategoriesforAdmin();
             setCategories(response.data);
         } catch (error: any) {
             console.error("Không thể lấy danh sách danh mục:", error);
@@ -85,7 +85,7 @@ export default function CategoriesPage() {
     return (
         <div className="space-y-6">
             <DashboardHeader
-                title="Categories"
+                title="Quản lý danh mục"
                 description="Quản lý danh mục tài liệu."
                 actions={
                     <Button onClick={handleAddCategory}>

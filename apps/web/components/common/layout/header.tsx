@@ -10,11 +10,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ModeToggle } from "@/components/ui/themeToggle";
 import { useAuth } from "@/contexts/authContext";
 import {
     Bell,
+    GlobeIcon,
+    LayoutDashboardIcon,
     LogIn,
+    LogOutIcon,
     Menu,
     Search,
     User,
@@ -22,14 +26,40 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import logo from "@/public/logo.svg";
 
 interface MainHeaderProps {
     showSearch?: boolean;
 }
 
 export function Header({ showSearch = true }: MainHeaderProps) {
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, isAuthenticated, logout, isLoading } = useAuth();
+
+    if (isLoading) {
+        return (
+            <header className="sticky top-0 z-40 w-full border-b bg-background animate-pulse">
+                <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-screen-2xl mx-auto">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="md:hidden h-8 w-8 rounded-full" />
+                        <div className="hidden md:flex items-center gap-2">
+                            <Skeleton className="w-8 h-8 rounded-full" />
+                            <Skeleton className="h-6 w-32 rounded-md" />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        {showSearch && (
+                            <div className="relative hidden md:flex items-center">
+                                <Skeleton className="h-9 w-64 rounded-full" />
+                            </div>
+                        )}
+                        <ModeToggle />
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                    </div>
+                </div>
+            </header>
+        );
+    }
 
     const handleLogout = async () => {
         try {
@@ -133,23 +163,43 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>
-                                        {user?.name || "Người dùng"}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-foreground">
+                                               {"Xin chào"} {user?.name || "Người dùng"} {"!"}
+                                            </span>
+                                        </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem asChild>
-                                        <Link href="/profile">Hồ sơ</Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
                                         <Link href="/dashboard">
-                                            Dashboard
+                                            <LayoutDashboardIcon className="h-5 w-5" />
+                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                                Dashboard{" "}
+                                            </span>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href="/settings">Cài đặt</Link>
+                                        <Link href="/profile">
+                                            <User className="h-5 w-5" />
+                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                                Hồ sơ{" "}
+                                            </span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="#">
+                                            <GlobeIcon className="h-5 w-5" />
+                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                                Hỗ trợ
+                                            </span>
+                                        </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={handleLogout}>
-                                        <span>Đăng xuất</span>
+                                        <LogOutIcon className="h-5 w-5" />
+                                        <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                            Đăng xuất
+                                        </span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>

@@ -8,9 +8,9 @@ import thumbnailGT from "@/public/GiaoTrinh_thumbnail.jpg";
 import thumbnailSTK from "@/public/SachTK_thumb.jpg";
 import thumbnailNN from "@/public/ngoaingu_thumb.png";
 import documentApi from "@/lib/apis/documentApi";
-import { Category, Document } from "@/lib/types/document";
+import { Document } from "@/lib/types/document";
 import { formatDateToDDMMMM } from "@/lib/utils";
-import categoriesApi from "@/lib/apis/categoriesApi";
+import { CategoryNavigation } from "@/components/home/CategoryNavigation";
 
 async function getPublicDocuments(): Promise<Document[]> {
     try {
@@ -24,20 +24,9 @@ async function getPublicDocuments(): Promise<Document[]> {
         return [];
     }
 }
-async function getCategories(): Promise<Category[]> {
-    try {
-        const response = await categoriesApi.getCategories();
-
-        return response.data;
-    } catch (error) {
-        console.error("Không thể lấy danh sách danh mục:", error);
-        return [];
-    }
-}
 
 export default async function HomePage() {
     const documents = await getPublicDocuments();
-    const categories = await getCategories();
     return (
         <div className="flex flex-col min-h-screen">
             <section className="bg-slate-900 text-white py-16 px-4 text-center">
@@ -52,45 +41,9 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* Category Navigation */}
-            <section className="bg-white border-b py-4">
-                <div className="container mx-auto">
-                    <div className="flex flex-wrap justify-center gap-2 md:gap-6">
-                        <Link
-                            href="/"
-                            className="px-3 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600"
-                        >
-                            TẤT CẢ
-                        </Link>
-
-                        {categories && categories.length > 0
-                            ? categories.map((category) => (
-                                  <Link
-                                      key={category.id}
-                                      href={`/category/${category.slug}`}
-                                      className="px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-                                  >
-                                      {category.name}
-                                  </Link>
-                              ))
-                            : [
-                                  "SÁCH GIÁO TRÌNH",
-                                  "SÁCH THAM KHẢO",
-                                  "LUẬN ÁN LUẬN VĂN",
-                                  "SÁCH PHÁP LUẬT",
-                                  "NGOẠI NGỮ",
-                                  "AN TOÀN THÔNG TIN",
-                                  "TIN TỨC",
-                              ].map((name, index) => (
-                                  <Link
-                                      key={index}
-                                      href={`/category/${index}`}
-                                      className="px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600"
-                                  >
-                                      {name}
-                                  </Link>
-                              ))}
-                    </div>
+            <section className=" py-2" >
+                <div className="container mx-auto items-center">
+                    <CategoryNavigation />
                 </div>
             </section>
 

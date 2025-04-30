@@ -24,23 +24,3 @@ export interface GetDocumentsResponse {
     };
 }
 
-export interface Category {
-    id: string;
-    name: string;
-    slug: string;
-    parent?: string | null;
-    created_at?: string;
-    updatedAt?: string;
-    description?: string;
-    documentCount?: number;
-}
-
-export interface CategoryResponse {
-    data: Category[];
-    meta: {
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-    };
-}
