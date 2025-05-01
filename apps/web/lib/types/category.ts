@@ -1,10 +1,10 @@
 export interface Category {
     id: string;
     name: string;
-    slug: string;
+    slug?: string;
     description?: string;
     documentCount: number;
-    parentId?: string;
+    parent_id?: string;
     children?: Category[];
     level?: number;
 }

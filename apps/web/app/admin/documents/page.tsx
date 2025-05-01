@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { FileText, MoreHorizontal, Plus, Search } from "lucide-react"
 
-export default function DocumentsPage() {
+export default function DocumentsAdminPage() {
   const documents = [
     {
       id: "1",
@@ -71,6 +71,8 @@ export default function DocumentsPage() {
       downloads: 0,
     },
   ]
+
+  
 
   return (
     <div className="space-y-6">

@@ -14,7 +14,6 @@ import {
 } from "@tanstack/react-table"
 import {
   ChevronDownIcon,
-  MoreHorizontalIcon,
   PenIcon,
   TrashIcon,
   ChevronLeftIcon,
@@ -25,14 +24,6 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -50,6 +41,51 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+const flattenCategories = (
+  categories: Category[],
+  level = 0,
+  parentId: string | null = null,
+  expanded: Record<string, boolean> = {}
+): Array<Category & { level: number; isVisible: boolean }> => {
+  const result: Array<Category & { level: number; isVisible: boolean }> = [];
+
+  categories.forEach((category) => {
+    const isVisible = parentId ? expanded[parentId] ?? false : true;
+
+    result.push({
+      ...category,
+      level,
+      isVisible,
+    });
+
+    if (category.children && category.children.length > 0) {
+      result.push(
+        ...flattenCategories(category.children, level + 1, category.id, expanded)
+      );
+    }
+  });
+
+  return result;
+};
+
+// Hàm helper để tìm category cha dựa vào parent_id
+const findParentCategory = (categories: Category[], parentId: string | undefined): Category | null => {
+  if (!parentId) return null;
+  
+  for (const category of categories) {
+    if (category.id === parentId) {
+      return category;
+    }
+    
+    if (category.children && category.children.length > 0) {
+      const found = findParentCategory(category.children, parentId);
+      if (found) return found;
+    }
+  }
+  
+  return null;
+};
+
 interface CategoriesTableProps {
   categories: Category[]
   isLoading?: boolean
@@ -63,6 +99,9 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
   const [rowSelection, setRowSelection] = useState({})
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
+
+  // Flatten categories để dễ dàng tìm tất cả categories (kể cả con)
+  const allCategories = flattenCategories(categories);
 
   const handleDeleteClick = (category: Category) => {
     setCategoryToDelete(category)
@@ -117,6 +156,29 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
       },
     },
     {
+      accessorKey: "parent",
+      header: "Parent Category",
+      cell: ({ row }) => {
+        const parentId = row.original.parent_id;
+        if (!parentId) {
+          return <div className="text-muted-foreground">None</div>;
+        }
+        
+        // Tìm parent category từ danh sách categories
+        const parent = findParentCategory(categories, parentId);
+        
+        return parent ? (
+          <div className="flex items-center">
+            <Badge variant="outline" className="font-medium">
+              {parent.name}
+            </Badge>
+          </div>
+        ) : (
+          <div className="text-muted-foreground">Unknown</div>
+        );
+      },
+    },
+    {
       accessorKey: "slug",
       header: "Slug",
       cell: ({ row }) => <div className="line-clamp-1">{row.original.slug}</div>,
@@ -124,7 +186,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     {
       accessorKey: "description",
       header: "Mô tả",
-      cell: ({ row }) => <div className="line-clamp-1">{row.original.description}</div>,
+      cell: ({ row }) => <div className="line-clamp-1">{row.original.description || "Không có mô tả"}</div>,
     },
     {
       accessorKey: "documentCount",
@@ -154,26 +216,26 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
         const category = row.original
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(category)}>
-                <PenIcon className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDeleteClick(category)}>
-                <TrashIcon className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+              onClick={() => onEdit(category)}
+            >
+              <span className="sr-only">Edit</span>
+              <PenIcon className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+              onClick={() => handleDeleteClick(category)}
+            >
+              <span className="sr-only">Delete</span>
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
         )
       },
     },

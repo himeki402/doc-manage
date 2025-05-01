@@ -1,18 +1,35 @@
-export interface Document {
+// lib/types/document.ts
+export type Document = {
     id: string;
     title: string;
     description?: string;
-    accessType: string;
+    content?: string;
+    file_path?: string;
+    file_size?: number;
+    file_url?: string;
+    mimeType: string;
+    createdByName: string;
+    category?: { id: string; name: string };
+    categorySlug?: string;
     created_at: string;
-    categoryId: string;
-    categoryName?: string;
-    groupId?: string;
-    groupName?: string;
-    fileName?: string;
-    fileUrl?: string;
-    slug?: string;
-    mimeType?: string;
-}
+    updated_at: string;
+    likeCount: number;
+    ratingCount: number;
+    view: number;
+    rating: number;
+    thumbnailUrl?: string;
+    access_type: string;
+    status?: string;
+    rejection_reason?: string;
+    reviewed_by?: string;
+    reviewed_at?: string;
+    source?: string;
+    tags?: string[];
+    last_edited_by?: string;
+    last_edited_at?: string;
+    language?: string;
+    version?: string;
+};
 
 export interface GetDocumentsResponse {
     data: Document[];

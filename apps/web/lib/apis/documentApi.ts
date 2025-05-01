@@ -1,3 +1,4 @@
+import { create } from "domain";
 import {  GetDocumentsResponse } from "../types/document";
 import apiClient from "./config";
 
@@ -32,8 +33,8 @@ const documentApi = {
   }, 
   getDocumentByCategory: async (params: DocumentQueryParams = {}): Promise<GetDocumentsResponse> => {
     try {
-      const response = await apiClient.get("/documents/by-categoryId", { params });
-      return response.data;
+      const response = await apiClient.get("/documents/by-category", { params });
+      return response.data.data;
     } catch (error: any) {
       if (error.response) {
         throw {
@@ -47,7 +48,45 @@ const documentApi = {
         message: error.message || "Lỗi máy chủ nội bộ",
       };
     }
-  }
+  },
+  createDocument: async (data: FormData): Promise<void> => {
+    try {
+      await apiClient.post("/documents/upload", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error: any) {
+      if (error.response) {
+        throw {
+          status: error.response.status,
+          message: error.response.data.message || "Không thể tạo tài liệu",
+          errors: error.response.data.errors,
+        };
+      }
+      throw {
+        status: 500,
+        message: error.message || "Lỗi máy chủ nội bộ",
+      };
+    }
+  },
+  deleteDocument: async (id: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/documents/${id}`);
+    } catch (error: any) {
+      if (error.response) {
+        throw {
+          status: error.response.status,
+          message: error.response.data.message || "Không thể xóa tài liệu",
+          errors: error.response.data.errors,
+        };
+      }
+      throw {
+        status: 500,
+        message: error.message || "Lỗi máy chủ nội bộ",
+      };
+    }
+  },
 };
 
 export default documentApi;

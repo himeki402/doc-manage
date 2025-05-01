@@ -23,7 +23,7 @@ export const mapApiCategoryToCategory = (
         slug: apiCategory.slug,
         description: apiCategory.description || undefined,
         documentCount: Number.parseInt(apiCategory.documentCount, 10),
-        parentId: apiCategory.parent_id || undefined,
+        parent_id: apiCategory.parent_id || undefined,
     };
 };
 
@@ -44,9 +44,9 @@ export const buildCategoryTree = (categories: ApiCategory[]): Category[] => {
     const rootCategories: Category[] = [];
 
     allCategories.forEach((category) => {
-        if (category.parentId) {
+        if (category.parent_id) {
             // Đây là category con
-            const parent = categoryMap.get(category.parentId);
+            const parent = categoryMap.get(category.parent_id);
             if (parent) {
                 if (!parent.children) {
                     parent.children = [];

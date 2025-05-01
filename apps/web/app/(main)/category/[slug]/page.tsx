@@ -1,24 +1,14 @@
-import documentApi from "@/lib/apis/documentApi";
-import { Category, Document } from "@/lib/types/document";
+import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
+import { Document } from "@/lib/types/document";
 
-async function getCategoryBySlug(slug: string): Promise<Category | null> {
-    try {
-        const response = await documentApi.getCategories();
-        const categories = response.data;
-        return categories.find(category => category.slug === slug) || null;
-    } catch (error) {
-        console.error("Không thể lấy thông tin danh mục:", error);
-        return null;
-    }
-}
 
-async function getDocumentByCategory(categoryId: string): Promise<Document[]> {
+async function getDocumentByCategory(slug: string): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
+            slug: slug,
             page: 1,
             limit: 10,
-            categoryId: categoryId,
-        });
+        } as DocumentQueryParams);
         return response.data;
     } catch (error) {
         console.error("Không thể lấy danh sách tài liệu:", error);
@@ -27,10 +17,7 @@ async function getDocumentByCategory(categoryId: string): Promise<Document[]> {
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-    const category = await getCategoryBySlug(params.slug);
-    const documents = category 
-    ? await getDocumentByCategory(category.id)
-    : await getDocumentByCategory(params.slug);
+    const documents = await getDocumentByCategory(params.slug);
     return (
         <div className="flex flex-col gap-4">
             {documents.map((document) => (

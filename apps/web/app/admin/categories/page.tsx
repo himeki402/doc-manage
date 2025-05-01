@@ -22,12 +22,12 @@ export default function CategoriesPage() {
         fetchCategories();
     }, []);
 
-    // Hàm lấy danh sách danh mục
     const fetchCategories = async () => {
         try {
             setIsLoading(true);
             const response = await categoriesApi.getCategoriesforAdmin();
             setCategories(response.data);
+            console.log("Categories loaded:", categories);
         } catch (error: any) {
             console.error("Không thể lấy danh sách danh mục:", error);
             toast.error(error.message || "Không thể lấy danh sách danh mục");
@@ -107,6 +107,7 @@ export default function CategoriesPage() {
                 onOpenChange={setShowCategoryDialog}
                 onSave={handleSaveCategory}
                 category={editingCategory}
+                categories={categories}
             />
         </div>
     );

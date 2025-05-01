@@ -71,7 +71,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
     };
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background">
-            <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-screen-2xl mx-auto">
+            <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-7xl mx-auto">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" className="md:hidden">
                         <Menu className="h-5 w-5" />

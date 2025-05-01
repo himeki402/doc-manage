@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,13 +23,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { Category } from "@/lib/types/document";
-import { slugify } from "@/lib/utils";
+import { Category } from "@/lib/types/category";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 const categorySchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
-    slug: z.string().min(2, "Slug must be at least 2 characters"),
     description: z.string().optional(),
+    parent_id: z.string().optional(),
 });
 
 type CategoryFormValues = z.infer<typeof categorySchema>;
@@ -39,6 +45,7 @@ interface CategoryDialogProps {
     onOpenChange: (open: boolean) => void;
     onSave: (category: Category) => void;
     category?: Category | null;
+    categories: Category[];
 }
 
 export function CategoryDialog({
@@ -46,58 +53,52 @@ export function CategoryDialog({
     onOpenChange,
     onSave,
     category = null,
+    categories,
 }: CategoryDialogProps) {
-    const [isGeneratingSlug, setIsGeneratingSlug] = useState(true);
 
     const form = useForm<CategoryFormValues>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
             name: "",
-            slug: "",
             description: "",
+            parent_id: undefined,
         },
     });
 
-    // Reset form when dialog opens/closes or when editing a different category
     useEffect(() => {
         if (open) {
             if (category) {
                 form.reset({
                     name: category.name,
-                    slug: category.slug,
                     description: category.description || "",
+                    parent_id: category.parent_id,
                 });
-                setIsGeneratingSlug(false);
             } else {
                 form.reset({
                     name: "",
-                    slug: "",
                     description: "",
+                    parent_id: undefined,
                 });
-                setIsGeneratingSlug(true);
             }
         }
     }, [open, category, form]);
 
-    // Auto-generate slug from name if enabled
-    useEffect(() => {
-        const subscription = form.watch((value, { name }) => {
-            if (name === "name" && isGeneratingSlug) {
-                form.setValue("slug", slugify(value.name || ""));
-            }
-        });
-        return () => subscription.unsubscribe();
-    }, [form, isGeneratingSlug]);
+    // Slug generation effect removed
 
     const onSubmit = (data: CategoryFormValues) => {
         onSave({
             id: category?.id || "",
             name: data.name,
-            slug: data.slug,
             description: data.description || "",
             documentCount: category?.documentCount || 0,
+            parent_id: data.parent_id === "none" ? undefined : data.parent_id,
         });
+        onOpenChange(false);
     };
+
+    const availableCategories = categories.filter(
+        (cat) => cat.id !== category?.id
+    );
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -135,52 +136,38 @@ export function CategoryDialog({
                             )}
                         />
 
+                        {/* Slug field removed */}
+
                         <FormField
                             control={form.control}
-                            name="slug"
+                            name="parent_id"
                             render={({ field }) => (
                                 <FormItem>
-                                    <div className="flex items-center justify-between">
-                                        <FormLabel>Slug</FormLabel>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 text-xs"
-                                            onClick={() => {
-                                                setIsGeneratingSlug(
-                                                    !isGeneratingSlug
-                                                );
-                                                if (
-                                                    isGeneratingSlug === false
-                                                ) {
-                                                    form.setValue(
-                                                        "slug",
-                                                        slugify(
-                                                            form.getValues(
-                                                                "name"
-                                                            )
-                                                        )
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            {isGeneratingSlug
-                                                ? "Edit manually"
-                                                : "Generate from name"}
-                                        </Button>
-                                    </div>
+                                    <FormLabel>Parent Category</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="category-slug"
-                                            {...field}
-                                            readOnly={isGeneratingSlug}
-                                            className={
-                                                isGeneratingSlug
-                                                    ? "bg-muted cursor-not-allowed"
-                                                    : ""
-                                            }
-                                        />
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Chọn thư mục cha (Tùy chọn)" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">
+                                                    None
+                                                </SelectItem>
+                                                {availableCategories.map(
+                                                    (cat) => (
+                                                        <SelectItem
+                                                            key={cat.id}
+                                                            value={cat.id}
+                                                        >
+                                                            {cat.name}
+                                                        </SelectItem>
+                                                    )
+                                                )}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
