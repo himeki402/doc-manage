@@ -9,7 +9,7 @@ export type Document = {
     file_url?: string;
     mimeType: string;
     createdByName: string;
-    category?: { id: string; name: string };
+    categoryName: string;
     categorySlug?: string;
     created_at: string;
     updated_at: string;

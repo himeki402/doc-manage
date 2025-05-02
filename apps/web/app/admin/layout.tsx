@@ -1,8 +1,9 @@
 "use client"
 
+import { AdminHeader } from "@/components/common/admin/admin-header"
+import { AdminSidebar } from "@/components/common/admin/admin-sidebar"
 import type { ReactNode } from "react"
-import { AdminSidebar } from "@/components/common/layout/admin/admin-sidebar"
-import { AdminHeader } from "@/components/common/layout/admin/admin-header"
+
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

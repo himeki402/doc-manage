@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { DashboardHeader } from "@/components/common/layout/admin/admin-dashboard-header";
-import { CategoryDialog } from "@/components/common/layout/admin/category/category-dialog";
-import { CategoriesTable } from "@/components/common/layout/admin/category/category-table";
+
 import categoriesApi from "@/lib/apis/categoriesApi";
 import { toast } from "sonner";
 import { Category } from "@/lib/types/category";
+import { DashboardHeader } from "@/components/common/admin/admin-dashboard-header";
+import { CategoriesTable } from "@/components/common/admin/category/category-table";
+import { CategoryDialog } from "@/components/common/admin/category/category-dialog";
 
 export default function CategoriesPage() {
     const [showCategoryDialog, setShowCategoryDialog] = useState(false);

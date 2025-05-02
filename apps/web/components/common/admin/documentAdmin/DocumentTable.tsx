@@ -36,8 +36,8 @@ export function DocumentTable({ documents }: DocumentTableProps) {
                                     <span className="line-clamp-2">{doc.title}</span>
                                 </div>
                             </TableCell>
-                            <TableCell>{doc.category?.name || "N/A"}</TableCell>
-                            <TableCell>{doc.created_by?.username || "N/A"}</TableCell>
+                            <TableCell>{doc.categoryName || "N/A"}</TableCell>
+                            <TableCell>{doc.createdByName || "N/A"}</TableCell>
                             <TableCell>
                                 <Badge
                                     variant={

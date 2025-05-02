@@ -2,30 +2,79 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const privatePaths = ['/me'] 
-const adminPaths = ['/admin']
+const roleRoutes = {
+  admin: ["/admin", "/dashboard"],
+  user: ["/user", "/documents"],
+  public: ["/", "/login", "/register"],
+};
+
+const publicPaths = ['/', '/category', '/doc']
+const protectedPaths = ['/me', '/dashboard', '/admin']
 const authPaths = ['/login', '/register']
-const dashboardEditRegex = /^\/dashboard\/(?!edit).*/ // Regex to match all paths except /dashboard/edit
-const adminEditRegex = /^\/admin\/(?!edit).*/ // Regex to match all paths except /admin/edit
 
 export default async function middleware(request: NextRequest) {
-  const cookieStore = await cookies()
-  const sessionToken = cookieStore.get('Authentication')
+  const sessionToken = request.cookies.get('Authentication')
+  console.log('Session Token:', sessionToken)
   const { pathname } = request.nextUrl
-  // Chưa đăng nhập thì không cho vào private paths
-  if (privatePaths.some((path) => pathname.startsWith(path)) && !sessionToken) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  // Check if the current path is public
+  const isPublicPath = publicPaths.some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  )
+
+  console.log('NextResponse:', NextResponse.next().cookies)
+  if (pathname.startsWith('/api') || pathname === '/') {
+    return NextResponse.next();
   }
-  // Đăng nhập rồi thì không cho vào login/register nữa
-  if (authPaths.some((path) => pathname.startsWith(path)) && sessionToken) {
+
+  // Check if the current path is an auth path
+  const isAuthPath = authPaths.some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  )
+
+  // Check if the current path requires authentication
+  const isProtectedPath = protectedPaths.some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  )
+
+  // Special case for dashboard/edit which might be public
+  const isDashboardEditPath = pathname === '/dashboard/edit'
+  
+  // Special case for admin/edit which might be public
+  const isAdminEditPath = pathname === '/admin/edit'
+
+  // Case 1: User is authenticated and tries to access auth pages
+  if (isAuthPath && sessionToken) {
     return NextResponse.redirect(new URL('/', request.url))
   }
-  if (pathname.match(dashboardEditRegex) && !sessionToken) {
+
+  // Case 2: User is not authenticated and tries to access protected paths
+  if (!sessionToken && (
+    isProtectedPath && 
+    !isDashboardEditPath && 
+    !isAdminEditPath
+  )) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
+
+  // Allow all other cases to proceed
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/me', '/login', '/register', '/dashboard/:path*', '/admin/:path*'] 
+  // Matcher for all routes that need middleware processing
+  matcher: [
+    // Include public paths
+    '/',
+    '/category/:path*',
+    '/doc/:path*',
+    
+    // Include protected paths
+    '/me/:path*',
+    '/dashboard/:path*',
+    '/admin/:path*',
+    
+    // Include auth paths
+    '/login',
+    '/register'
+  ]
 }

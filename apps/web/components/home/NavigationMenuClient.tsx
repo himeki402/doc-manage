@@ -30,7 +30,9 @@ interface NavigationMenuClientProps {
     categories: Category[];
 }
 
-export function NavigationMenuClient({ categories }: NavigationMenuClientProps) {
+export function NavigationMenuClient({
+    categories,
+}: NavigationMenuClientProps) {
     const foreignLanguageCategory = categories.find((cat) =>
         cat.name.toLowerCase().includes("ngoại ngữ")
     );
@@ -47,7 +49,7 @@ export function NavigationMenuClient({ categories }: NavigationMenuClientProps) 
 
     return (
         <NavigationMenu className="max-w-full w-full justify-center">
-            <NavigationMenuList className="flex flex-wrap justify-center">
+            <NavigationMenuList className="flex flex-wrap justify-center ">
                 {/* Các danh mục chính */}
                 {mainCategories.map((category) => (
                     <NavigationMenuItem key={category.id}>
@@ -59,7 +61,6 @@ export function NavigationMenuClient({ categories }: NavigationMenuClientProps) 
                             <NavigationMenuLink
                                 className={navigationMenuTriggerStyle()}
                             >
-                                
                                 {category.name.toUpperCase()}
                             </NavigationMenuLink>
                         </Link>
@@ -69,7 +70,7 @@ export function NavigationMenuClient({ categories }: NavigationMenuClientProps) 
                 {/* Danh mục NGOẠI NGỮ với các danh mục con */}
                 {foreignLanguageCategory && (
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>                           
+                        <NavigationMenuTrigger>
                             {foreignLanguageCategory.name.toUpperCase()}
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>

@@ -146,7 +146,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     >
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage
-                                                src={"/placeholder.svg"}
+                                                src={user?.avatar}
                                                 alt={user?.name || "User"}
                                             />
                                             <AvatarFallback>

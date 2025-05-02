@@ -157,7 +157,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     },
     {
       accessorKey: "parent",
-      header: "Parent Category",
+      header: "Danh mục cha",
       cell: ({ row }) => {
         const parentId = row.original.parent_id;
         if (!parentId) {

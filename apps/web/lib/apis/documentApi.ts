@@ -31,6 +31,24 @@ const documentApi = {
       };
     }
   }, 
+  getAllDocuments: async (params: DocumentQueryParams = {}): Promise<GetDocumentsResponse> => {
+    try {
+      const response = await apiClient.get("/documents/admin", { params });
+      return response.data;
+    } catch (error: any) {
+      if (error.response) {
+        throw {
+          status: error.response.status,
+          message: error.response.data.message || "Không thể lấy danh sách tài liệu",
+          errors: error.response.data.errors,
+        };
+      }
+      throw {
+        status: 500,
+        message: error.message || "Lỗi máy chủ nội bộ",
+      };
+    }
+  },
   getDocumentByCategory: async (params: DocumentQueryParams = {}): Promise<GetDocumentsResponse> => {
     try {
       const response = await apiClient.get("/documents/by-category", { params });

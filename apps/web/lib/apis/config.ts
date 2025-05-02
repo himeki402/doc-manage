@@ -32,20 +32,21 @@ apiClient.interceptors.request.use(
 );
 
 // Response interceptor
-// apiClient.interceptors.response.use(
-//   (response: AxiosResponse): any => {
-//     return response;
-//   },
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       // Xử lý khi token hết hạn
-//       if (typeof window !== 'undefined') {
-//         // Chuyển hướng đến trang đăng nhập
-//         window.location.href = '/login';
-//       }
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+apiClient.interceptors.response.use(
+  (response: AxiosResponse): any => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login' && currentPath !== '/register') {
+          window.location.href = '/login';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;
