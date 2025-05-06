@@ -18,7 +18,7 @@ export type Document = {
     view: number;
     rating: number;
     thumbnailUrl?: string;
-    access_type: string;
+    accessType: AccessType;
     status?: string;
     rejection_reason?: string;
     reviewed_by?: string;
@@ -41,3 +41,4 @@ export interface GetDocumentsResponse {
     };
 }
 
+export type AccessType = "PRIVATE" | "PUBLIC" | "GROUP"

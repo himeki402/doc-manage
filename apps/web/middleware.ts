@@ -13,16 +13,14 @@ const protectedPaths = ['/me', '/dashboard', '/admin']
 const authPaths = ['/login', '/register']
 
 export default async function middleware(request: NextRequest) {
-  const sessionToken = request.cookies.get('Authentication')
-  console.log('Session Token:', sessionToken)
+  const sessionToken = request.cookies.get('accessToken')
   const { pathname } = request.nextUrl
   // Check if the current path is public
   const isPublicPath = publicPaths.some(path => 
     pathname === path || pathname.startsWith(`${path}/`)
   )
 
-  console.log('NextResponse:', NextResponse.next().cookies)
-  if (pathname.startsWith('/api') || pathname === '/') {
+  if (isPublicPath) {
     return NextResponse.next();
   }
 

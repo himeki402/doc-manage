@@ -28,7 +28,6 @@ export default function CategoriesPage() {
             setIsLoading(true);
             const response = await categoriesApi.getCategoriesforAdmin();
             setCategories(response.data);
-            console.log("Categories loaded:", categories);
         } catch (error: any) {
             console.error("Không thể lấy danh sách danh mục:", error);
             toast.error(error.message || "Không thể lấy danh sách danh mục");

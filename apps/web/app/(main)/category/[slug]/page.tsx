@@ -1,6 +1,9 @@
+import { DocumentGrid } from "@/components/common/category/DocumentGrid";
+import { HeroBannerCategory } from "@/components/common/category/HeroBanner";
+import categoriesApi from "@/lib/apis/categoriesApi";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
+import { Category } from "@/lib/types/category";
 import { Document } from "@/lib/types/document";
-
 
 async function getDocumentByCategory(slug: string): Promise<Document[]> {
     try {
@@ -16,16 +19,54 @@ async function getDocumentByCategory(slug: string): Promise<Document[]> {
     }
 }
 
+async function getCategoryBySlug(slug: string): Promise<Category> {
+    try {
+        const response = await categoriesApi.getCategoryBySlug(slug);
+
+        const categoryData = response;
+        const category: Category = {
+            id: categoryData.id,
+            name: categoryData.name,
+            description: categoryData.description,
+            documentCount: categoryData.documentCount || 0,
+        };
+        return category;
+    } catch (error) {
+        console.error("Không thể lấy danh mục:", error);
+        return {
+            id: "",
+            name: "Unknown",
+            description: "No description available",
+            documentCount: 0,
+        };
+    }
+}
+
 export default async function Page({ params }: { params: { slug: string } }) {
-    const documents = await getDocumentByCategory(params.slug);
+    const resolvedParams = await params;
+    const slug = resolvedParams.slug;
+
+    const documents = await getDocumentByCategory(slug);
+    const category = await getCategoryBySlug(slug);
+
     return (
         <div className="flex flex-col gap-4">
-            {documents.map((document) => (
-                <div key={document.id} className="p-4 border rounded-md shadow-sm">
-                    <h2 className="text-xl font-bold">{document.title}</h2>
-                    <p>{document.description}</p>
+            <HeroBannerCategory
+                id={category.id}
+                name={category.name}
+                description={category.description}
+                documentCount={category.documentCount}
+            />
+            <section className="py-12">
+                <div className="container mx-auto max-w-7xl">
+                    <DocumentGrid
+                        title={category.name}
+                        categorySlug="Sach-giao-trinh"
+                        documents={documents}
+                        // onBookmark={handleBookmark}
+                    />
                 </div>
-            ))}
+            </section>
         </div>
     );
 }

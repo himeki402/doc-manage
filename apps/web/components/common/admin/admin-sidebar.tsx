@@ -9,7 +9,7 @@ import {
   FolderIcon,
   BarChartIcon,
   SettingsIcon,
-  LogOutIcon,
+  HomeIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -115,9 +115,9 @@ export function AdminSidebar() {
           variant="ghost" 
           className="w-full justify-start gap-3 px-3"
         >
-          <LogOutIcon className="h-5 w-5" />
+          <HomeIcon className="h-5 w-5" />
           <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
-            Log out
+            Quay lại trang chủ
           </span>
         </Button>
       </div>

@@ -4,6 +4,7 @@ import "@repo/ui/globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/themes/theme-provider";
 import { AuthProvider } from "@/contexts/authContext";
+import { getUserData } from "@/lib/actions/auth/currentUser";
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -18,18 +19,20 @@ export const metadata: Metadata = {
     description: "Tài liệu KMA",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const userData = await getUserData();
+    
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={`${inter.variable} font-sans antialiased`}>
                 <ThemeProvider>
                     <div className="flex h-svh">
                         <div className="flex-1 flex flex-col">
-                            <AuthProvider>{children}</AuthProvider>
+                            <AuthProvider initialUser={userData}>{children}</AuthProvider>
                         </div>
                     </div>
                     <Toaster position="top-right" expand closeButton />

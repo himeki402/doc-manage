@@ -126,7 +126,7 @@ export function UploadDocumentDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[800px] bg-[#121212] text-white border-gray-800">
+            <DialogContent className="sm:max-w-[800px] border-border">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold">
                         Tải lên tài liệu mới
@@ -139,8 +139,8 @@ export function UploadDocumentDialog({
                         {!file ? (
                             <FileUploader onFileSelected={handleFileChange} />
                         ) : (
-                            <div className="relative w-full aspect-[3/4] bg-black border border-gray-700 rounded-md overflow-hidden">
-                                <div className="absolute top-0 left-0 bg-black text-white text-xs font-medium py-1 px-2 z-10">
+                            <div className="relative w-full aspect-[3/4] border border-border rounded-md overflow-hidden bg-card">
+                                <div className="absolute top-0 left-0 text-xs font-medium py-1 px-2 z-10 bg-primary/10 text-primary">
                                     {file.type === "application/pdf"
                                         ? "PDF"
                                         : file.type
@@ -157,7 +157,7 @@ export function UploadDocumentDialog({
                                         objectFit="contain"
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                                         {file.name}
                                     </div>
                                 )}
@@ -185,7 +185,7 @@ export function UploadDocumentDialog({
                                 className="text-sm font-medium"
                             >
                                 Title{" "}
-                                <span className="text-gray-400">
+                                <span className="text-muted-foreground">
                                     (Required)
                                 </span>
                             </label>
@@ -194,7 +194,7 @@ export function UploadDocumentDialog({
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="Enter document title"
-                                className="bg-[#1a1a1a] border-gray-700 focus:border-gray-500"
+                                className="bg-background border-input focus:border-ring"
                                 required
                             />
                         </div>
@@ -205,7 +205,7 @@ export function UploadDocumentDialog({
                                 className="text-sm font-medium"
                             >
                                 Description{" "}
-                                <span className="text-gray-400">
+                                <span className="text-muted-foreground">
                                     (Required)
                                 </span>
                             </label>
@@ -214,7 +214,7 @@ export function UploadDocumentDialog({
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Enter a description..."
-                                className="min-h-[100px] bg-[#1a1a1a] border-gray-700 focus:border-gray-500"
+                                className="min-h-[100px] bg-background border-input focus:border-ring"
                                 required
                             />
                         </div>
@@ -231,132 +231,32 @@ export function UploadDocumentDialog({
                                 htmlFor="private"
                                 className="text-sm font-medium cursor-pointer flex items-center"
                             >
-                                Make this document private
-                                <Info className="ml-1 h-4 w-4 text-gray-400" />
+                                Chuyển tài liệu thành dạng riêng tư
+                                <Info className="ml-1 h-4 w-4 text-muted-foreground" />
                             </label>
-                        </div>
-
-                        <div className="pt-4 border-t border-gray-800">
-                            <button
-                                type="button"
-                                onClick={toggleAdvanced}
-                                className="flex items-center text-sm text-gray-300 hover:text-white"
-                            >
-                                {showAdvanced ? "Hide" : "Show"} Advanced
-                                Settings
-                                {showAdvanced ? (
-                                    <ChevronUp className="ml-1 h-4 w-4" />
-                                ) : (
-                                    <ChevronDown className="ml-1 h-4 w-4" />
-                                )}
-                            </button>
-
-                            {showAdvanced && (
-                                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <h3 className="text-sm font-medium">
-                                            Allow people to
-                                        </h3>
-
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id="allowCopyPaste"
-                                                checked={allowCopyPaste}
-                                                onCheckedChange={(checked) =>
-                                                    setAllowCopyPaste(
-                                                        checked as boolean
-                                                    )
-                                                }
-                                            />
-                                            <label
-                                                htmlFor="allowCopyPaste"
-                                                className="text-sm cursor-pointer"
-                                            >
-                                                Copy and paste text
-                                            </label>
-                                        </div>
-
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id="allowDownload"
-                                                checked={allowDownload}
-                                                onCheckedChange={(checked) =>
-                                                    setAllowDownload(
-                                                        checked as boolean
-                                                    )
-                                                }
-                                            />
-                                            <label
-                                                htmlFor="allowDownload"
-                                                className="text-sm cursor-pointer"
-                                            >
-                                                Download the document
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <h3 className="text-sm font-medium">
-                                            Copyright & Licensing
-                                        </h3>
-
-                                        <Select
-                                            value={copyright}
-                                            onValueChange={setCopyright}
-                                        >
-                                            <SelectTrigger className="bg-[#1a1a1a] border-gray-700">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-[#1a1a1a] border-gray-700">
-                                                <SelectItem value="All Rights Reserved">
-                                                    © All Rights Reserved
-                                                </SelectItem>
-                                                <SelectItem value="Creative Commons">
-                                                    Creative Commons
-                                                </SelectItem>
-                                                <SelectItem value="Public Domain">
-                                                    Public Domain
-                                                </SelectItem>
-                                                <SelectItem value="MIT License">
-                                                    MIT License
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-
-                                        <a
-                                            href="#"
-                                            className="block text-sm text-blue-400 hover:underline"
-                                            onClick={(e) => e.preventDefault()}
-                                        >
-                                            Learn more about copyright and
-                                            licensing
-                                        </a>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
 
-                <DialogFooter className="sm:justify-between border-t border-gray-800 pt-4">
+                <DialogFooter className="sm:justify-between border-t border-border pt-4">
                     <Button
                         variant="ghost"
                         onClick={() => {
                             resetForm();
                             onOpenChange(false);
                         }}
-                        className="text-gray-300 hover:text-white hover:bg-red-900/20"
+                        className="text-foreground hover:text-foreground hover:bg-destructive/10"
                     >
-                        Delete
+                        Hủy
                     </Button>
                     <Button
                         onClick={handleSubmit}
                         disabled={
                             !file || !title || !description || isUploading
                         }
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
-                        {isUploading ? "Uploading..." : "Submit"}
+                        {isUploading ? "Uploading..." : "Upload"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

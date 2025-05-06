@@ -21,6 +21,7 @@ import {
     LogOutIcon,
     Menu,
     Search,
+    ShieldIcon,
     User,
     UserPlus,
 } from "lucide-react";
@@ -33,11 +34,12 @@ interface MainHeaderProps {
 
 export function Header({ showSearch = true }: MainHeaderProps) {
     const { user, isAuthenticated, logout, isLoading } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
 
     if (isLoading) {
         return (
             <header className="sticky top-0 z-40 w-full border-b bg-background animate-pulse">
-                <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-screen-2xl mx-auto">
+                <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-7xl mx-auto">
                     <div className="flex items-center gap-4">
                         <Skeleton className="md:hidden h-8 w-8 rounded-full" />
                         <div className="hidden md:flex items-center gap-2">
@@ -172,32 +174,42 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem asChild>
                                         <Link href="/dashboard">
-                                            <LayoutDashboardIcon className="h-5 w-5" />
-                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                            <LayoutDashboardIcon className="h-5 w-5 mr-2" />
+                                            <span>
                                                 Dashboard{" "}
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
+                                    {isAdmin && (
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/admin">
+                                                <ShieldIcon className="h-5 w-5 mr-2" />
+                                                <span>
+                                                    Quản trị hệ thống
+                                                </span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem asChild>
                                         <Link href="/profile">
-                                            <User className="h-5 w-5" />
-                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                            <User className="h-5 w-5 mr-2" />
+                                            <span>
                                                 Hồ sơ{" "}
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
                                         <Link href="#">
-                                            <GlobeIcon className="h-5 w-5" />
-                                            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                            <GlobeIcon className="h-5 w-5 mr-2" />
+                                            <span>
                                                 Hỗ trợ
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={handleLogout}>
-                                        <LogOutIcon className="h-5 w-5" />
-                                        <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                                        <LogOutIcon className="h-5 w-5 mr-2" />
+                                        <span>
                                             Đăng xuất
                                         </span>
                                     </DropdownMenuItem>

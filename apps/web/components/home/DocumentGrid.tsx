@@ -1,4 +1,3 @@
-// components/document/DocumentGrid.tsx
 import { ChevronRight, FileText } from "lucide-react";
 import Link from "next/link";
 import { DocumentCard } from "../common/layout/document/DocumentCard";

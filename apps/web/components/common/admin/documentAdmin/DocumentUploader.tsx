@@ -91,7 +91,9 @@ export function FileUploader({
     <div
       className={cn(
         "w-full aspect-[3/4] border-2 border-dashed rounded-md flex flex-col items-center justify-center p-4 transition-colors",
-        isDragging ? "border-blue-500 bg-blue-500/10" : "border-gray-700 bg-[#1a1a1a] hover:border-gray-500",
+        isDragging 
+          ? "border-primary bg-primary/10" 
+          : "border-border bg-muted hover:border-muted-foreground",
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -101,14 +103,19 @@ export function FileUploader({
       <input ref={fileInputRef} type="file" className="hidden" accept={acceptedFileTypes} onChange={handleFileChange} />
 
       <div className="flex flex-col items-center text-center">
-        <div className="mb-3 p-3 rounded-full bg-gray-800">
-          {isDragging ? <Upload className="h-6 w-6 text-blue-400" /> : <FileText className="h-6 w-6 text-gray-400" />}
+        <div className="mb-3 p-3 rounded-full bg-background">
+          {isDragging 
+            ? <Upload className="h-6 w-6 text-primary" /> 
+            : <FileText className="h-6 w-6 text-muted-foreground" />
+          }
         </div>
-        <p className="text-sm font-medium mb-1">{isDragging ? "Thả file để tải lên" : "Kéo & thả file vào đây"}</p>
-        <p className="text-xs text-gray-400 mb-2">hoặc click để chọn file</p>
-        <p className="text-xs text-gray-500">Chấp nhận file PDF (tối đa {maxSize}MB)</p>
+        <p className="text-sm font-medium mb-1 text-foreground">
+          {isDragging ? "Thả file để tải lên" : "Kéo & thả file vào đây"}
+        </p>
+        <p className="text-xs text-muted-foreground mb-2">hoặc click để chọn file</p>
+        <p className="text-xs text-muted-foreground/70">Chấp nhận file PDF (tối đa {maxSize}MB)</p>
 
-        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
       </div>
     </div>
   )

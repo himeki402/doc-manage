@@ -9,7 +9,6 @@ export interface ApiResponse<T> {
   headers: any;
 }
 
-// Định nghĩa các config defaults
 const config: AxiosRequestConfig = {
   baseURL: process.env.NEXT_PUBLIC_API_URL ,
   timeout: 10000,
@@ -34,19 +33,21 @@ apiClient.interceptors.request.use(
 // Response interceptor
 apiClient.interceptors.response.use(
   (response: AxiosResponse): any => {
-    return response;
+      return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        const currentPath = window.location.pathname;
-        if (currentPath !== '/login' && currentPath !== '/register') {
-          window.location.href = '/login';
-        }
+      
+      const isMeRequest = error.config?.url?.endsWith('/me');
+      if (error.response?.status === 401 && !isMeRequest) {
+          if (typeof window !== 'undefined') {
+              const currentPath = window.location.pathname;
+              if (currentPath !== '/login' && currentPath !== '/register') {
+                  window.location.href = '/login';
+              }
+          }
       }
-    }
-    return Promise.reject(error);
+      return Promise.reject(error);
   }
-);
+)
 
 export default apiClient;

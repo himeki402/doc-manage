@@ -41,34 +41,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const flattenCategories = (
-  categories: Category[],
-  level = 0,
-  parentId: string | null = null,
-  expanded: Record<string, boolean> = {}
-): Array<Category & { level: number; isVisible: boolean }> => {
-  const result: Array<Category & { level: number; isVisible: boolean }> = [];
-
-  categories.forEach((category) => {
-    const isVisible = parentId ? expanded[parentId] ?? false : true;
-
-    result.push({
-      ...category,
-      level,
-      isVisible,
-    });
-
-    if (category.children && category.children.length > 0) {
-      result.push(
-        ...flattenCategories(category.children, level + 1, category.id, expanded)
-      );
-    }
-  });
-
-  return result;
-};
-
-// Hàm helper để tìm category cha dựa vào parent_id
 const findParentCategory = (categories: Category[], parentId: string | undefined): Category | null => {
   if (!parentId) return null;
   
@@ -100,8 +72,6 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
 
-  // Flatten categories để dễ dàng tìm tất cả categories (kể cả con)
-  const allCategories = flattenCategories(categories);
 
   const handleDeleteClick = (category: Category) => {
     setCategoryToDelete(category)
@@ -164,7 +134,6 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
           return <div className="text-muted-foreground">None</div>;
         }
         
-        // Tìm parent category từ danh sách categories
         const parent = findParentCategory(categories, parentId);
         
         return parent ? (
@@ -186,7 +155,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     {
       accessorKey: "description",
       header: "Mô tả",
-      cell: ({ row }) => <div className="line-clamp-1">{row.original.description || "Không có mô tả"}</div>,
+      cell: ({ row }) => <div className="line-clamp-2 max-w-[350px]">{row.original.description || "Không có mô tả"}</div>,
     },
     {
       accessorKey: "documentCount",

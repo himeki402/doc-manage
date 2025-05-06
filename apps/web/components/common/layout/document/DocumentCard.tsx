@@ -21,7 +21,7 @@ type DocumentItem = {
 export function DocumentCard({ document }: { document: DocumentItem }) {
     return (
         <Card className="overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
-            <div className="relative">
+            <div className="relative flex justify-center">
                 <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 text-xs font-medium rounded">
                     {document.mimeType === "application/pdf" ? "PDF" : "DOCUMENT"}
                 </div>
@@ -31,21 +31,18 @@ export function DocumentCard({ document }: { document: DocumentItem }) {
                 <Image
                     src={document.thumbnailUrl || SGTthumbnail }
                     alt={document.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-48 object-cover"
+                    width={300}
+                    height={400}
+                    className="w-full h-60 object-contain py-2"
                 />
             </div>
             <CardContent className="p-4">
-                {/* Tiêu đề (giới hạn 2 dòng) */}
                 <h4 className="font-bold mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
                     {document.title}
                 </h4>
-                {/* Thông tin người đăng */}
                 <p className="text-sm text-slate-600 mb-2">
                     Added by {document.createdByName}
                 </p>
-                {/* Đánh giá */}
                 <div className="flex items-center text-sm text-slate-600">
                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
                     <span>
@@ -57,7 +54,7 @@ export function DocumentCard({ document }: { document: DocumentItem }) {
             <CardFooter className="p-4 pt-0">
                 <div className="flex items-center text-sm text-slate-500">
                     <BookOpen className="h-4 w-4 mr-1" />
-                    <span>{document.view} lượt xem</span> {/* Có thể thay bằng dữ liệu thực */}
+                    <span>{document.view} lượt xem</span> 
                 </div>
             </CardFooter>
         </Card>

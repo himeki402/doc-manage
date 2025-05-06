@@ -53,3 +53,11 @@ export function convertCategoryToNavigationItem(category: Category): NavigationI
 export function convertCategoriesToNavigation(categories: any[]): NavigationItem[] {
     return categories.map(convertCategoryToNavigationItem);
 }
+
+export const hasAuthToken = (): boolean => {
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('token='))
+      ?.split('=')[1];
+    return !!token; 
+  };

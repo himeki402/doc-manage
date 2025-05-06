@@ -10,17 +10,9 @@ import { LoginInput } from "@/lib/validations/loginSchema";
 import { Login } from "@/lib/actions/auth/login";
 import { FormState } from "@/lib/types/formState";
 import authService from "@/app/services/authService/authService";
+import { User } from "@/lib/types/user";
+import { hasAuthToken } from "@/lib/utils";
 
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    avatar: string;
-    documentsUploaded: number;
-}
-
-// Định nghĩa kiểu dữ liệu cho AuthContext
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
@@ -42,29 +34,45 @@ export const useAuth = () => {
 
 interface AuthProviderProps {
     children: ReactNode;
+    initialUser?: User | null; 
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUser = null }) => { // 
+    const [user, setUser] = useState<User | null>(initialUser);
+    const [isLoading, setIsLoading] = useState<boolean>(true); 
     const [error, setError] = useState<string | null>(null);
 
-    // Kiểm tra trạng thái đăng nhập khi component được mount
     useEffect(() => {
-        fetchUserInfo()
-            .catch(() => {
-                setUser(null);
-            })
-            .finally(() => {
-                setIsLoading(false);
-                
-            });
-    }, []);
+        if (initialUser) {
+            setIsLoading(false); 
+        } else {
+            const checkAuth = async () => {
+                if (hasAuthToken()) {
+                    try {
+                      const fetchedUser = await fetchUserInfo();
+                      if (!fetchedUser) {
+                        setUser(null);
+                      }
+                    } catch (e) {
+                      setUser(null);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  } else {
+                    // Không có token, coi như chưa đăng nhập
+                    setUser(null);
+                    setIsLoading(false);
+                  }
+                };
+                checkAuth();
+            
+        }
+    }, [initialUser]);
 
     const fetchUserInfo = async (): Promise<User | null> => {
         try {
-            setIsLoading(true);
             const result = await authService.getMe();
+            console.log("fetchUserInfo result:", result);
             if (result) {
                 setUser(result.data.data as User);
                 return result.data.data as User;
@@ -76,8 +84,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.error("Lỗi khi kiểm tra trạng thái đăng nhập:", error);
             setUser(null);
             return null;
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -94,7 +100,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const result = await Login(undefined, formData);
 
             if (result && result.success) {
-                await fetchUserInfo();
+                const fetchedUser = await fetchUserInfo();
+                if (!fetchedUser) {
+                  setUser(null);
+                }
             } else {
                 setError(result?.message || "Đăng nhập thất bại");
             }

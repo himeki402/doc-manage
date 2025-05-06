@@ -40,7 +40,7 @@ async function getNNDocuments(): Promise<Document[]> {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
             limit: 10,
-            slug: "Ngoai-ngu",
+            slug: "Tai-lieu-ngoai-ngu",
         });
         return response.data;
     } catch (error) {
@@ -76,12 +76,12 @@ export default async function HomePage() {
     const TLTKDocument = await getTLTKDocuments();
     return (
         <div className="flex flex-col min-h-screen">
-            <HeroSection />
-            <section className=" py-2 bg-slate-100">
+            <section className=" py-2">
                 <div className="container mx-auto items-center">
                     <CategoryNavigation />
                 </div>
             </section>
+            <HeroSection />
             <SearchBar />
             <section className="py-12">
                 <div className="container mx-auto max-w-7xl">
