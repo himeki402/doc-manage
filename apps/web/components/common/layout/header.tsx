@@ -109,7 +109,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     />
                                 </svg>
                             </div>
-                            <span className="font-semibold text-lg text-foreground">
+                            <span className="font-bold text-xl text-red-500">
                                 KMA Document
                             </span>{" "}
                         </Link>

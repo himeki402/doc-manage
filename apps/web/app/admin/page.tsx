@@ -3,18 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  BarChart3,
-  BookOpen,
   FileText,
   Users,
   ArrowUpRight,
-  ArrowDownRight,
   Clock,
-  CheckCircle2,
-  AlertCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
 
 export default function AdminDashboard() {
   return (
@@ -154,58 +148,6 @@ export default function AdminDashboard() {
                 </div>
                 <Button variant="outline" className="mt-4 w-full">
                   Xem tất cả
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Báo cáo hệ thống</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <CheckCircle2 className="mr-1 h-4 w-4 text-emerald-500" />
-                        <span>Hệ thống hoạt động bình thường</span>
-                      </div>
-                      <span className="text-muted-foreground">100%</span>
-                    </div>
-                    <Progress value={100} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <CheckCircle2 className="mr-1 h-4 w-4 text-emerald-500" />
-                        <span>Lưu trữ dữ liệu</span>
-                      </div>
-                      <span className="text-muted-foreground">68%</span>
-                    </div>
-                    <Progress value={68} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <AlertCircle className="mr-1 h-4 w-4 text-amber-500" />
-                        <span>Băng thông mạng</span>
-                      </div>
-                      <span className="text-muted-foreground">82%</span>
-                    </div>
-                    <Progress value={82} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <CheckCircle2 className="mr-1 h-4 w-4 text-emerald-500" />
-                        <span>Tài nguyên CPU</span>
-                      </div>
-                      <span className="text-muted-foreground">45%</span>
-                    </div>
-                    <Progress value={45} className="h-2" />
-                  </div>
-                </div>
-                <Button variant="outline" className="mt-4 w-full">
-                  Xem chi tiết
                 </Button>
               </CardContent>
             </Card>

@@ -32,11 +32,9 @@ interface UploadDocumentDialogProps {
 export interface UploadDocumentFormData {
     file: File | null;
     title: string;
+    
     description: string;
     isPrivate: boolean;
-    allowCopyPaste: boolean;
-    allowDownload: boolean;
-    copyright: string;
 }
 
 export function UploadDocumentDialog({
@@ -49,17 +47,12 @@ export function UploadDocumentDialog({
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [isPrivate, setIsPrivate] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(true);
-    const [allowCopyPaste, setAllowCopyPaste] = useState(true);
-    const [allowDownload, setAllowDownload] = useState(true);
-    const [copyright, setCopyright] = useState("All Rights Reserved");
     const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = useCallback((file: File | null) => {
         if (file) {
             setFile(file);
 
-            // Auto-fill title from filename
             const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
             setTitle(fileName);
 
@@ -88,9 +81,6 @@ export function UploadDocumentDialog({
                 title,
                 description,
                 isPrivate,
-                allowCopyPaste,
-                allowDownload,
-                copyright,
             };
 
             // Call the onSubmit callback with the form data
@@ -114,15 +104,8 @@ export function UploadDocumentDialog({
         setTitle("");
         setDescription("");
         setIsPrivate(false);
-        setShowAdvanced(true);
-        setAllowCopyPaste(true);
-        setAllowDownload(true);
-        setCopyright("All Rights Reserved");
     };
 
-    const toggleAdvanced = () => {
-        setShowAdvanced(!showAdvanced);
-    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

@@ -16,32 +16,32 @@ import { Button } from "@/components/ui/button";
 
 const sidebarLinks = [
   {
-    title: "Admin Dashboard",
+    title: "Trang chủ Admin",
     href: "/admin",
     icon: LayoutDashboardIcon,
   },
   {
-    title: "Documents",
+    title: "Tài liệu",
     href: "/admin/documents",
     icon: FileTextIcon,
   },
   {
-    title: "Users",
+    title: "Người dùng",
     href: "/admin/users",
     icon: UsersIcon,
   },
   {
-    title: "Categories",
+    title: "Danh mục",
     href: "/admin/categories",
     icon: FolderIcon,
   },
   {
-    title: "Analytics",
+    title: "Phân tích",
     href: "/admin/analytics",
     icon: BarChartIcon,
   },
   {
-    title: "Settings",
+    title: "Cài đặt",
     href: "/admin/settings",
     icon: SettingsIcon,
   },
@@ -83,30 +83,30 @@ export function AdminSidebar() {
                                     />
                                 </svg>
                             </div>
-                            <span className="font-semibold text-lg text-foreground">
+                            <span className="font-bold text-xl text-red-500">
                                 KMA Document
                             </span>{" "}
                         </Link>
         </span>
       </div>
       <div className="flex-1 overflow-auto py-4">
-        <nav className="grid items-start gap-2 px-2 text-sm">
+        <nav className="grid items-start gap-2 px-2 text-base">
           {sidebarLinks.map((link) => (
             <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "group/link flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-all hover:bg-accent hover:text-accent-foreground",
-                pathname === link.href || pathname.startsWith(link.href + "/")
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground"
-              )}
-            >
-              <link.icon className="h-5 w-5" />
-              <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
-                {link.title}
-              </span>
-            </Link>
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "group/link flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-all hover:bg-red-100 hover:text-accent-foreground",
+              pathname === link.href || (link.href !== "/admin" && pathname.startsWith(link.href + "/"))
+                ? "bg-red-100 text-red-600"
+                : "hover:text-red-600"
+            )}
+          >
+            <link.icon className="h-5 w-5" />
+            <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+              {link.title}
+            </span>
+          </Link>
           ))}
         </nav>
       </div>

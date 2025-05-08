@@ -25,7 +25,9 @@ export default function DocumentsAdminPage() {
     const fetchDocuments = async () => {
         try {
             setIsLoading(true);
-            const response = await documentApi.getAllDocuments();
+            const response = await documentApi.getAllDocuments({
+                limit: 20
+            });
             setDocuments(response.data);
         } catch (error: any) {
             console.error("Không thể lấy danh sách tài liệu:", error);
