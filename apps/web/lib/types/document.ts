@@ -10,6 +10,7 @@ export type Document = {
     mimeType: string;
     createdByName: string;
     categoryName: string;
+    categoryId?: string;
     categorySlug?: string;
     created_at: string;
     updated_at: string;
@@ -24,6 +25,7 @@ export type Document = {
     reviewed_by?: string;
     reviewed_at?: string;
     source?: string;
+    group_id?: string;
     tags?: string[];
     last_edited_by?: string;
     last_edited_at?: string;
@@ -40,5 +42,14 @@ export interface GetDocumentsResponse {
         totalPages: number;
     };
 }
+export interface SearchResultItem {
+    document: Document
+    relevance: number
+    matches: {
+      field: string
+      contexts: string[]
+    }[]
+  }
+  
 
 export type AccessType = "PRIVATE" | "PUBLIC" | "GROUP"

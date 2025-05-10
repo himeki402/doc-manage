@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
     Select,
     SelectContent,
@@ -19,9 +18,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Info, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { FileUploader } from "./DocumentUploader";
 import Image from "next/image";
+import { useAdminContext } from "@/contexts/adminContext";
+import { AccessType } from "@/lib/types/document";
+import { Label } from "@radix-ui/react-label";
+import { Badge } from "@/components/ui/badge";
 
 interface UploadDocumentDialogProps {
     open: boolean;
@@ -32,9 +35,11 @@ interface UploadDocumentDialogProps {
 export interface UploadDocumentFormData {
     file: File | null;
     title: string;
-    
+
     description: string;
-    isPrivate: boolean;
+    accessType: AccessType;
+    categoryId: string;
+    selectedTags: string[];
 }
 
 export function UploadDocumentDialog({
@@ -42,12 +47,17 @@ export function UploadDocumentDialog({
     onOpenChange,
     onSubmit,
 }: UploadDocumentDialogProps) {
+    const { categories, tags } = useAdminContext();
+
     const [file, setFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [isPrivate, setIsPrivate] = useState(false);
+    const [accessType, setAccessType] = useState<AccessType>("PRIVATE");
+    const [categoryId, setCategoryId] = useState("");
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [tagInput, setTagInput] = useState("");
 
     const handleFileChange = useCallback((file: File | null) => {
         if (file) {
@@ -56,7 +66,6 @@ export function UploadDocumentDialog({
             const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
             setTitle(fileName);
 
-            // Create preview for PDF
             if (file.type === "application/pdf") {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -69,6 +78,17 @@ export function UploadDocumentDialog({
         }
     }, []);
 
+    const handleAddTag = () => {
+        if (tagInput && !selectedTags.includes(tagInput)) {
+            setSelectedTags([...selectedTags, tagInput]);
+            setTagInput("");
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
+    };
+
     const handleSubmit = async () => {
         if (!file || !title || !description) return;
 
@@ -80,7 +100,9 @@ export function UploadDocumentDialog({
                 file,
                 title,
                 description,
-                isPrivate,
+                accessType,
+                categoryId,
+                selectedTags,
             };
 
             // Call the onSubmit callback with the form data
@@ -102,10 +124,11 @@ export function UploadDocumentDialog({
         setFile(null);
         setFilePreview(null);
         setTitle("");
+        setCategoryId("");
+        setSelectedTags([]);
         setDescription("");
-        setIsPrivate(false);
+        setAccessType("PRIVATE");
     };
-
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -131,7 +154,7 @@ export function UploadDocumentDialog({
                                               ?.toUpperCase() || "UNKNOWN"}
                                 </div>
 
-                                {filePreview ? (                    
+                                {filePreview ? (
                                     <Image
                                         src={filePreview || "/placeholder.svg"}
                                         alt="Document preview"
@@ -202,21 +225,137 @@ export function UploadDocumentDialog({
                             />
                         </div>
 
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="private"
-                                checked={isPrivate}
-                                onCheckedChange={(checked) =>
-                                    setIsPrivate(checked as boolean)
+                        <div className="space-y-2">
+                            <Label htmlFor="access-type">Access Type</Label>
+                            <Select
+                                value={accessType}
+                                onValueChange={(value) =>
+                                    setAccessType(value as AccessType)
                                 }
-                            />
-                            <label
-                                htmlFor="private"
-                                className="text-sm font-medium cursor-pointer flex items-center"
                             >
-                                Chuyển tài liệu thành dạng riêng tư
-                                <Info className="ml-1 h-4 w-4 text-muted-foreground" />
-                            </label>
+                                <SelectTrigger id="access-type">
+                                    <SelectValue placeholder="Select access type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="PRIVATE">
+                                        Private
+                                    </SelectItem>
+                                    <SelectItem value="PUBLIC">
+                                        Public
+                                    </SelectItem>
+                                    <SelectItem value="GROUP">Group</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="category">Category</Label>
+                            <Select
+                                value={categoryId}
+                                onValueChange={setCategoryId}
+                            >
+                                <SelectTrigger id="category">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories.map((category) => (
+                                        <SelectItem
+                                            key={category.id}
+                                            value={category.id}
+                                        >
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="tags">Tags</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="tags"
+                                    value={tagInput}
+                                    onChange={(e) =>
+                                        setTagInput(e.target.value)
+                                    }
+                                    placeholder="Add tags"
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            handleAddTag();
+                                        }
+                                    }}
+                                />
+                                <Button type="button" onClick={handleAddTag}>
+                                    <Plus className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {tags.map((tag) => (
+                                    <Badge
+                                        key={tag.id}
+                                        variant={
+                                            selectedTags.includes(tag.id)
+                                                ? "default"
+                                                : "outline"
+                                        }
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            if (selectedTags.includes(tag.id)) {
+                                                setSelectedTags(
+                                                    selectedTags.filter(
+                                                        (id) => id !== tag.id
+                                                    )
+                                                );
+                                            } else {
+                                                setSelectedTags([
+                                                    ...selectedTags,
+                                                    tag.id,
+                                                ]);
+                                            }
+                                        }}
+                                    >
+                                        {tag.name}
+                                    </Badge>
+                                ))}
+                            </div>
+                            {selectedTags.length > 0 && (
+                                <div className="mt-2">
+                                    <Label>Selected Tags</Label>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {selectedTags.map((tagId) => {
+                                            const tag = tags.find(
+                                                (t) => t.id === tagId
+                                            );
+                                            return (
+                                                <Badge
+                                                    key={tagId}
+                                                    variant="secondary"
+                                                    className="flex items-center gap-1"
+                                                >
+                                                    {tag?.name || tagId}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-4 w-4 rounded-full p-0 ml-1"
+                                                        onClick={() =>
+                                                            handleRemoveTag(
+                                                                tagId
+                                                            )
+                                                        }
+                                                    >
+                                                        <span className="sr-only">
+                                                            Remove
+                                                        </span>
+                                                        ×
+                                                    </Button>
+                                                </Badge>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

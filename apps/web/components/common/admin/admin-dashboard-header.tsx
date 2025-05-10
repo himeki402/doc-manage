@@ -1,28 +1,40 @@
-import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface DashboardHeaderProps {
-  title: string;
-  description?: string;
-  actions?: ReactNode;
-  className?: string;
+    title: string;
+    description?: string;
+    actionLabel?: string;
+    actionIcon?: LucideIcon;
+    onAction?: () => void;
+    children?: React.ReactNode;
 }
 
 export function DashboardHeader({
-  title,
-  description,
-  actions,
-  className,
+    title,
+    description,
+    actionLabel,
+    actionIcon: ActionIcon,
+    onAction,
+    children,
 }: DashboardHeaderProps) {
-  return (
-    <div className={cn("flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between", className)}>
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
-      </div>
-      {actions && <div className="mt-2 sm:mt-0">{actions}</div>}
-    </div>
-  );
+    return (
+        <div className="flex items-center justify-between p-4 md:p-6 border-b">
+            <div>
+                <h1 className="text-2xl font-bold">{title}</h1>
+                {description && (
+                    <p className="text-sm text-muted-foreground">
+                        {description}
+                    </p>
+                )}
+                {children}
+            </div>
+            {onAction && (
+                <Button onClick={onAction}>
+                    {ActionIcon && <ActionIcon className="mr-2 h-4 w-4" />}
+                    {actionLabel}
+                </Button>
+            )}
+        </div>
+    );
 }
