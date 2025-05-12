@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 
 import categoriesApi from "@/lib/apis/categoriesApi";
@@ -87,12 +86,9 @@ export default function CategoriesPage() {
             <DashboardHeader
                 title="Quản lý danh mục"
                 description="Quản lý danh mục tài liệu."
-                actions={
-                    <Button onClick={handleAddCategory}>
-                        <PlusIcon className="mr-2 h-4 w-4" />
-                        Thêm danh mục
-                    </Button>
-                }
+                actionLabel="Thêm danh mục"
+                actionIcon={PlusIcon}
+                onAction={handleAddCategory}
             />
 
             <CategoriesTable

@@ -19,9 +19,9 @@ export function DashboardHeader({
     children,
 }: DashboardHeaderProps) {
     return (
-        <div className="flex items-center justify-between p-4 md:p-6 border-b">
+        <div className="flex items-center justify-between pr-4 md:p-6 border-b">
             <div>
-                <h1 className="text-2xl font-bold">{title}</h1>
+                <h1 className="text-3xl font-bold mb-3">{title}</h1>
                 {description && (
                     <p className="text-sm text-muted-foreground">
                         {description}

@@ -87,12 +87,3 @@
         @apply px-2 md:px-6 lg:px-8 2xl:px-[120px];
     }
 }
-
-@layer base {
-  * {
-    @apply border-border;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
-}

@@ -1,4 +1,3 @@
-// components/admin/DocumentActions.tsx
 "use client";
 
 import { Document } from "@/lib/types/document";

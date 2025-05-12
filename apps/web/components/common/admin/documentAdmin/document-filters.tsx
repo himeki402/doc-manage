@@ -28,11 +28,11 @@ export function DocumentsFilters() {
     })
   }
 
-  // const handleGroupChange = (value: string) => {
-  //   setFilters({
-  //     group: value,
-  //   })
-  // }
+  const handleGroupChange = (value: string) => {
+    setFilters({
+      group: value,
+    })
+  }
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center flex-wrap">
@@ -48,9 +48,9 @@ export function DocumentsFilters() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Access Types</SelectItem>
-            <SelectItem value="private">Private</SelectItem>
-            <SelectItem value="public">Public</SelectItem>
-            <SelectItem value="group">Group</SelectItem>
+            <SelectItem value="PRIVATE">Private</SelectItem>
+            <SelectItem value="PUBLIC">Public</SelectItem>
+            <SelectItem value="GROUP">Group</SelectItem>
           </SelectContent>
         </Select>
 
@@ -81,8 +81,7 @@ export function DocumentsFilters() {
             ))}
           </SelectContent>
         </Select>
-
-        {/* <Select value={filters.group} onValueChange={handleGroupChange}>
+        <Select value={filters.group} onValueChange={handleGroupChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Group" />
           </SelectTrigger>
@@ -94,7 +93,7 @@ export function DocumentsFilters() {
               </SelectItem>
             ))}
           </SelectContent>
-        </Select> */}
+        </Select>
 
         <Button
           variant="outline"
@@ -104,7 +103,7 @@ export function DocumentsFilters() {
               accessType: "all",
               category: "all",
               tag: "all",
-              // group: "all",
+              group: "all",
             })
           }
         >

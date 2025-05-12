@@ -23,7 +23,7 @@ export function SearchBar() {
     };
 
     return (
-        <section className="py-12 px-4 bg-slate-100">
+        <section className="py-12 px-4 bg-secondary">
             <div className="container mx-auto max-w-3xl">
                 <div className="relative">
                     <Input

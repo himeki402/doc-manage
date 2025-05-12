@@ -8,6 +8,8 @@ import { useAuth } from "./authContext";
 import documentApi from "@/lib/apis/documentApi";
 import categoriesApi from "@/lib/apis/categoriesApi";
 import userApi from "@/lib/apis/userApi";
+import tagApi from "@/lib/apis/tagApi";
+import { toast } from "sonner";
 
 interface AdminContextType {
     //documents
@@ -45,6 +47,7 @@ interface AdminContextType {
         accessType?: AccessType | "all";
         category?: string | "all";
         tag?: string | "all";
+        group?: string | "all";
     }) => void;
 
     // Current user
@@ -58,7 +61,8 @@ interface AdminContextType {
         pageIndex?: number;
         pageSize?: number;
     }) => void;
-
+    totalDocuments: number;
+    setTotalDocuments: (total: number) => void;
     // Modals
     isDocumentModalOpen: boolean;
     setIsDocumentModalOpen: (isOpen: boolean) => void;
@@ -68,6 +72,7 @@ interface AdminContextType {
     setIsVersionModalOpen: (isOpen: boolean) => void;
     isDetailsModalOpen: boolean;
     setIsDetailsModalOpen: (isOpen: boolean) => void;
+    isLoading: boolean;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -92,6 +97,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [totalDocuments, setTotalDocuments] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     //Current user
     const { user } = useAuth();
@@ -113,10 +120,19 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const fetchInitialData = async () => {
+            setIsLoading(true);
             try {
-                const documentsResponse = await documentApi.getAllDocuments();
+                const documentsResponse = await documentApi.getAllDocuments({
+                    page: pagination.pageIndex + 1,
+                    limit: pagination.pageSize,
+                    accessType: filters.accessType,
+                    categoryId: filters.category,
+                    tag: filters.tag,
+                    group: filters.group,
+                });
                 setDocuments(documentsResponse.data);
                 setFilteredDocuments(documentsResponse.data);
+                setTotalDocuments(documentsResponse.meta.total);
 
                 const categoriesResponse =
                     await categoriesApi.getCategoriesforAdmin();
@@ -124,8 +140,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
                 const usersResponse = await userApi.getAllUsers();
                 setUsers(usersResponse.data);
+
+                const tagsResponse = await tagApi.getAlltag();
+                setTags(tagsResponse.data);
             } catch (error) {
                 console.error("Error fetching initial data:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -133,36 +154,30 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
-        const applyFilters = () => {
-            let result = [...documents];
-
-            if (filters.accessType !== "all") {
-                result = result.filter(
-                    (doc) => doc.accessType === filters.accessType
-                );
+        const fetchFilteredDocuments = async () => {
+            setIsLoading(true);
+            try {
+                const response = await documentApi.getAllDocuments({
+                    page: pagination.pageIndex + 1,
+                    limit: pagination.pageSize,
+                    accessType: filters.accessType,
+                    categoryId: filters.category,
+                    tag: filters.tag,
+                    group: filters.group,
+                });
+                setFilteredDocuments(response.data);
+                setTotalDocuments(response.meta.total);
+            } catch (error: any) {
+                console.error("Lỗi khi lấy tài liệu đã lọc:", error);
+                toast.error(error.message || "Không thể lấy tài liệu");
+            } finally {
+                setIsLoading(false);
             }
-
-            if (filters.category !== "all") {
-                result = result.filter(
-                    (doc) => doc.categoryName === filters.category
-                );
-            }
-
-            if (filters.tag !== "all") {
-                result = result.filter((doc) =>
-                    doc.tags?.includes(filters.tag)
-                );
-            }
-
-            if (filters.group !== "all") {
-                result = result.filter((doc) => doc.group_id === filters.group);
-            }
-
-            setFilteredDocuments(result);
         };
 
-        applyFilters();
-    }, [documents, filters]);
+        fetchFilteredDocuments();
+    }, [filters, pagination]);
+
     const updatePagination = (newPagination: {
         pageIndex?: number;
         pageSize?: number;
@@ -177,6 +192,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         group?: string | "all";
     }) => {
         setFilters({ ...filters, ...newFilters });
+        setPagination({ ...pagination, pageIndex: 0 });
     };
 
     return (
@@ -189,6 +205,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 setFilteredDocuments,
                 selectedDocument,
                 setSelectedDocument,
+                totalDocuments,
+                setTotalDocuments,
+                isLoading,
 
                 // Users
                 users,

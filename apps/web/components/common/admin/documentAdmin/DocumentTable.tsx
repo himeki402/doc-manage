@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
     type ColumnDef,
     flexRender,
@@ -9,8 +9,6 @@ import {
     useReactTable,
     type SortingState,
     getSortedRowModel,
-    type ColumnFiltersState,
-    getFilteredRowModel,
     VisibilityState,
 } from "@tanstack/react-table";
 import {
@@ -19,12 +17,9 @@ import {
     Lock,
     Globe,
     Users,
-    Star,
     MoreHorizontal,
-    Download,
-    Share2,
-    History,
     Trash2,
+    Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +36,7 @@ import { useAdminContext } from "@/contexts/adminContext";
 import {
     Pagination,
     PaginationContent,
+    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
@@ -48,32 +44,38 @@ import {
 } from "@/components/ui/pagination";
 import {
     DropdownMenu,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDateToFullOptions } from "@/lib/utils";
 
-export function DocumentsTable() {
+interface DocumentsTableProps {
+    onEdit: (document: Document) => void;
+    onDelete: (documentId: string) => void;
+}
+
+export function DocumentsTable({ onEdit, onDelete }: DocumentsTableProps) {
     const {
         filteredDocuments,
         setSelectedDocument,
         pagination,
         setPagination,
+        totalDocuments,
+        isLoading,
         setIsShareModalOpen,
         setIsVersionModalOpen,
         setIsDetailsModalOpen,
-        categories,
-        tags,
-        users,
     } = useAdminContext();
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    view: false,
-    version: false,
-    createdBy: false,
-  })
+        view: false,
+        version: false,
+        createdBy: false,
+    });
 
     const getAccessTypeIcon = (accessType: AccessType) => {
         switch (accessType) {
@@ -86,226 +88,177 @@ export function DocumentsTable() {
         }
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-        }).format(date);
+    const formatMimeType = (mimeType: string) => {
+        if (!mimeType) return "Unknown";
+        switch (mimeType.toLowerCase()) {
+            case "application/pdf":
+                return "PDF";
+            case "application/msword":
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                return "Word";
+            case "application/vnd.ms-excel":
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                return "Excel";
+            case "application/vnd.ms-powerpoint":
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                return "PowerPoint";
+            case "image/jpeg":
+            case "image/jpg":
+                return "JPEG";
+            case "image/png":
+                return "PNG";
+            case "image/gif":
+                return "GIF";
+            case "text/plain":
+                return "Text";
+            case "application/json":
+                return "JSON";
+            default:
+                return mimeType;
+        }
     };
 
-    const columns: ColumnDef<Document>[] = useMemo(
-        () => [
-            {
-                accessorKey: "title",
-                header: "Tiêu đề",
-                cell: ({ row }) => {
-                    const document = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <div className="flex flex-col">
-                                <span className="font-medium">
-                                    {document.title}
-                                </span>
-                                <span className="text-xs text-muted-foreground truncate max-w-[300px]">
-                                    {document.description}
-                                </span>
-                            </div>
+    const columns: ColumnDef<Document>[] = [
+        {
+            accessorKey: "Tiêu đề",
+            header: "Tiêu đề",
+            cell: ({ row }) => {
+                const document = row.original;
+                return (
+                    <div className="flex items-center gap-2">
+                        <div className="flex flex-col">
+                            <span className="font-medium">
+                                {document.title}
+                            </span>
+                            <span className="text-xs text-muted-foreground truncate max-w-[300px]">
+                                {document.description}
+                            </span>
                         </div>
-                    );
-                },
+                    </div>
+                );
             },
-            {
-                accessorKey: "type",
-                header: "Type",
-                cell: ({ row }) => {
-                    return (
-                        <Badge variant="outline">{row.original.mimeType}</Badge>
-                    );
-                },
+        },
+        {
+            accessorKey: "Loại văn bản",
+            header: "Loại văn bản",
+            cell: ({ row }) => (
+                <Badge variant="outline">
+                    {formatMimeType(row.original.mimeType)}
+                </Badge>
+            ),
+        },
+        {
+            accessorKey: "Danh mục",
+            header: "Danh mục",
+            cell: ({ row }) => (
+                <div className="flex items-center gap-1">
+                    <span>{row.original.categoryName}</span>
+                </div>
+            ),
+        },
+        {
+            accessorKey: "tags",
+            header: "Thẻ",
+            cell: ({ row }) => {
+                const document = row.original;
+                return (
+                    <div className="flex flex-wrap gap-1">
+                        {document.tags?.map((tag) => (
+                            <Badge key={tag.id} variant="secondary">
+                                {tag.name}
+                            </Badge>
+                        )) || "Không có thẻ"}
+                    </div>
+                );
             },
-            {
-                accessorKey: "categoryId",
-                header: "Danh mục",
-                cell: ({ row }) => {
-                    return (
-                        <div className="flex items-center gap-1">
-                            <span>{row.original.categoryName}</span>
-                        </div>
-                    );
-                },
+        },
+        {
+            accessorKey: "Quyền truy cập",
+            header: "Quyền truy cập",
+            cell: ({ row }) => {
+                const accessType = row.original.accessType;
+                return (
+                    <div className="flex items-center gap-1">
+                        {getAccessTypeIcon(accessType)}
+                        <span className="capitalize">{accessType}</span>
+                    </div>
+                );
             },
-            {
-                accessorKey: "tags",
-                header: "Tags",
-                cell: ({ row }) => {
-                    const tagNames = row.original.tags || [""];
-                    return (
-                        <div className="flex flex-wrap gap-1 max-w-[200px]">
-                            {tagNames.map((tagName) => (
-                                <Badge
-                                    key={tagName}
-                                    variant="secondary"
-                                    className="text-xs flex items-center gap-1"
-                                >
-                                    <Tag className="h-3 w-3" />
-                                    {tagName}
-                                </Badge>
-                            ))}
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "size",
-                header: "Size",
-            },
-            {
-                accessorKey: "accessType",
-                header: "Quyền truy cập",
-                cell: ({ row }) => {
-                    const accessType = row.original.accessType;
-                    return (
-                        <div className="flex items-center gap-1">
-                            {getAccessTypeIcon(accessType)}
-                            <span className="capitalize">{accessType}</span>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "views",
-                header: "Views",
-                cell: ({ row }) => {
-                    return (
-                        <div className="flex items-center gap-1">
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                            <span>{row.original.view}</span>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "rating",
-                header: "Rating",
-                cell: ({ row }) => {
-                    const rating = row.original.rating;
-                    return (
-                        <div className="flex items-center">
-                            <span className="mr-1">{rating.toFixed(1)}</span>
-                            <div className="flex text-yellow-400">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        className="h-3 w-3"
-                                        fill={
-                                            i < Math.floor(rating)
-                                                ? "currentColor"
-                                                : "none"
-                                        }
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "version",
-                header: "Version",
-                cell: ({ row }) => {
-                    return <span>v{row.original.version}</span>;
-                },
-            },
-            {
-                accessorKey: "createdBy",
-                header: "Created By",
-                cell: ({ row }) => {
-                    return <span>{row.original.createdByName}</span>;
-                },
-            },
-            {
-                accessorKey: "updatedAt",
-                header: "Last Modified",
-                cell: ({ row }) => {
-                    return formatDate(row.original.updated_at);
-                },
-            },
-            {
-                id: "actions",
-                cell: ({ row }) => {
-                    const document = row.original;
+        },
+        {
+            accessorKey: "Lượt xem",
+            header: "Lượt xem",
+            cell: ({ row }) => (
+                <div className="flex items-center gap-1">
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <span>{row.original.view}</span>
+                </div>
+            ),
+        },
+        {
+            accessorKey: "Được tạo bởi",
+            header: "Được tạo bởi",
+            cell: ({ row }) => <span>{row.original.createdByName}</span>,
+        },
+        {
+            accessorKey: "Lần thay đổi cuối",
+            header: "Lần thay đổi cuối",
+            cell: ({ row }) => formatDateToFullOptions(row.original.updated_at),
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const document = row.original;
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Mở menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setSelectedDocument(document);
+                                    setIsDetailsModalOpen(true);
+                                }}
+                            >
+                                <Eye className="mr-2 h-4 w-4" />
+                                <span>Xem chi tiết</span>
+                            </DropdownMenuItem>
 
-                    return (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setSelectedDocument(document);
-                                        setIsDetailsModalOpen(true);
-                                    }}
-                                >
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    <span>View Details</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    <span>Download</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setSelectedDocument(document);
-                                        setIsShareModalOpen(true);
-                                    }}
-                                >
-                                    <Share2 className="mr-2 h-4 w-4" />
-                                    <span>Share</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setSelectedDocument(document);
-                                        setIsVersionModalOpen(true);
-                                    }}
-                                >
-                                    <History className="mr-2 h-4 w-4" />
-                                    <span>Upload New Version</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-red-600">
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    <span>Delete</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    );
-                },
+                            <DropdownMenuItem onClick={() => onEdit(document)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Sửa</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="text-red-600"
+                                onClick={() => onDelete(document.id)}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Xóa</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                );
             },
-        ],
-        [
-            categories,
-            tags,
-            users,
-            setSelectedDocument,
-            setIsDetailsModalOpen,
-            setIsShareModalOpen,
-            setIsVersionModalOpen,
-        ]
-    );
+        },
+    ];
 
     const table = useReactTable({
         data: filteredDocuments,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onPaginationChange: setPagination,
+        onPaginationChange: (updater) => {
+            const newPagination =
+                typeof updater === "function" ? updater(pagination) : updater;
+            setPagination(newPagination);
+        },
         state: {
             pagination,
             sorting,
@@ -314,23 +267,54 @@ export function DocumentsTable() {
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
         getSortedRowModel: getSortedRowModel(),
-        manualPagination: false,
+        manualPagination: true,
+        pageCount: Math.ceil(totalDocuments / pagination.pageSize),
     });
+
+    const totalPages = Math.ceil(totalDocuments / pagination.pageSize);
 
     return (
         <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-auto"
+                            >
+                                Cột
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {table
+                                .getAllColumns()
+                                .filter((column) => column.getCanHide())
+                                .map((column) => (
+                                    <DropdownMenuCheckboxItem
+                                        key={column.id}
+                                        className="capitalize"
+                                        checked={column.getIsVisible()}
+                                        onCheckedChange={(value) =>
+                                            column.toggleVisibility(!!value)
+                                        }
+                                    >
+                                        {column.id}
+                                    </DropdownMenuCheckboxItem>
+                                ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => {
                             table.toggleAllColumnsVisible(false);
-                            table.getColumn("name")?.toggleVisibility(true);
+                            table.getColumn("Tiêu đề")?.toggleVisibility(true);
                             table.getColumn("actions")?.toggleVisibility(true);
                         }}
                     >
-                        Reset Columns
+                        Đặt lại cột
                     </Button>
                 </div>
             </div>
@@ -355,7 +339,16 @@ export function DocumentsTable() {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    Đang tải...
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -379,7 +372,7 @@ export function DocumentsTable() {
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No documents found.
+                                    Không tìm thấy tài liệu.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -389,17 +382,13 @@ export function DocumentsTable() {
 
             <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                    Showing{" "}
-                    {table.getState().pagination.pageIndex *
-                        table.getState().pagination.pageSize +
-                        1}{" "}
-                    to{" "}
+                    Hiển thị {pagination.pageIndex * pagination.pageSize + 1}{" "}
+                    đến{" "}
                     {Math.min(
-                        (table.getState().pagination.pageIndex + 1) *
-                            table.getState().pagination.pageSize,
-                        filteredDocuments.length
+                        (pagination.pageIndex + 1) * pagination.pageSize,
+                        totalDocuments
                     )}{" "}
-                    of {filteredDocuments.length} documents
+                    của {totalDocuments} tài liệu
                 </div>
 
                 <Pagination>
@@ -411,25 +400,26 @@ export function DocumentsTable() {
                             />
                         </PaginationItem>
 
-                        {Array.from({
-                            length: Math.min(5, table.getPageCount()),
-                        }).map((_, index) => (
-                            <PaginationItem key={index}>
-                                <PaginationLink
-                                    isActive={
-                                        index ===
-                                        table.getState().pagination.pageIndex
-                                    }
-                                    onClick={() => table.setPageIndex(index)}
-                                >
-                                    {index + 1}
-                                </PaginationLink>
-                            </PaginationItem>
-                        ))}
+                        {Array.from({ length: Math.min(5, totalPages) }).map(
+                            (_, index) => (
+                                <PaginationItem key={index}>
+                                    <PaginationLink
+                                        isActive={
+                                            index === pagination.pageIndex
+                                        }
+                                        onClick={() =>
+                                            table.setPageIndex(index)
+                                        }
+                                    >
+                                        {index + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            )
+                        )}
 
-                        {table.getPageCount() > 5 && (
+                        {totalPages > 5 && (
                             <PaginationItem>
-                                <PaginationLink>...</PaginationLink>
+                                <PaginationEllipsis />
                             </PaginationItem>
                         )}
 

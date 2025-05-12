@@ -30,6 +30,31 @@ export function formatDateToDDMMMM(isoDateString: string): string {
     return `${day} ${month}`;
 }
 
+export function formatDateToFullOptions(isoDateString: string): string {
+    if (!isoDateString) return "01 Jan";
+    const date = new Date(isoDateString);
+    const day = date.getDate();
+    const monthNames: string[] = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    const monthIndex = date.getMonth();
+    const month = monthNames[monthIndex];
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
+}
+
 export function slugify(text: string): string {
     return text
         .toLowerCase()

@@ -1,3 +1,5 @@
+import { Tag } from "./tag";
+
 // lib/types/document.ts
 export type Document = {
     id: string;
@@ -5,8 +7,8 @@ export type Document = {
     description?: string;
     content?: string;
     file_path?: string;
-    file_size?: number;
-    file_url?: string;
+    fileSize?: number;
+    fileUrl?: string;
     mimeType: string;
     createdByName: string;
     categoryName: string;
@@ -25,8 +27,9 @@ export type Document = {
     reviewed_by?: string;
     reviewed_at?: string;
     source?: string;
-    group_id?: string;
-    tags?: string[];
+    groupId?: string;
+    groupName?: string;
+    tags?: Tag[];
     last_edited_by?: string;
     last_edited_at?: string;
     language?: string;
@@ -41,15 +44,24 @@ export interface GetDocumentsResponse {
         limit: number;
         totalPages: number;
     };
+    message: string;
 }
 export interface SearchResultItem {
-    document: Document
-    relevance: number
+    document: Document;
+    relevance: number;
     matches: {
-      field: string
-      contexts: string[]
-    }[]
-  }
-  
+        field: string;
+        contexts: string[];
+    }[];
+}
 
-export type AccessType = "PRIVATE" | "PUBLIC" | "GROUP"
+export interface UpdateDocumentPayload {
+    title: string;
+    description?: string;
+    accessType: AccessType;
+    categoryId: string;
+    tagIds?: string[];
+    groupId?: string;
+}
+
+export type AccessType = "PRIVATE" | "PUBLIC" | "GROUP";
