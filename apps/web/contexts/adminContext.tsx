@@ -141,10 +141,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 const usersResponse = await userApi.getAllUsers();
                 setUsers(usersResponse.data);
 
-                const tagsResponse = await tagApi.getAlltag();
+                const tagsResponse = await tagApi.getAllTags();
                 setTags(tagsResponse.data);
             } catch (error) {
-                console.error("Error fetching initial data:", error);
+                console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
             } finally {
                 setIsLoading(false);
             }

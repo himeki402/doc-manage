@@ -164,7 +164,8 @@ export function DocumentsTable({ onEdit, onDelete }: DocumentsTableProps) {
                 return (
                     <div className="flex flex-wrap gap-1">
                         {document.tags?.map((tag) => (
-                            <Badge key={tag.id} variant="secondary">
+                            <Badge key={tag.id} variant="secondary" className="text-xs flex items-center gap-1">
+                                <Tag className="h-3 w-3" />
                                 {tag.name}
                             </Badge>
                         )) || "Không có thẻ"}

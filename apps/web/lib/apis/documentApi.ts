@@ -53,7 +53,7 @@ const documentApi = {
                 filteredParams.accessType = params.accessType;
             }
             if (params.categoryId && params.categoryId !== "all") {
-                filteredParams.category = params.categoryId;
+                filteredParams.categoryId = params.categoryId;
             }
             if (params.tag && params.tag !== "all") {
                 filteredParams.tag = params.tag;

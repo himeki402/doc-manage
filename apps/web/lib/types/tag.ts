@@ -2,7 +2,7 @@ export type Tag = {
     id: string;
     name: string;
     description?: string;
-    createdAt?: string;
+    created_at?: string;
     createdBy?: string;
 };
 
