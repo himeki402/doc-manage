@@ -1,5 +1,9 @@
-import { create } from "domain";
-import { AccessType, GetDocumentsResponse, UpdateDocumentPayload } from "../types/document";
+import {
+    AccessType,
+    Document,
+    GetDocumentsResponse,
+    UpdateDocumentPayload,
+} from "../types/document";
 import apiClient from "./config";
 
 export interface DocumentQueryParams {
@@ -146,24 +150,48 @@ const documentApi = {
             };
         }
     },
-    updateDocument: async (id: string, payload: UpdateDocumentPayload): Promise<Document> => {
-    try {
-      const response = await apiClient.put(`/documents/${id}`, payload);
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        throw {
-          status: error.response.status,
-          message: error.response.data.message || "Không thể cập nhật tài liệu",
-          errors: error.response.data.errors,
-        };
-      }
-      throw {
-        status: 500,
-        message: error.message || "Lỗi máy chủ nội bộ",
-      };
-    }
-  },
+    updateDocument: async (
+        id: string,
+        payload: UpdateDocumentPayload
+    ): Promise<Document> => {
+        try {
+            const response = await apiClient.put(`/documents/${id}`, payload);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể cập nhật tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    getDocumentById: async (id: string): Promise<Document> => {
+        try {
+            const response = await apiClient.get(`/documents/${id}`);
+            return response.data.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Không thể lấy tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
 };
 
 export default documentApi;

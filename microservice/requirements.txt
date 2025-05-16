@@ -1,3 +1,4 @@
-fastapi
-uvicorn
-pdfplumber
+fastapi==0.115.0
+uvicorn==0.30.6
+pdfplumber==0.11.4
+python-multipart==0.0.9

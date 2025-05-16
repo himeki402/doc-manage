@@ -1,14 +1,15 @@
 import { DocumentGrid } from "@/components/common/category/DocumentGrid";
-import { HeroBannerCategory } from "@/components/common/category/HeroBanner";
+import { HeroBannerCategory } from "@/components/common/layout/HeroBanner";
 import categoriesApi from "@/lib/apis/categoriesApi";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
 import { Category } from "@/lib/types/category";
 import { Document } from "@/lib/types/document";
+import { notFound } from "next/navigation";
 
 async function getDocumentByCategory(slug: string): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
-            slug: slug,
+            slug,
             page: 1,
             limit: 10,
         } as DocumentQueryParams);
@@ -22,51 +23,65 @@ async function getDocumentByCategory(slug: string): Promise<Document[]> {
 async function getCategoryBySlug(slug: string): Promise<Category> {
     try {
         const response = await categoriesApi.getCategoryBySlug(slug);
-
-        const categoryData = response;
-        const category: Category = {
-            id: categoryData.id,
-            name: categoryData.name,
-            description: categoryData.description,
-            documentCount: categoryData.documentCount || 0,
+        if (!response) {
+            throw new Error("Category not found");
+        }
+        return {
+            id: response.id,
+            name: response.name,
+            description: response.description,
+            documentCount: response.documentCount || 0,
         };
-        return category;
     } catch (error) {
         console.error("Không thể lấy danh mục:", error);
-        return {
-            id: "",
-            name: "Unknown",
-            description: "No description available",
-            documentCount: 0,
-        };
+        throw error;
     }
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-    const resolvedParams = await params;
-    const slug = resolvedParams.slug;
+    const { slug } = params;
 
-    const documents = await getDocumentByCategory(slug);
-    const category = await getCategoryBySlug(slug);
+    if (!slug) {
+        notFound();
+    }
 
-    return (
-        <div className="flex flex-col gap-4">
-            <HeroBannerCategory
-                id={category.id}
-                name={category.name}
-                description={category.description}
-                documentCount={category.documentCount}
-            />
-            <section className="py-12">
-                <div className="container mx-auto max-w-7xl">
-                    <DocumentGrid
-                        title={category.name}
-                        categorySlug="Sach-giao-trinh"
-                        documents={documents}
-                        // onBookmark={handleBookmark}
-                    />
-                </div>
-            </section>
-        </div>
-    );
+    try {
+        const [documents, category] = await Promise.all([
+            getDocumentByCategory(slug),
+            getCategoryBySlug(slug),
+        ]);
+
+        return (
+            <div className="flex flex-col gap-4">
+                <HeroBannerCategory
+                    id={category.id}
+                    name={category.name}
+                    description={category.description}
+                    documentCount={category.documentCount}
+                />
+                <section className="py-12">
+                    <div className="container mx-auto max-w-7xl">
+                        <DocumentGrid
+                            title={category.name}
+                            categorySlug={slug}
+                            documents={documents}
+                        />
+                        {documents.length === 0 && (
+                            <div className="text-center py-8">
+                                Không tìm thấy tài liệu trong danh mục này.
+                            </div>
+                        )}
+                    </div>
+                </section>
+            </div>
+        );
+    } catch (error) {
+        return (
+            <div className="text-center py-8">
+                Đã xảy ra lỗi khi tải danh mục. Vui lòng thử lại sau.
+            </div>
+        );
+    }
 }
+
+export const revalidate = 3600; // Revalidate mỗi giờ

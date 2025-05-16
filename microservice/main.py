@@ -14,7 +14,8 @@ async def extract_text(file: UploadFile = File(...)):
             text = ""
             for page in pdf.pages:
                 text += page.extract_text() + "\n"
-        return {"text": text.strip()}
+            page_count = len(pdf.pages)
+        return {"text": text.strip(), "pageCount": page_count}
     except Exception as e:
         return {"error": str(e)}
 

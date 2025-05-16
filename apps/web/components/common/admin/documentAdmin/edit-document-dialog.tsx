@@ -38,7 +38,6 @@ export function EditDocumentDialog({ open, onOpenChange, document }: EditDocumen
   const [tagInput, setTagInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Reset form when dialog opens or document changes
   useEffect(() => {
     if (open && document) {
       setDocumentTitle(document.title || "");

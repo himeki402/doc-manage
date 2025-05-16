@@ -16,6 +16,7 @@ type DocumentGridProps = {
     created_at: string;
     createdByName: string;
     view: number;
+    slug: string;
     rating: number;
     ratingCount: number;
     mimeType: string;

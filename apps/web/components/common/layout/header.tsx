@@ -39,7 +39,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
     if (isLoading) {
         return (
             <header className="sticky top-0 z-40 w-full border-b bg-background animate-pulse">
-                <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-7xl mx-auto">
+                <div className="flex h-16 items-center justify-between px-4 md:px-9 container mx-auto">
                     <div className="flex items-center gap-4">
                         <Skeleton className="md:hidden h-8 w-8 rounded-full" />
                         <div className="hidden md:flex items-center gap-2">

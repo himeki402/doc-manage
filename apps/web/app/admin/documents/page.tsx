@@ -52,14 +52,10 @@ export default function DocumentsAdminPage() {
     };
 
     const handleDeleteDocument = (documentId: string) => {
-        const document = documents.find((doc) => doc.id === documentId);
-        if (!document) {
-            toast.error("Tài liệu không tồn tại");
-            return;
-        }
-        setDocumentToDelete({ id: documentId, title: document.title });
-        setIsDeleteDialogOpen(true);
-    };
+    const document = documents.find((doc) => doc.id === documentId) || { title: "Tài liệu không xác định" };
+    setDocumentToDelete({ id: documentId, title: document.title });
+    setIsDeleteDialogOpen(true);
+};
 
     const confirmDeleteDocument = async () => {
         if (!documentToDelete) return;

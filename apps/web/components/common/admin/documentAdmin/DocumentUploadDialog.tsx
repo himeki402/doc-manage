@@ -149,7 +149,9 @@ export function UploadDocumentDialog({
       formDataToSend.append("description", description);
       formDataToSend.append("accessType", accessType);
       formDataToSend.append("categoryId", categoryId);
-      formDataToSend.append("tags", JSON.stringify(selectedTags));
+      selectedTags.forEach((tagId) => {
+            formDataToSend.append("tagIds[]", tagId);
+        })
       if (accessType === "GROUP" && groupId) {
         formDataToSend.append("groupId", groupId);
       }
@@ -157,7 +159,7 @@ export function UploadDocumentDialog({
       await documentApi.createDocument(formDataToSend);
 
       if (onSubmit) {
-        await onSubmit(formData);
+        onSubmit(formData);
       }
 
       toast.success("Tài liệu đã được tải lên thành công");
@@ -207,8 +209,8 @@ export function UploadDocumentDialog({
                     src={filePreview || "/placeholder.svg"}
                     alt="Document preview"
                     className="w-full h-full object-contain"
-                    layout="fill"
-                    objectFit="contain"
+                    width={200}
+                    height={300}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">

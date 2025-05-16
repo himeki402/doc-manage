@@ -10,6 +10,7 @@ export type Document = {
     fileSize?: number;
     fileUrl?: string;
     mimeType: string;
+    slug: string;
     createdByName: string;
     categoryName: string;
     categoryId?: string;
@@ -24,6 +25,7 @@ export type Document = {
     accessType: AccessType;
     status?: string;
     rejection_reason?: string;
+    pageCount: string;
     reviewed_by?: string;
     reviewed_at?: string;
     source?: string;
