@@ -69,8 +69,25 @@ async function getTLTKDocuments(): Promise<Document[]> {
     }
 }
 
+async function getTLCNDocuments(): Promise<Document[]> {
+    try {
+        const response = await documentApi.getDocumentByCategory({
+            page: 1,
+            limit: 10,
+            slug: "tai-lieu-chuyen-nganh",
+        });
+        return response.data;
+    } catch (error) {
+        console.error(
+            "Không thể lấy danh sách tài liệu",
+            error
+        );
+        return [];
+    }
+}
+
 export default async function HomePage() {
-    const documents = await getPublicDocuments();
+    const TLCNDocument = await getTLCNDocuments();
     const NNDocument = await getNNDocuments();
     const SGTDocument = await getSGTDocuments();
     const TLTKDocument = await getTLTKDocuments();
@@ -105,7 +122,16 @@ export default async function HomePage() {
                         iconColor="text-green-600"
                         documents={TLTKDocument}
                         // onBookmark={handleBookmark}
-                    />             
+                    />       
+                    {/* Category Tài liệu chuyên ngành */}
+                    <DocumentGrid
+                        title="Tài liệu Chuyên ngành"
+                        categorySlug="tai-lieu-chuyen-nganh"
+                        iconBgColor="bg-blue-100"
+                        iconColor="text-green-600"
+                        documents={TLCNDocument}
+                        // onBookmark={handleBookmark}
+                    />       
                     {/* Category Tài liệu ngoại ngữ */}
                     <DocumentGrid
                         title="Tài liệu ngoại ngữ"

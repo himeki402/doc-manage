@@ -122,12 +122,14 @@ export function DocumentsTable({ onEdit, onDelete }: DocumentsTableProps) {
         {
             accessorKey: "Tiêu đề",
             header: "Tiêu đề",
+            size: 300, 
+            maxSize: 300,
             cell: ({ row }) => {
                 const document = row.original;
                 return (
                     <div className="flex items-center gap-2">
                         <div className="flex flex-col">
-                            <span className="font-medium">
+                            <span className="font-medium truncate max-w-[280px]" title={document.title}>
                                 {document.title}
                             </span>
                             <span className="text-xs text-muted-foreground truncate max-w-[300px]">

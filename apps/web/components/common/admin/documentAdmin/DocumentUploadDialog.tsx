@@ -187,8 +187,8 @@ export function UploadDocumentDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] border-border">
+    <Dialog open={open} onOpenChange={onOpenChange} aria-describedby="Tải lên tài liệu mới">
+      <DialogContent className="sm:max-w-[800px] border-border" aria-describedby="Tải lên tài liệu mới">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Tải lên tài liệu mới</DialogTitle>
         </DialogHeader>

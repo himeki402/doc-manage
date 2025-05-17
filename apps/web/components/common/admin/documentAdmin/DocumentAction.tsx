@@ -50,7 +50,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
                     Xem chi tiết
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <a href={document.file_url} download>
+                    <a href={document.fileUrl} download>
                         Tải xuống
                     </a>
                 </DropdownMenuItem>
