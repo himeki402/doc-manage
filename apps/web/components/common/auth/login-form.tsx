@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/authContext";
+import Link from "next/link";
 
 export function LoginForm({
     className,
@@ -56,7 +57,7 @@ export function LoginForm({
             if (result) {
                 if (result.success) {
                     toast.success("Đăng nhập thành công");
-                        router.push("/");              
+                    router.push("/");
                 } else if (result.error) {
                     Object.entries(result.error).forEach(([key, errors]) => {
                         if (Array.isArray(errors) && errors.length > 0) {
@@ -172,9 +173,14 @@ export function LoginForm({
 
             <div className="text-center text-sm text-muted-foreground">
                 Chưa có tài khoản?{" "}
-                <Button variant="link" className="font-normal" size="sm">
-                    Đăng ký ngay
-                </Button>
+                <Link
+                    href="/register"
+                    className="font-normal text-primary hover:underline"
+                >
+                    <Button variant="link" className="font-normal" size="sm">
+                        Đăng ký ngay
+                    </Button>
+                </Link>
             </div>
         </div>
     );

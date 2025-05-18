@@ -101,7 +101,7 @@ export default async function HomePage() {
             <HeroSection />
             <SearchBar />
             <section className="py-12">
-                <div className="container mx-auto max-w-7xl">
+                <div className="container mx-auto px-8 max-w-7xl">
                     <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
                         DANH MỤC TÀI LIỆU MIỄN PHÍ
                     </h2>

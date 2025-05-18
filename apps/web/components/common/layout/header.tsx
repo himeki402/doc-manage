@@ -26,6 +26,8 @@ import {
     UserPlus,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface MainHeaderProps {
@@ -36,6 +38,20 @@ export function Header({ showSearch = true }: MainHeaderProps) {
     const { user, isAuthenticated, logout, isLoading } = useAuth();
     const isAdmin = user?.role === "ADMIN";
 
+    const [searchQuery, setSearchQuery] = useState("");
+        const router = useRouter();
+    
+        const handleSearch = () => {
+            if (searchQuery.trim()) {
+                router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+            }
+        };
+    
+        const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") {
+                handleSearch();
+            }
+        };
     if (isLoading) {
         return (
             <header className="sticky top-0 z-40 w-full border-b bg-background animate-pulse">
@@ -73,7 +89,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
     };
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background">
-            <div className="flex h-16 items-center justify-between px-4 md:px-9 max-w-7xl mx-auto">
+            <div className="flex h-16 items-center justify-between px-4 md:px-9 container mx-auto">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" className="md:hidden">
                         <Menu className="h-5 w-5" />
@@ -124,6 +140,9 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                 type="search"
                                 placeholder="Tìm kiếm tài liệu..."
                                 className="w-64 pl-8 rounded-full bg-slate-100 border-slate-200 focus-visible:ring-blue-500"
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                value={searchQuery}                     
                             />
                         </div>
                     )}
@@ -166,7 +185,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-foreground">
+                                            <span className="text-base font-bold text-foreground">
                                                {"Xin chào"} {user?.name || "Người dùng"} {"!"}
                                             </span>
                                         </div>
@@ -175,7 +194,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     <DropdownMenuItem asChild>
                                         <Link href="/dashboard">
                                             <LayoutDashboardIcon className="h-5 w-5 mr-2" />
-                                            <span>
+                                            <span className="text-base font-semibold text-foreground">
                                                 Dashboard{" "}
                                             </span>
                                         </Link>
@@ -184,7 +203,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                         <DropdownMenuItem asChild>
                                             <Link href="/admin">
                                                 <ShieldIcon className="h-5 w-5 mr-2" />
-                                                <span>
+                                                <span className="text-base font-semibold text-foreground">
                                                     Quản trị hệ thống
                                                 </span>
                                             </Link>
@@ -193,7 +212,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     <DropdownMenuItem asChild>
                                         <Link href="/profile">
                                             <User className="h-5 w-5 mr-2" />
-                                            <span>
+                                            <span className="text-base font-semibold text-foreground">
                                                 Hồ sơ{" "}
                                             </span>
                                         </Link>
@@ -201,7 +220,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     <DropdownMenuItem asChild>
                                         <Link href="#">
                                             <GlobeIcon className="h-5 w-5 mr-2" />
-                                            <span>
+                                            <span className="text-base font-semibold text-foreground">
                                                 Hỗ trợ
                                             </span>
                                         </Link>
@@ -209,7 +228,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={handleLogout}>
                                         <LogOutIcon className="h-5 w-5 mr-2" />
-                                        <span>
+                                        <span className="text-base font-semibold text-foreground">
                                             Đăng xuất
                                         </span>
                                     </DropdownMenuItem>

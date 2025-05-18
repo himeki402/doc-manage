@@ -19,6 +19,18 @@ export interface DocumentQueryParams {
     group?: string | "all";
 }
 
+export interface SearchDocumentParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sortBy?: string;
+    mimeType?: string;
+    sortOrder?: "ASC" | "DESC";
+    categoryId?: string;
+    tag?: string | "all";
+}
+
+
 const documentApi = {
     getPublicDocuments: async (
         params: DocumentQueryParams = {}
@@ -183,6 +195,30 @@ const documentApi = {
                     status: error.response.status,
                     message:
                         error.response.data.message || "Không thể lấy tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    FTSDocument: async (
+        params: DocumentQueryParams = {}
+    ): Promise<GetDocumentsResponse> => {
+        try {
+            const response = await apiClient.get("/documents/search", {
+                params,
+            });
+            return response.data.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy danh sách tài liệu",
                     errors: error.response.data.errors,
                 };
             }

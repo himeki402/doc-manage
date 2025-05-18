@@ -9,6 +9,7 @@ const authService = {
             name: formData.get("name"),
             username: formData.get("username"),
             password: formData.get("password"),
+            confirmPassword: formData.get("confirmPassword"),
         });
         if (!validationFields.success) {
             return {
@@ -19,12 +20,13 @@ const authService = {
         }
 
         try {
-            const result = await authApi.register(validationFields.data);
+             const { confirmPassword, ...registerData } = validationFields.data;
+            const result = await authApi.register(registerData);
 
             return {
                 success: true,
                 data: result,
-                message: "Registration successful",
+                message: "Đăng ký thành công",
             };
         } catch (error) {
             const apiError = error as ApiError;
@@ -32,7 +34,7 @@ const authService = {
             if (apiError.status === 409) {
                 return {
                     success: false,
-                    message: "Username already exists",
+                    message: "Tài khoản đã tồn tại",
                 };
             }
 

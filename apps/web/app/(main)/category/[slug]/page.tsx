@@ -84,4 +84,4 @@ export default async function Page({ params }: { params: { slug: string } }) {
     }
 }
 
-export const revalidate = 3600; // Revalidate mỗi giờ
+export const revalidate = 3600;
