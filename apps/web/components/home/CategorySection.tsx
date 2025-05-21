@@ -11,6 +11,7 @@ type DocumentItem = {
     created_at: string;
     createdByName: string;
     view: number;
+    slug: string;
     rating: number;
     ratingCount: number;
     thumbnailUrl: string;

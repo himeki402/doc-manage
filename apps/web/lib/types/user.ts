@@ -10,7 +10,7 @@ export interface User {
     phone?: string
     address?: string
     bio?: string
-    documentsUploaded: number
+    documentsUploaded?: number
     groups?: UserGroup[]
   }
   

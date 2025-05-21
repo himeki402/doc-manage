@@ -38,7 +38,7 @@ export function DocumentsFilters() {
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center flex-wrap">
       <div className="flex items-center gap-2">
         <Filter className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium">Filters:</span>
+        <span className="text-sm font-medium">Lọc:</span>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -47,7 +47,7 @@ export function DocumentsFilters() {
             <SelectValue placeholder="Access Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Access Types</SelectItem>
+            <SelectItem value="all">Quyền truy cập</SelectItem>
             <SelectItem value="PRIVATE">Private</SelectItem>
             <SelectItem value="PUBLIC">Public</SelectItem>
             <SelectItem value="GROUP">Group</SelectItem>
@@ -59,7 +59,7 @@ export function DocumentsFilters() {
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">Tất cả danh mục</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
@@ -73,7 +73,7 @@ export function DocumentsFilters() {
             <SelectValue placeholder="Tag" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Tags</SelectItem>
+            <SelectItem value="all">Tags</SelectItem>
             {tags.map((tag) => (
               <SelectItem key={tag.id} value={tag.id}>
                 {tag.name}

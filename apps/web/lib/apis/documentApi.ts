@@ -122,6 +122,30 @@ const documentApi = {
             };
         }
     },
+    getMyDocuments: async (
+        params: DocumentQueryParams = {}
+    ): Promise<GetDocumentsResponse> => {
+        try {
+            const response = await apiClient.get("/documents/my-documents", {
+                params,
+            });
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy danh sách tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
     createDocument: async (data: FormData): Promise<void> => {
         try {
             await apiClient.post("/documents/upload", data, {

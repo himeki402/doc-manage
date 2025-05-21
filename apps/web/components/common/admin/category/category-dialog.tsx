@@ -83,8 +83,6 @@ export function CategoryDialog({
         }
     }, [open, category, form]);
 
-    // Slug generation effect removed
-
     const onSubmit = (data: CategoryFormValues) => {
         onSave({
             id: category?.id || "",
@@ -105,12 +103,12 @@ export function CategoryDialog({
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
                     <DialogTitle>
-                        {category ? "Edit Category" : "Add Category"}
+                        {category ? "Sửa danh mục" : "Thêm danh mục"}
                     </DialogTitle>
                     <DialogDescription>
                         {category
-                            ? "Edit the details for this category."
-                            : "Create a new category for organizing documents."}
+                            ? "Sửa chi tiết cho danh mục này."
+                            : "Tạo một danh mục mới để tổ chức tài liệu."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -124,10 +122,10 @@ export function CategoryDialog({
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Tên</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Category name"
+                                            placeholder="Tên danh mục"
                                             {...field}
                                         />
                                     </FormControl>
@@ -136,14 +134,12 @@ export function CategoryDialog({
                             )}
                         />
 
-                        {/* Slug field removed */}
-
                         <FormField
                             control={form.control}
                             name="parent_id"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Parent Category</FormLabel>
+                                    <FormLabel>Danh mục cha</FormLabel>
                                     <FormControl>
                                         <Select
                                             onValueChange={field.onChange}
@@ -182,7 +178,7 @@ export function CategoryDialog({
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder="Brief description of this category (optional)"
+                                            placeholder="Mô tả danh mục (Tùy chọn)"
                                             className="resize-none"
                                             {...field}
                                         />
@@ -201,7 +197,7 @@ export function CategoryDialog({
                                 Cancel
                             </Button>
                             <Button type="submit">
-                                {category ? "Save changes" : "Create category"}
+                                {category ? "Lưu thay đổi" : "Tạo"}
                             </Button>
                         </DialogFooter>
                     </form>

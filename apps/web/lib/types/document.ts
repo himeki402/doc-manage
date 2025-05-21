@@ -11,6 +11,7 @@ export type Document = {
     fileUrl?: string;
     mimeType: string;
     slug: string;
+    subject?: string;
     createdByName: string;
     categoryName: string;
     categoryId?: string;

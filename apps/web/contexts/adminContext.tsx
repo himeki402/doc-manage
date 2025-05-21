@@ -10,6 +10,7 @@ import categoriesApi from "@/lib/apis/categoriesApi";
 import userApi from "@/lib/apis/userApi";
 import tagApi from "@/lib/apis/tagApi";
 import { toast } from "sonner";
+import groupApi from "@/lib/apis/groupApi";
 
 interface AdminContextType {
     //documents
@@ -143,6 +144,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
                 const tagsResponse = await tagApi.getAllTags();
                 setTags(tagsResponse.data);
+
+                const groupsResponse = await groupApi.getAllGroup()
+                setGroups(groupsResponse.data)
             } catch (error) {
                 console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
             } finally {
