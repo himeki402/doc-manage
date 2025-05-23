@@ -17,12 +17,6 @@ export default function OverviewCards({ documentsResponse } : OverviewCardsProps
       icon: FileText,
     },
     {
-      title: "Môn học",
-      value: 12,
-      description: "Học kỳ hiện tại",
-      icon: GraduationCap,
-    },
-    {
       title: "Tài liệu được chia sẻ",
       value: 28,
       description: "5 chia sẻ mới trong tuần này",

@@ -95,7 +95,7 @@ export default function DocumentsAdminPage() {
             <DocumentsHeader
                 onCreateDocument={() => setIsDocumentModalOpen(true)}
             />
-            <div className="p-4 md:p-6 flex flex-col gap-6 overflow-auto">
+            <div className="p-4 md:p-6 flex flex-col gap-6">
                 <DocumentsFilters />
                 <DocumentsTable
                     onDelete={handleDeleteDocument}

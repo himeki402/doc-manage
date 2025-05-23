@@ -36,6 +36,7 @@ export type Document = {
     last_edited_by?: string;
     last_edited_at?: string;
     language?: string;
+    approval_status?: string;
     version?: string;
 };
 
@@ -68,3 +69,17 @@ export interface UpdateDocumentPayload {
 }
 
 export type AccessType = "PRIVATE" | "PUBLIC" | "GROUP";
+
+export type DocumentStatsResponseDto = {
+    data: DocumentStats;
+    message: string;
+    statusCode: number;
+};
+
+export type DocumentStats = {
+    totalDocuments: number;
+    newDocumentsThisMonth: number;
+    newDocumentsLastMonth: number;
+    growthPercentage: number;
+    growthCount: number;
+};

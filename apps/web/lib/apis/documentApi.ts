@@ -1,6 +1,7 @@
 import {
     AccessType,
     Document,
+    DocumentStatsResponseDto,
     GetDocumentsResponse,
     UpdateDocumentPayload,
 } from "../types/document";
@@ -29,7 +30,6 @@ export interface SearchDocumentParams {
     categoryId?: string;
     tag?: string | "all";
 }
-
 
 const documentApi = {
     getPublicDocuments: async (
@@ -243,6 +243,88 @@ const documentApi = {
                     message:
                         error.response.data.message ||
                         "Không thể lấy danh sách tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    getPendingDocuments: async (
+        params: DocumentQueryParams = {}
+    ): Promise<GetDocumentsResponse> => {
+        try {
+            const response = await apiClient.get("/documents/admin/pending", {
+                params,
+            });
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy danh sách tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    approveDocument: async (id: string): Promise<void> => {
+        try {
+            await apiClient.post(`/documents/${id}/approve`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể duyệt tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    rejectDocument: async (id: string): Promise<void> => {
+        try {
+            await apiClient.post(`/documents/${id}/reject`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể từ chối tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    getDocumentStats: async (): Promise<DocumentStatsResponseDto> => {
+        try {
+            const response = await apiClient.get("/documents/admin/stats");
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy thống kê tài liệu",
                     errors: error.response.data.errors,
                 };
             }

@@ -1,179 +1,80 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  FileText,
-  Users,
-  ArrowUpRight,
-  Clock,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, Users, ArrowUpRight, Clock, Pen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import PendingDocuments from "@/components/common/admin/overview/pending-document";
+import StatsCards from "@/components/common/admin/overview/stats-cards";
+import { useAdminContext } from "@/contexts/adminContext";
+import NewUserTable from "@/components/common/admin/overview/new-user";
 
 export default function AdminDashboard() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Tổng quan quản trị</h1>
-        <div className="flex items-center gap-2">
-          <Button>Xuất báo cáo</Button>
+  const { userStats, documentStats } = useAdminContext();
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold tracking-tight">
+                    Tổng quan quản trị
+                </h1>
+                <div className="flex items-center gap-2">
+                    <Button>Xuất báo cáo</Button>
+                </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <StatsCards
+                    title="Tổng người dùng"
+                    value={userStats?.totalUsers}
+                    growthPercentage={userStats?.growthPercentage}
+                    icon={<Users className="h-4 w-4 text-muted-foreground" />}
+                />
+                <StatsCards
+                    title="Tổng tài liệu"
+                    value={documentStats?.totalDocuments}
+                    growthPercentage={documentStats?.growthPercentage}
+                    icon={<FileText className="h-4 w-4 text-muted-foreground" />}
+                />
+            </div>
+
+            <Tabs defaultValue="overview" className="space-y-4">
+                <TabsList>
+                    <TabsTrigger value="overview">Tổng quan</TabsTrigger>
+                    <TabsTrigger value="analytics">Phân tích</TabsTrigger>
+                    <TabsTrigger value="reports">Báo cáo</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview" className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+                        <PendingDocuments />
+                        <NewUserTable />
+                    </div>
+                </TabsContent>
+                <TabsContent value="analytics" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Phân tích chi tiết</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">
+                                Dữ liệu phân tích chi tiết sẽ được hiển thị ở
+                                đây.
+                            </p>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="reports" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Báo cáo hệ thống</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">
+                                Các báo cáo hệ thống sẽ được hiển thị ở đây.
+                            </p>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
         </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Tổng người dùng</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,248</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-emerald-500 flex items-center">
-                <ArrowUpRight className="mr-1 h-4 w-4" />
-                +12% so với tháng trước
-              </span>
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Tổng tài liệu</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3,642</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-emerald-500 flex items-center">
-                <ArrowUpRight className="mr-1 h-4 w-4" />
-                +8% so với tháng trước
-              </span>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-          <TabsTrigger value="analytics">Phân tích</TabsTrigger>
-          <TabsTrigger value="reports">Báo cáo</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Tài liệu đang chờ duyệt</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    {
-                      title: "Giáo trình Toán cao cấp",
-                      author: "Nguyễn Văn A",
-                      time: "2 giờ trước",
-                    },
-                    {
-                      title: "Tài liệu Lập trình Java",
-                      author: "Trần Thị B",
-                      time: "3 giờ trước",
-                    },
-                    {
-                      title: "Bài giảng Kinh tế vĩ mô",
-                      author: "Lê Văn C",
-                      time: "5 giờ trước",
-                    },
-                    {
-                      title: "Tài liệu An toàn thông tin",
-                      author: "Phạm Thị D",
-                      time: "8 giờ trước",
-                    },
-                  ].map((doc, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{doc.title}</p>
-                        <p className="text-sm text-muted-foreground">{doc.author}</p>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="mr-1 h-3 w-3" />
-                        {doc.time}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="mt-4 w-full">
-                  Xem tất cả
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Người dùng mới đăng ký</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    {
-                      name: "Nguyễn Văn A",
-                      email: "nguyenvana@example.com",
-                      time: "1 giờ trước",
-                    },
-                    {
-                      name: "Trần Thị B",
-                      email: "tranthib@example.com",
-                      time: "3 giờ trước",
-                    },
-                    {
-                      name: "Lê Văn C",
-                      email: "levanc@example.com",
-                      time: "5 giờ trước",
-                    },
-                    {
-                      name: "Phạm Thị D",
-                      email: "phamthid@example.com",
-                      time: "12 giờ trước",
-                    },
-                  ].map((user, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="mr-1 h-3 w-3" />
-                        {user.time}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="mt-4 w-full">
-                  Xem tất cả
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Phân tích chi tiết</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Dữ liệu phân tích chi tiết sẽ được hiển thị ở đây.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="reports" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Báo cáo hệ thống</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Các báo cáo hệ thống sẽ được hiển thị ở đây.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+    );
 }

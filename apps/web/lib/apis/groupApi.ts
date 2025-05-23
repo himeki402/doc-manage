@@ -1,4 +1,5 @@
-import { Group, GroupResponse } from "../types/group";
+import { add } from "date-fns";
+import { AddMember, Group, GroupResponse } from "../types/group";
 import apiClient from "./config";
 
 const groupApi = {
@@ -64,7 +65,81 @@ const groupApi = {
             if (error.response) {
                 throw {
                     status: error.response.status,
-                    message: error.response.data.message || "Không thể xóa nhóm",
+                    message:
+                        error.response.data.message || "Không thể xóa nhóm",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    addMultipleMember: async (
+        groupId: string,
+        members: AddMember[]
+    ): Promise<Group> => {
+        try {
+            const response = await apiClient.post(
+                `/groups/${groupId}/members/bulk`,
+                {
+                    members,
+                }
+            );
+            return response.data.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể thêm thành viên vào nhóm",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    getGroupById: async (groupId: string): Promise<Group> => {
+        try {
+            const response = await apiClient.get(`/groups/${groupId}`);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy thông tin nhóm",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    removeMember: async (
+        groupId: string,
+        memberId: string
+    ): Promise<Group> => {
+        try {
+            const response = await apiClient.delete(
+                `/groups/${groupId}/members/${memberId}`
+            );
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể xóa thành viên khỏi nhóm",
                     errors: error.response.data.errors,
                 };
             }

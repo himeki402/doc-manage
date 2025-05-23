@@ -1,16 +1,16 @@
 import { Category } from "@/lib/types/category";
-import { AccessType, Document } from "@/lib/types/document";
+import { AccessType, Document, DocumentStats } from "@/lib/types/document";
 import { Group } from "@/lib/types/group";
 import { Tag } from "@/lib/types/tag";
-import { User } from "@/lib/types/user";
+import { User, UserStats } from "@/lib/types/user";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
 import documentApi from "@/lib/apis/documentApi";
 import categoriesApi from "@/lib/apis/categoriesApi";
-import userApi from "@/lib/apis/userApi";
 import tagApi from "@/lib/apis/tagApi";
 import { toast } from "sonner";
 import groupApi from "@/lib/apis/groupApi";
+import userApi from "@/lib/apis/userApi";
 
 interface AdminContextType {
     //documents
@@ -20,10 +20,16 @@ interface AdminContextType {
     setFilteredDocuments: (documents: Document[]) => void;
     selectedDocument: Document | null;
     setSelectedDocument: (document: Document | null) => void;
+    pendingDocuments: Document[];
+    setPendingDocuments: (documents: Document[]) => void;
+    documentStats: DocumentStats;
+    setDocumentStats: (documentStats: DocumentStats) => void;
 
     //Users
     users: User[];
     setUsers: (users: User[]) => void;
+    userStats: UserStats;
+    setUserStats: (userStats: UserStats) => void;
 
     //Categories
     categories: Category[];
@@ -64,6 +70,8 @@ interface AdminContextType {
     }) => void;
     totalDocuments: number;
     setTotalDocuments: (total: number) => void;
+    totalPendingDocuments: number;
+    setTotalPendingDocuments: (total: number) => void;
     // Modals
     isDocumentModalOpen: boolean;
     setIsDocumentModalOpen: (isOpen: boolean) => void;
@@ -85,8 +93,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     const [selectedDocument, setSelectedDocument] = useState<Document | null>(
         null
     );
+    const [documentStats, setDocumentStats] = useState<DocumentStats>(
+        {} as DocumentStats
+    );
+    const [pendingDocuments, setPendingDocuments] = useState<Document[]>([]);
     // User state
     const [users, setUsers] = useState<User[]>([]);
+    const [userStats, setUserStats] = useState<UserStats>({} as UserStats);
     // Category state
     const [categories, setCategories] = useState<Category[]>([]);
     // Tag state
@@ -99,6 +112,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [totalDocuments, setTotalDocuments] = useState(0);
+    const [totalPendingDocuments, setTotalPendingDocuments] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
     //Current user
@@ -135,18 +149,32 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 setFilteredDocuments(documentsResponse.data);
                 setTotalDocuments(documentsResponse.meta.total);
 
+                const pendingResponse = await documentApi.getPendingDocuments({
+                    page: 1,
+                    limit: 4,
+                });
+                setPendingDocuments(pendingResponse.data);
+                setTotalPendingDocuments(pendingResponse.meta.total);
+
+                const documentStatsResponse =
+                    await documentApi.getDocumentStats();
+                setDocumentStats(documentStatsResponse.data);
+
                 const categoriesResponse =
                     await categoriesApi.getCategoriesforAdmin();
                 setCategories(categoriesResponse.data);
 
-                const usersResponse = await userApi.getAllUsers();
+                const usersResponse = await userApi.getAllUsers({ limit: 10 });
                 setUsers(usersResponse.data);
+
+                const userStatsResponse = await userApi.getUsersStats();
+                setUserStats(userStatsResponse.data);
 
                 const tagsResponse = await tagApi.getAllTags();
                 setTags(tagsResponse.data);
 
-                const groupsResponse = await groupApi.getAllGroup()
-                setGroups(groupsResponse.data)
+                const groupsResponse = await groupApi.getAllGroup();
+                setGroups(groupsResponse.data);
             } catch (error) {
                 console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
             } finally {
@@ -207,15 +235,23 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 setDocuments,
                 filteredDocuments,
                 setFilteredDocuments,
+                pendingDocuments,
+                setPendingDocuments,
+                totalPendingDocuments,
+                setTotalPendingDocuments,
                 selectedDocument,
                 setSelectedDocument,
                 totalDocuments,
                 setTotalDocuments,
                 isLoading,
+                documentStats,
+                setDocumentStats,
 
                 // Users
                 users,
                 setUsers,
+                userStats,
+                setUserStats,
 
                 // Categories
                 categories,

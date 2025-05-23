@@ -252,7 +252,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Input
-          placeholder="Filter categories..."
+          placeholder="Tìm kiếm danh mục..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
           className="max-w-sm"
@@ -299,32 +299,31 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
       </div>
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} category(s)
-          selected.
+          {table.getFilteredSelectedRowModel().rows.length} của {table.getFilteredRowModel().rows.length} danh mục
+          được chọn.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onValueChange={(value) => {
-                table.setPageSize(Number(value))
-              }}
-            >
-              <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <span className="text-sm text-muted-foreground">Hiển thị</span>
+                <select
+                    value={table.getState().pagination.pageSize}
+                    onChange={(e) => {
+                        table.setPageSize(Number(e.target.value));
+                    }}
+                    className="px-2 py-1 border rounded text-sm"
+                >
+                    {[5, 10, 20, 30, 50].map((pageSize) => (
+                        <option key={pageSize} value={pageSize}>
+                            {pageSize}
+                        </option>
+                    ))}
+                </select>
+                <span className="text-sm text-muted-foreground">
+                    kết quả mỗi trang
+                </span>
           </div>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            Trang {table.getState().pagination.pageIndex + 1} của {table.getPageCount()}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -333,7 +332,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">Về trang đầu</span>
               <ChevronsLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -342,7 +341,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to previous page</span>
+              <span className="sr-only">Về trang trước</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -351,7 +350,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to next page</span>
+              <span className="sr-only">Về trang tiếp theo</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -360,7 +359,7 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to last page</span>
+              <span className="sr-only">Về trang cuối</span>
               <ChevronsRightIcon className="h-4 w-4" />
             </Button>
           </div>

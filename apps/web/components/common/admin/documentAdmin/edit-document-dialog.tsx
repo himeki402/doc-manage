@@ -158,6 +158,7 @@ export function EditDocumentDialog({ open, onOpenChange, document }: EditDocumen
             <Textarea
               id="description"
               value={description}
+              className="min-h-[100px]"
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Nhập mô tả tài liệu"
               rows={3}

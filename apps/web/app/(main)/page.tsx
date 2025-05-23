@@ -22,7 +22,7 @@ async function getSGTDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
-            limit: 10,
+            limit: 6,
             slug: "Sach-giao-trinh",
         });
         return response.data;
@@ -39,7 +39,7 @@ async function getNNDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
-            limit: 10,
+            limit: 6,
             slug: "Tai-lieu-ngoai-ngu",
         });
         return response.data;
@@ -56,7 +56,7 @@ async function getTLTKDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
-            limit: 10,
+            limit: 6,
             slug: "Tai-lieu-tham-khao",
         });
         return response.data;
@@ -73,7 +73,7 @@ async function getTLCNDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
-            limit: 10,
+            limit: 6,
             slug: "tai-lieu-chuyen-nganh",
         });
         return response.data;

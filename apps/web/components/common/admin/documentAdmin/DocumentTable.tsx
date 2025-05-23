@@ -120,6 +120,21 @@ export function DocumentsTable({ onEdit, onDelete }: DocumentsTableProps) {
 
     const columns: ColumnDef<Document>[] = [
         {
+            id: "stt",
+            header: "STT",
+            cell: ({ row }) => {
+                return (
+                    <div className="text-center">
+                        {pagination.pageIndex * pagination.pageSize +
+                            row.index +
+                            1}
+                    </div>
+                );
+            },
+            enableHiding: false, 
+            size: 50,
+        },
+        {
             accessorKey: "Tiêu đề",
             header: "Tiêu đề",
             size: 300, 

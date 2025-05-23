@@ -122,7 +122,16 @@ export function AdminSidebar() {
                 </nav>
             </div>
             <div className="flex flex-col gap-4 p-4 border-t">
-                <Button
+                <Link
+                    href="/"
+                    className={cn(
+                        "group/link flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-all hover:bg-red-100 hover:text-accent-foreground",
+                        pathname === "/"
+                            ? "bg-red-500 text-red-600"
+                            : "hover:text-red-600"
+                    )}
+                >
+                    <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 px-3"
                 >
@@ -131,6 +140,8 @@ export function AdminSidebar() {
                         Quay lại trang chủ
                     </span>
                 </Button>
+                </Link>
+                
             </div>
         </div>
     );

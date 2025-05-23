@@ -57,6 +57,8 @@ interface GroupsTableProps {
     isLoading?: boolean;
     onEdit: (group: Group) => void;
     onDelete: (groupId: string) => void;
+    onAddMember: (group: Group) => void;
+    onViewDetail: (group: Group) => void;
 }
 
 export function GroupsTable({
@@ -65,6 +67,8 @@ export function GroupsTable({
     isLoading = false,
     onEdit,
     onDelete,
+    onAddMember,
+    onViewDetail,
 }: GroupsTableProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -96,18 +100,18 @@ export function GroupsTable({
     const columns: ColumnDef<Group>[] = [
         {
             accessorKey: "name",
-            header: "Name",
+            header: "Tên nhóm",
             cell: ({ row }) => {
                 return <div className="font-medium">{row.original.name}</div>;
             },
         },
         {
             accessorKey: "description",
-            header: "Description",
+            header: "Mô tả",
         },
         {
             accessorKey: "members",
-            header: "Members",
+            header: "Thành viên",
             cell: ({ row }) => {
                 const members = row.original.members;
                 return (
@@ -144,14 +148,14 @@ export function GroupsTable({
         },
         {
             accessorKey: "createdBy",
-            header: "Created By",
+            header: "Người tạo",
             cell: ({ row }) => {
-                return getUserName(row.original.createdBy);
+                return getUserName(row.original.groupAdmin?.id);
             },
         },
         {
             accessorKey: "createdAt",
-            header: "Created",
+            header: "Ngày tạo",
             cell: ({ row }) => {
                 return formatDateToFullOptions(row.original.created_at);
             },
@@ -169,18 +173,18 @@ export function GroupsTable({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => onEdit(group)}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit Group</span>
+                                <span>Sửa nhóm</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onAddMember(group)}>
                                 <UserPlus className="mr-2 h-4 w-4" />
-                                <span>Add Members</span>
+                                <span>Thêm thành viên</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onViewDetail(group)}>
                                 <Users className="mr-2 h-4 w-4" />
-                                <span>View Members</span>
+                                <span>Xem chi tiết</span>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -188,7 +192,7 @@ export function GroupsTable({
                                 onClick={() => handleDeleteClick(group)}
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                <span>Delete Group</span>
+                                <span>Xóa nhóm</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -258,7 +262,7 @@ export function GroupsTable({
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No groups found.
+                                    Không tìm thấy nhóm nào.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -268,17 +272,17 @@ export function GroupsTable({
 
             <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                    Showing{" "}
+                    Hiện{" "}
                     {table.getState().pagination.pageIndex *
                         table.getState().pagination.pageSize +
                         1}{" "}
-                    to{" "}
+                    đến{" "}
                     {Math.min(
                         (table.getState().pagination.pageIndex + 1) *
                             table.getState().pagination.pageSize,
                         groups.length
                     )}{" "}
-                    of {groups.length} groups
+                    trong tổng số {groups.length} nhóm
                 </div>
 
                 <Pagination>
