@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
 import { Document, GetDocumentsResponse } from "@/lib/types/document";
 import SGTthumbnail from "@/public/GiaoTrinh_thumbnail.jpg";
-import { formatDateToFullOptions } from "@/lib/utils";
+import { convertBytesToMB, formatDateToFullOptions } from "@/lib/utils";
 import { useState } from "react";
 import {
     Dialog,
@@ -222,8 +222,8 @@ export default function DocumentList({
                                                 </span>
                                                 <span>•</span>
                                                 <span>
-                                                    {doc.subject ||
-                                                        "Không có môn học"}
+                                                    {doc.categoryName ||
+                                                        "Không có danh mục"}
                                                 </span>
                                                 <span>•</span>
                                                 <span>
@@ -239,14 +239,14 @@ export default function DocumentList({
                                         <Badge
                                             variant="outline"
                                             className={`${
-                                                doc.status === "Đã hoàn thành"
+                                                doc.accessType === "PUBLIC"
                                                     ? "bg-green-50 text-green-700 border-green-200"
-                                                    : doc.status === "Đang học"
+                                                    : doc.accessType === "GROUP"
                                                       ? "bg-blue-50 text-blue-700 border-blue-200"
                                                       : "bg-slate-50 text-slate-700 border-slate-200"
                                             }`}
                                         >
-                                            {doc.status}
+                                            {doc.accessType}
                                         </Badge>
                                         <div className="flex gap-1">
                                             <Button
@@ -393,8 +393,8 @@ export default function DocumentList({
                                             <FileImage className="h-4 w-4 mr-2 text-muted-foreground" />
                                             <span>
                                                 Kích thước:{" "}
-                                                {(selectedDocument.fileSize ?? 0) }{" "}
-                                                KB
+                                                {convertBytesToMB(selectedDocument.fileSize ?? 0) }{" "}
+                                                MB
                                             </span>
                                         </div>
                                         <div className="flex items-center">

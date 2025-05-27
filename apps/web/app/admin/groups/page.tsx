@@ -44,7 +44,7 @@ export default function GroupsPage() {
     const handleDeleteGroup = async (groupId: string) => {
         try {
             await groupApi.deleteGroup(groupId);
-            setGroups(groups.filter((group) => group.id !== groupId));
+            setGroups(groups.filter((group: Group) => group.id !== groupId));
             toast.success("Xóa group thành công");
         } catch (error) {
             toast.error("Xóa group thất bại");
@@ -53,41 +53,33 @@ export default function GroupsPage() {
 
     const handleSaveGroup = async (group: Group) => {
         try {
-            if (group.id) {
-                await groupApi.updateGroup(group.id, {
-                    name: group.name,
-                    description: group.description,
-                });
-                setGroups(
-                    groups.map((t) =>
-                        t.id === group.id ? { ...t, ...group } : t
-                    )
+            if (editingGroup) {
+                const updatedGroup = await groupApi.updateGroup(
+                    editingGroup.id,
+                    group
                 );
-                toast.success("Đã chỉnh sửa group thành công");
+                setGroups(
+                    groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g))
+                );
             } else {
-                const response = await groupApi.createGroup({
-                    name: group.name,
-                    description: group.description,
-                });
-                setGroups([...groups, { ...response }]);
-                toast.success("Tạo group thành công");
+                const newGroup = await groupApi.createGroup(group);
+                setGroups([...groups, newGroup]);
             }
             setShowGroupDialog(false);
-            setEditingGroup(null);
-        } catch (error: any) {
-            console.error("Failed to save group:", error);
-            toast.error(error.message || "Failed to save group");
+        } catch (error) {
+            toast.error("Lưu thất bại");
         }
     };
-
-    const handleConfirmAddMember = async (groupId: string, members: AddMember[]) => {
+    const handleConfirmAddMember = async (
+        groupId: string,
+        members: AddMember[]
+    ) => {
         try {
             await groupApi.addMultipleMember(groupId, members);
-            
-            // Refresh group data after adding members
+
             const updatedGroup = await groupApi.getGroupById(groupId);
-            setGroups(groups.map(g => g.id === groupId ? updatedGroup : g));
-            
+            setGroups(groups.map((g) => (g.id === groupId ? updatedGroup : g)));
+
             toast.success("Thêm thành viên thành công");
             setShowAddMemberDialog(false);
         } catch (error) {
@@ -96,7 +88,9 @@ export default function GroupsPage() {
     };
 
     const handleGroupUpdate = (updatedGroup: Group) => {
-        setGroups(groups.map(g => g.id === updatedGroup.id ? updatedGroup : g));
+        setGroups(
+            groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g))
+        );
     };
 
     return (

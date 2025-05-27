@@ -153,7 +153,9 @@ export function AdminHeader() {
                         <DropdownMenuItem>Profile</DropdownMenuItem>
                         <DropdownMenuItem>Settings</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Log out</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <a href="/logout">Log out</a>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

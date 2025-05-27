@@ -123,11 +123,11 @@ export function DocumentDetailsDialog({
                     className="w-full"
                 >
                     <TabsList className="grid grid-cols-3 mb-4">
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                        <TabsTrigger value="overview">Tổng quan</TabsTrigger>
                         <TabsTrigger value="versions">
-                            Version History
+                            Lịch sử phiên bản
                         </TabsTrigger>
-                        <TabsTrigger value="audit">Audit Log</TabsTrigger>
+                        <TabsTrigger value="audit">Nhật ký kiểm tra</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-4">
@@ -135,13 +135,13 @@ export function DocumentDetailsDialog({
                             <Card>
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-base">
-                                        Document Information
+                                        Thông tin tài liệu
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            Type:
+                                            Loại:
                                         </span>
                                         <Badge variant="outline">
                                             {document.mimeType ||
@@ -150,7 +150,7 @@ export function DocumentDetailsDialog({
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            Size:
+                                            Kích thước:
                                         </span>
                                         <span>
                                             {formatFileSize(document.fileSize)}
@@ -166,7 +166,7 @@ export function DocumentDetailsDialog({
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            Category:
+                                            Danh mục:
                                         </span>
                                         <div className="flex items-center gap-1">
                                             <FolderClosed className="h-3.5 w-3.5" />
@@ -180,7 +180,7 @@ export function DocumentDetailsDialog({
                                         "group" && (
                                         <div className="flex justify-between">
                                             <span className="text-sm text-muted-foreground">
-                                                Group:
+                                                Nhóm:
                                             </span>
                                             <div className="flex items-center gap-1">
                                                 <Users className="h-3.5 w-3.5 text-blue-500" />
@@ -190,7 +190,7 @@ export function DocumentDetailsDialog({
                                     )}
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            Current Version:
+                                            Phiên bản hiện tại:
                                         </span>
                                         <span>
                                             v{document.version || "1.0"}
@@ -198,7 +198,7 @@ export function DocumentDetailsDialog({
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            Access Type:
+                                            Loại truy cập:
                                         </span>
                                         <div className="flex items-center gap-1">
                                             {getAccessTypeIcon(
@@ -216,7 +216,7 @@ export function DocumentDetailsDialog({
                             <Card>
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-base">
-                                        Stats & Metadata
+                                        Thống kê & Siêu dữ liệu
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
@@ -224,7 +224,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Views:
+                                                Lượt xem:
                                             </span>
                                         </div>
                                         <span>{document.view || 0}</span>
@@ -233,7 +233,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <Heart className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Likes:
+                                                Lượt thích:
                                             </span>
                                         </div>
                                         <span>{document.likeCount || 0}</span>
@@ -242,7 +242,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <Star className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Rating:
+                                                Đánh giá:
                                             </span>
                                         </div>
                                         <span>
@@ -256,7 +256,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <User className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Owner:
+                                                Chủ sở hữu:
                                             </span>
                                         </div>
                                         <span>
@@ -268,7 +268,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Created:
+                                                Ngày tạo:
                                             </span>
                                         </div>
                                         <span>
@@ -281,7 +281,7 @@ export function DocumentDetailsDialog({
                                         <div className="flex items-center gap-1">
                                             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                                             <span className="text-sm text-muted-foreground">
-                                                Last Modified:
+                                                Ngày sửa đổi cuối:
                                             </span>
                                         </div>
                                         <span>
@@ -336,7 +336,7 @@ export function DocumentDetailsDialog({
                                     rel="noopener noreferrer"
                                 >
                                     <Download className="mr-2 h-4 w-4" />
-                                    Download
+                                    Tải về
                                 </a>
                             </Button>
                             <Button
@@ -348,7 +348,7 @@ export function DocumentDetailsDialog({
                                 }}
                             >
                                 <Share2 className="mr-2 h-4 w-4" />
-                                Share
+                                Chia sẻ
                             </Button>
                             <Button
                                 size="sm"
@@ -358,11 +358,36 @@ export function DocumentDetailsDialog({
                                 }}
                             >
                                 <History className="mr-2 h-4 w-4" />
-                                Upload New Version
+                                Tải lên phiên bản mới
                             </Button>
                         </div>
                     </TabsContent>
-
+                    <TabsContent value="versions">
+                        <div className="p-4">
+                            <h3 className="text-lg font-medium">Lịch sử phiên bản</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Xem lại các phiên bản trước đó của tài liệu này.
+                            </p>
+                        </div>
+                        <div className="p-4">
+                            <p className="text-sm text-muted-foreground">
+                                Chức năng này sẽ được cập nhật sau.
+                            </p>
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="audit">
+                        <div className="p-4">
+                            <h3 className="text-lg font-medium">Nhật ký kiểm tra</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Theo dõi các hoạt động liên quan đến tài liệu này.
+                            </p>
+                        </div>
+                        <div className="p-4">
+                            <p className="text-sm text-muted-foreground">
+                                Chức năng này sẽ được cập nhật sau.
+                            </p>
+                        </div>
+                    </TabsContent>
                     {/* Các tab khác (versions, audit) đã được comment, nếu cần sẽ sửa sau */}
                 </Tabs>
             </DialogContent>

@@ -1,10 +1,11 @@
 "use client"
 
-import { Filter } from "lucide-react"
+import { Filter, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AccessType } from "@/lib/types/document"
 import { useAdminContext } from "@/contexts/adminContext"
+import { Input } from "@/components/ui/input"
 
 
 export function DocumentsFilters() {

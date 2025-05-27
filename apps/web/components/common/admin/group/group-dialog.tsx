@@ -24,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Group } from "@/lib/types/group";
+import { toast } from "sonner";
+import groupApi from "@/lib/apis/groupApi";
 
 const groupSchema = z.object({
   name: z.string().min(2, "Tên nhóm phải có ít nhất 2 ký tự"),
@@ -37,6 +39,7 @@ interface GroupDialogProps {
   onOpenChange: (open: boolean) => void;
   onSave: (group: Group) => void;
   group?: Group | null;
+  isSaving?: boolean;
 }
 
 export function GroupDialog({
@@ -44,6 +47,7 @@ export function GroupDialog({
   onOpenChange,
   onSave,
   group = null,
+  isSaving = false,
 }: GroupDialogProps) {
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupSchema),
@@ -69,38 +73,31 @@ export function GroupDialog({
     }
   }, [open, group, form]);
 
-  const onSubmit = async (data: GroupFormValues) => {
+ const onSubmit = async (data: GroupFormValues) => {
     try {
-      let response;
+      let savedGroup: Group;
       if (group) {
-        response = await fetch(`/api/groups/${group.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+        savedGroup = await groupApi.updateGroup(group.id, {
+          name: data.name,
+          description: data.description || "",
         });
       } else {
-        // Create new group (assume userId is available, e.g., from auth context)
-        const userId = "current-user-id"; // Replace with actual userId from auth
-        response = await fetch("/api/groups", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...data, createdBy: userId }),
+        savedGroup = await groupApi.createGroup({
+          name: data.name,
+          description: data.description || "",
         });
       }
 
-      if (!response.ok) {
-        throw new Error("Failed to save group");
-      }
-
-      const savedGroup: Group = await response.json().then((res) => res.data);
-
-      // Call onSave with the saved group
       onSave(savedGroup);
+      toast.success(group ? "Đã chỉnh sửa nhóm thành công" : "Tạo nhóm thành công");
       onOpenChange(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving group:", error);
-      // Optionally show error message in UI
-      form.setError("root", { message: "Lỗi khi lưu nhóm" });
+      toast.error(
+        error.errors
+          ? error.errors.join(", ")
+          : error.message || "Lỗi khi lưu nhóm"
+      );
     }
   };
 

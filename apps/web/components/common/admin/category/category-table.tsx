@@ -369,18 +369,18 @@ export function CategoriesTable({ categories, isLoading = false, onEdit, onDelet
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Bạn có chắc chắn muốn xóa danh mục này?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the category "{categoryToDelete?.name}". This action cannot be undone.
+              Việc này sẽ xóa vĩnh viễn danh mục "{categoryToDelete?.name}". Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,5 +1,5 @@
 
-type Document = {
+export type Document = {
     id: string;
     title: string;
     mimeType: string;
@@ -27,6 +27,7 @@ export interface Member {
     group_id: string;
     joined_at: string;
     role: "MEMBER" | "ADMIN";
+    avatar?: string;
 }
 export interface GroupResponse {
     data: Group[];
@@ -41,9 +42,7 @@ export interface GroupQueryParams {
 
 export interface CreateGroupRequest {
     name: string;
-    description?: string;
-    createdBy: string;
-    members?: Member[];
+    description: string;
 }
 
 export interface UpdateGroupRequest {

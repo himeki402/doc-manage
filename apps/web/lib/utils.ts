@@ -113,3 +113,8 @@ export function formatTimeAgo(date: string): string {
         return 'Không xác định';
     }
 }
+
+export function convertBytesToMB(bytes: number): number {
+  const mb = bytes / (1024 * 1024);
+  return Number(mb.toFixed(2));
+}

@@ -1,5 +1,5 @@
 import { add } from "date-fns";
-import { AddMember, Group, GroupResponse } from "../types/group";
+import { AddMember, CreateGroupRequest, Group, GroupResponse } from "../types/group";
 import apiClient from "./config";
 
 const groupApi = {
@@ -21,15 +21,16 @@ const groupApi = {
             };
         }
     },
-    createGroup: async (group: Partial<Group>): Promise<Group> => {
+    createGroup: async ( data: CreateGroupRequest): Promise<Group> => {
         try {
-            const response = await apiClient.post("/groups", group);
+            const response = await apiClient.post("/groups", data);
             return response.data;
         } catch (error: any) {
             if (error.response) {
                 throw {
                     status: error.response.status,
-                    message: error.response.data.message || "Không thể tạo tag",
+                    message:
+                        error.response.data.message || "Không thể tạo nhóm",
                     errors: error.response.data.errors,
                 };
             }
@@ -107,7 +108,7 @@ const groupApi = {
     getGroupById: async (groupId: string): Promise<Group> => {
         try {
             const response = await apiClient.get(`/groups/${groupId}`);
-            return response.data;
+            return response.data.data;
         } catch (error: any) {
             if (error.response) {
                 throw {
@@ -124,10 +125,7 @@ const groupApi = {
             };
         }
     },
-    removeMember: async (
-        groupId: string,
-        memberId: string
-    ): Promise<Group> => {
+    removeMember: async (groupId: string, memberId: string): Promise<Group> => {
         try {
             const response = await apiClient.delete(
                 `/groups/${groupId}/members/${memberId}`
@@ -149,6 +147,24 @@ const groupApi = {
             };
         }
     },
+    getMygroups: async (): Promise<GroupResponse> => {
+        try {
+            const response = await apiClient.get("/groups/me");
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Lỗi máy chủ nội bộ",
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    }
 };
 
 export default groupApi;

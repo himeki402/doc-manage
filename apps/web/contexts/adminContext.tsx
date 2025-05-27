@@ -134,56 +134,63 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        const fetchInitialData = async () => {
-            setIsLoading(true);
-            try {
-                const documentsResponse = await documentApi.getAllDocuments({
+    const fetchInitialData = async () => {
+        setIsLoading(true);
+        try {
+            const [
+                documentsResponse,
+                pendingResponse,
+                documentStatsResponse,
+                categoriesResponse,
+                usersResponse,
+                userStatsResponse,
+                tagsResponse,
+                groupsResponse,
+            ] = await Promise.all([
+                documentApi.getAllDocuments({
                     page: pagination.pageIndex + 1,
                     limit: pagination.pageSize,
                     accessType: filters.accessType,
                     categoryId: filters.category,
                     tag: filters.tag,
                     group: filters.group,
-                });
-                setDocuments(documentsResponse.data);
-                setFilteredDocuments(documentsResponse.data);
-                setTotalDocuments(documentsResponse.meta.total);
-
-                const pendingResponse = await documentApi.getPendingDocuments({
+                }),
+                documentApi.getPendingDocuments({
                     page: 1,
                     limit: 4,
-                });
-                setPendingDocuments(pendingResponse.data);
-                setTotalPendingDocuments(pendingResponse.meta.total);
+                }),
+                documentApi.getDocumentStats(),
+                categoriesApi.getCategoriesforAdmin(),
+                userApi.getAllUsers({ limit: 10 }),
+                userApi.getUsersStats(),
+                tagApi.getAllTags(),
+                groupApi.getAllGroup(),
+            ]);
 
-                const documentStatsResponse =
-                    await documentApi.getDocumentStats();
-                setDocumentStats(documentStatsResponse.data);
+            // Cập nhật trạng thái sau khi tất cả API hoàn thành
+            setDocuments(documentsResponse.data);
+            setFilteredDocuments(documentsResponse.data);
+            setTotalDocuments(documentsResponse.meta.total);
 
-                const categoriesResponse =
-                    await categoriesApi.getCategoriesforAdmin();
-                setCategories(categoriesResponse.data);
+            setPendingDocuments(pendingResponse.data);
+            setTotalPendingDocuments(pendingResponse.meta.total);
 
-                const usersResponse = await userApi.getAllUsers({ limit: 10 });
-                setUsers(usersResponse.data);
+            setDocumentStats(documentStatsResponse.data);
+            setCategories(categoriesResponse.data);
+            setUsers(usersResponse.data);
+            setUserStats(userStatsResponse.data);
+            setTags(tagsResponse.data);
+            setGroups(groupsResponse.data);
+        } catch (error) {
+            console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
+            toast.error("Không thể tải dữ liệu ban đầu");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-                const userStatsResponse = await userApi.getUsersStats();
-                setUserStats(userStatsResponse.data);
-
-                const tagsResponse = await tagApi.getAllTags();
-                setTags(tagsResponse.data);
-
-                const groupsResponse = await groupApi.getAllGroup();
-                setGroups(groupsResponse.data);
-            } catch (error) {
-                console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchInitialData();
-    }, []);
+    fetchInitialData();
+}, []);
 
     useEffect(() => {
         const fetchFilteredDocuments = async () => {
