@@ -13,13 +13,28 @@ import {
     Users,
     LogOut,
     Edit,
+    Camera,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDateToFullOptions } from "@/lib/utils";
 import { useAuth } from "@/contexts/authContext";
+import { useState } from "react";
+import userApi from "@/lib/apis/userApi";
+import { toast } from "sonner";
+import AvatarUploadModal from "@/components/common/user/profile/avatar-upload";
 
 export default function ProfilePage() {
     const { user } = useAuth();
+    const [showUploadModal, setShowUploadModal] = useState(false);
+
+    const handleUploadAvatar = async (file: File) => {
+        try {
+            const data = await userApi.uploadAvatar(file);
+            toast.success("Ảnh đại diện đã được cập nhật thành công");
+        } catch (error) {
+            console.error("Error uploading avatar:", error);
+        }
+    };
 
     if (!user) {
         return (
@@ -51,16 +66,25 @@ export default function ProfilePage() {
             <div className="container mx-auto max-w-4xl px-4 py-8">
                 <Card className="border-none shadow-lg">
                     <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-                        <div className="flex items-center space-x-4">
-                            <Avatar className="h-24 w-24 border-4 border-white">
-                                <AvatarImage
-                                    src={user.avatar || "/placeholder.svg"}
-                                    alt={user.name}
-                                />
-                                <AvatarFallback>
-                                    {user.name.charAt(0)}
-                                </AvatarFallback>
-                            </Avatar>
+                        <div className="flex items-center space-x-4 relative">
+                            <div className="relative">
+                                <Avatar className="h-24 w-24 border-4 border-white">
+                                    <AvatarImage
+                                        src={user.avatar && user.avatar !== "" ? user.avatar : "/placeholder.svg"}
+                                        alt={user.name}
+                                    />
+                                    <AvatarFallback>
+                                        {user.name.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <button
+                                onClick={() => setShowUploadModal(true)}
+                                className="absolute bottom-0 right-0 bg-white text-gray-600 rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors z-10"
+                                title="Thay đổi ảnh đại diện"
+                            >
+                                <Camera className="h-4 w-4" />
+                            </button>
                             <div>
                                 <CardTitle className="text-2xl font-bold">
                                     {user.name}
@@ -70,9 +94,9 @@ export default function ProfilePage() {
                                 </p>
                                 <Badge
                                     className={`mt-2 ${
-                                        user.status === "active"
+                                        user.status === "ACTIVE"
                                             ? "bg-green-500"
-                                            : user.status === "locked"
+                                            : user.status === "LOCKED"
                                               ? "bg-red-500"
                                               : "bg-yellow-500"
                                     }`}
@@ -180,6 +204,11 @@ export default function ProfilePage() {
                         </div>
                     </CardContent>
                 </Card>
+                <AvatarUploadModal
+                    isOpen={showUploadModal}
+                    onClose={() => setShowUploadModal(false)}
+                    onUpload={handleUploadAvatar}
+                />
             </div>
         );
     } catch (error) {

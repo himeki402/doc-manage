@@ -91,12 +91,6 @@ export function GroupsTable({
         }
     };
 
-    const getUserName = (userId: string | undefined) => {
-        if (!userId) return "Unknown";
-        const user = users.find((u) => u.id === userId);
-        return user ? user.name : "Unknown";
-    };
-
     const columns: ColumnDef<Group>[] = [
         {
             accessorKey: "name",
@@ -150,7 +144,7 @@ export function GroupsTable({
             accessorKey: "createdBy",
             header: "Người tạo",
             cell: ({ row }) => {
-                return getUserName(row.original.groupAdmin?.id);
+                return (row.original.groupAdmin?.name);
             },
         },
         {

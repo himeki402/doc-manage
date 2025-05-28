@@ -23,11 +23,9 @@ import {
     User,
     AlertCircle,
     Mail,
-    UserCheck,
     FileText,
     Download,
     Trash2,
-    Upload,
     File,
     Image,
     Video,
@@ -154,7 +152,7 @@ export function GroupDetailDialog({
 
         setDeletingDocumentId(documentToDelete.id);
         try {
-            await groupApi.deleteDocument(groupDetails.id, documentToDelete.id);
+            await groupApi.removeDocumentFromGroup(documentToDelete.id);
 
             // Update local state
             const updatedGroup = {
@@ -489,20 +487,7 @@ export function GroupDetailDialog({
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-1">
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() =>
-                                                                        handleDownloadDocument(
-                                                                            document
-                                                                        )
-                                                                    }
-                                                                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                                                >
-                                                                    <Download className="h-4 w-4" />
-                                                                </Button>
-                                                                
+                                                            <div className="flex items-center gap-1">                                                          
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"

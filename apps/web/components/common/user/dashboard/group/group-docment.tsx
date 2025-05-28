@@ -59,7 +59,6 @@ export function GroupDocumentTab() {
             const group = await groupApi.getGroupById(groupId);
             setSelectedGroup(group);
         } catch (error) {
-            console.error("Error loading group details:", error);
             toast.error("Không thể tải chi tiết nhóm");
         }
     };
@@ -79,8 +78,8 @@ export function GroupDocumentTab() {
 
     const filteredGroups = groups.filter(
         (group) =>
-            group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            group.description.toLowerCase().includes(searchTerm.toLowerCase())
+            group.name.includes(searchTerm) ||
+            group.description.includes(searchTerm)
     );
 
     const handleCreateGroup = async () => {
@@ -109,14 +108,31 @@ export function GroupDocumentTab() {
         }
     };
     // Xử lý mời thành viên
-    const handleInviteMember = () => {
-        // Xử lý logic mời thành viên ở đây
-        console.log("Mời thành viên:", {
-            email: inviteEmail,
-            groupId: selectedGroup,
-        });
-        setInviteEmail("");
-        setShowInviteDialog(false);
+    const handleInviteMember = async () => {
+        if (!inviteEmail.trim() || !selectedGroup) {
+            toast.error("Vui lòng nhập email");
+            return;
+        }
+        try {
+            setInviting(true);
+            const updatedGroup = await groupApi.addMultipleMember(
+                selectedGroup.id,
+                [{ email: inviteEmail }]
+            );
+
+            setSelectedGroup(updatedGroup);
+            setGroups((prev) =>
+                prev.map((g) => (g.id === updatedGroup.id ? updatedGroup : g))
+            );
+            setInviteEmail("");
+            setShowInviteDialog(false);
+            toast.success("Mời thành viên thành công");
+        } catch (error) {
+            console.error("Error inviting member:", error);
+            toast.error("Không thể mời thành viên");
+        } finally {
+            setInviting(false);
+        }
     };
 
     const handleRemoveMember = async (memberId: string) => {
@@ -133,6 +149,7 @@ export function GroupDocumentTab() {
             toast.error("Không thể xóa thành viên");
         }
     };
+
     const getRoleText = (role: string) => {
         switch (role) {
             case "OWNER":
@@ -230,7 +247,13 @@ export function GroupDocumentTab() {
                                 >
                                     Hủy
                                 </Button>
-                                <Button onClick={handleCreateGroup}>
+                                <Button
+                                    onClick={handleCreateGroup}
+                                    disabled={creating}
+                                >
+                                    {creating && (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    )}
                                     Tạo nhóm
                                 </Button>
                             </DialogFooter>
@@ -351,7 +374,13 @@ export function GroupDocumentTab() {
                         >
                             Hủy
                         </Button>
-                        <Button onClick={handleInviteMember}>
+                        <Button
+                            onClick={handleInviteMember}
+                            disabled={inviting}
+                        >
+                            {inviting && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
                             Gửi lời mời
                         </Button>
                     </DialogFooter>

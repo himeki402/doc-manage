@@ -27,7 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/authContext";
 import { GetDocumentsResponse } from "@/lib/types/document";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
-import DocumentsTab from "@/components/common/user/dashboard/document-tab";
+import DocumentsTab from "@/components/common/user/dashboard/document/document-tab";
 import WelcomeSection from "@/components/common/user/dashboard/welcome-section";
 import OverviewCards from "@/components/common/user/dashboard/overview-card";
 import OcrDocumentTab from "@/components/common/user/dashboard/ocr/ocr-document-tab";

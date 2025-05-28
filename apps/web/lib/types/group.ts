@@ -23,7 +23,7 @@ export interface Group {
 }
 export interface Member {
     user_id: string;
-    user: { id: string; name: string; email: string };
+    user: { id: string; name: string; email: string; avatar?: string };
     group_id: string;
     joined_at: string;
     role: "MEMBER" | "ADMIN";
@@ -51,7 +51,7 @@ export interface UpdateGroupRequest {
 }
 
 export interface AddMember {
-    userId: string;
+    email: string;
 }
 
 export interface AddMultipleMembers {
@@ -59,5 +59,5 @@ export interface AddMultipleMembers {
 }
 
 export interface RemoveMemberRequest {
-    userId: string;
+    email: string;
 }

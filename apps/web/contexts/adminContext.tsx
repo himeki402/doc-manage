@@ -49,12 +49,14 @@ interface AdminContextType {
         category: string | "all";
         tag: string | "all";
         group: string | "all";
+        search: string; 
     };
     setFilters: (filters: {
         accessType?: AccessType | "all";
         category?: string | "all";
         tag?: string | "all";
         group?: string | "all";
+        search?: string;
     }) => void;
 
     // Current user
@@ -125,12 +127,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         pageSize: 10,
     });
 
-    // filters state
+    // filters state - Added search to initial state
     const [filters, setFilters] = useState({
         accessType: "all" as AccessType | "all",
         category: "all" as string | "all",
         tag: "all" as string | "all",
         group: "all" as string | "all",
+        search: "",
     });
 
     useEffect(() => {
@@ -150,10 +153,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 documentApi.getAllDocuments({
                     page: pagination.pageIndex + 1,
                     limit: pagination.pageSize,
-                    accessType: filters.accessType,
-                    categoryId: filters.category,
-                    tag: filters.tag,
-                    group: filters.group,
                 }),
                 documentApi.getPendingDocuments({
                     page: 1,
@@ -196,14 +195,29 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         const fetchFilteredDocuments = async () => {
             setIsLoading(true);
             try {
-                const response = await documentApi.getAllDocuments({
+                const apiParams: any = {
                     page: pagination.pageIndex + 1,
                     limit: pagination.pageSize,
-                    accessType: filters.accessType,
-                    categoryId: filters.category,
-                    tag: filters.tag,
-                    group: filters.group,
-                });
+                };
+
+                // Only add filters that are not "all" or empty
+                if (filters.accessType !== "all") {
+                    apiParams.accessType = filters.accessType;
+                }
+                if (filters.category !== "all") {
+                    apiParams.categoryId = filters.category;
+                }
+                if (filters.tag !== "all") {
+                    apiParams.tag = filters.tag;
+                }
+                if (filters.group !== "all") {
+                    apiParams.group = filters.group;
+                }
+                if (filters.search && filters.search.trim() !== "") {
+                    apiParams.search = filters.search.trim();
+                }
+
+                const response = await documentApi.getAllDocuments(apiParams);
                 setFilteredDocuments(response.data);
                 setTotalDocuments(response.meta.total);
             } catch (error: any) {
@@ -229,6 +243,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         category?: string | "all";
         tag?: string | "all";
         group?: string | "all";
+        search?: string;
     }) => {
         setFilters({ ...filters, ...newFilters });
         setPagination({ ...pagination, pageIndex: 0 });

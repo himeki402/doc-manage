@@ -27,7 +27,7 @@ interface EditDocumentDialogProps {
 }
 
 export function EditDocumentDialog({ open, onOpenChange, document }: EditDocumentDialogProps) {
-  const { documents, setDocuments, setFilteredDocuments, setTotalDocuments, categories, tags, groups, currentUser, filters, pagination } = useAdminContext();
+  const { documents, setDocuments, setFilteredDocuments, setTotalDocuments, categories, tags, groups, filters, pagination } = useAdminContext();
 
   const [documentTitle, setDocumentTitle] = useState(document.title);
   const [description, setDescription] = useState(document.description || "");

@@ -19,6 +19,14 @@ interface GroupDetailProps {
 }
 
 export function GroupDetail({ group, documents, members, onBack, onShowInviteDialog, onRemoveMember }: GroupDetailProps) {
+  const getRoleText = (role: string) => {
+    switch (role) {
+      case 'OWNER': return 'Chủ nhóm'
+      case 'ADMIN': return 'Quản trị viên'
+      case 'MEMBER': return 'Thành viên'
+      default: return 'Thành viên'
+    }
+  }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -144,13 +152,13 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
                       <div key={member.user_id} className="flex items-center justify-between p-4 hover:bg-muted/50">
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.user.name} />
+                            <AvatarImage src={member.user.avatar || "/placeholder.svg"} alt={member.user.name} />
                             <AvatarFallback>{member.user.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="text-sm font-medium">{member.user.name}</p>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <span>{member.user.email}</span>
+                              <span>{member.user?.email || "Không có email"}</span>
                               <span>•</span>
                               <span>Tham gia: {new Date(member.joined_at).toLocaleDateString("vi-VN")}</span>
                             </div>

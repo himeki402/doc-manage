@@ -164,7 +164,25 @@ const groupApi = {
                 message: error.message || "Lỗi máy chủ nội bộ",
             };
         }
-    }
+    },
+    removeDocumentFromGroup: async (documentId: string): Promise<void> => {
+        try {
+            await apiClient.patch(`/documents/${documentId}/remove-from-group`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Không thể gỡ tài liệu khỏi nhóm",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
 };
 
 export default groupApi;

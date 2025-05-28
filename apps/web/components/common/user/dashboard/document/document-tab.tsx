@@ -5,8 +5,8 @@ import { FileSearch, Tag } from "lucide-react";
 import DocumentList from "./document-list";
 import CategoriesSidebar from "./category-sidebar";
 import ActivitySection from "./activity-section";
-import ImportantDocuments from "./important-document";
 import { GetDocumentsResponse } from "@/lib/types/document";
+import ImportantDocuments from "./important-document";
 
 interface DocumentsTabProps {
     documentsResponse: GetDocumentsResponse | null;
@@ -25,10 +25,9 @@ export default function DocumentsTab({
         return <div className="text-center">Đang tải tài liệu...</div>;
     }
     if (error) {
-    return <div className="text-center text-red-500">Lỗi: {error}</div>;
-  }
+        return <div className="text-center text-red-500">Lỗi: {error}</div>;
+    }
 
-  
     return (
         <>
             <div className="flex justify-between items-center">

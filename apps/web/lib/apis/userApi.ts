@@ -48,6 +48,31 @@ const userApi = {
                 message: error.message || "Lỗi máy chủ nội bộ",
             };
         }
+    },
+    uploadAvatar: async (file: File): Promise<string> => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await apiClient.patch<{ url: string }>("/users/avatar", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response.data.url;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message: error.response.data.message || "Không thể tải lên ảnh đại diện",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
     }
 };
 export default userApi;
