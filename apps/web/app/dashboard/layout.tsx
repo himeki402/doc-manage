@@ -1,5 +1,6 @@
 import { Header } from "@/components/common/layout/header";
 import { Footer } from "@/components/common/layout/footer";
+import { DashboardProvider } from "@/contexts/dashboardContext";
 
 export default function DashboardLayout({
     children,
@@ -10,7 +11,9 @@ export default function DashboardLayout({
         <>
             <main className="min-h-screen">
                 <Header showSearch={false} />
-                {children}
+                <DashboardProvider>
+                    {children}
+                </DashboardProvider>
                 <Footer />
             </main>
         </>

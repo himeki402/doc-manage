@@ -4,18 +4,50 @@ import { Document } from "@/lib/types/document";
 import { DocumentContent } from "./document-content";
 import { DocumentMetadata } from "./document-metadata";
 import { DocumentRelated } from "./related-document";
+import documentApi from "@/lib/apis/documentApi";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface DocumentViewerProps {
     document: Document;
 }
 
-export function DocumentViewer({ document }: DocumentViewerProps) {
+export function DocumentViewer({
+    document: initialDocument,
+}: DocumentViewerProps) {
+    const [document, setDocument] = useState<Document>(initialDocument);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const handleRating = async (rating: "like" | "dislike") => {
+        try {
+            setIsLoading(true);
+            let updatedDocument;
+
+            if (rating === "like") {
+                updatedDocument = await documentApi.likeDocument(document.id);
+            } else {
+                updatedDocument = await documentApi.dislikeDocument(
+                    document.id
+                );
+            }
+            toast.success('Cập nhật đánh giá tài liệu thành công!');
+        } catch (error: any) {
+            toast.error("Lỗi khi cập nhật đánh giá tài liệu: ");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <div className="flex-grow container mx-auto px-4">
                 <div className="grid grid-cols-12 gap-6 h-full">
                     <div className="col-span-3">
-                        <DocumentMetadata document={document} />
+                        <DocumentMetadata
+                            document={document}
+                            onRating={(rating) => handleRating(rating)}
+                            isLoading={isLoading}
+                        />
                     </div>
                     <div className="col-span-7 h-full">
                         <DocumentContent document={document} />

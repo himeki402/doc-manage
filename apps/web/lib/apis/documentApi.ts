@@ -148,11 +148,12 @@ const documentApi = {
     },
     createDocument: async (data: FormData): Promise<void> => {
         try {
-            await apiClient.post("/documents/upload", data, {
+            const response = await apiClient.post("/documents/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
+            return response.data;
         } catch (error: any) {
             if (error.response) {
                 throw {
@@ -276,6 +277,27 @@ const documentApi = {
             };
         }
     },
+    requestApproveDocument: async (
+        id: string
+    ): Promise<void> => {
+        try {
+            await apiClient.post(`/documents/${id}/request-approval`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể yêu cầu duyệt tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
     approveDocument: async (id: string): Promise<void> => {
         try {
             await apiClient.post(`/documents/${id}/approve`);
@@ -325,6 +347,43 @@ const documentApi = {
                     message:
                         error.response.data.message ||
                         "Không thể lấy thống kê tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    likeDocument: async (id: string): Promise<void> => {
+        try {
+            await apiClient.post(`/documents/${id}/like`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Không thể thích tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    dislikeDocument: async (id: string): Promise<void> => {
+        try {
+            await apiClient.post(`/documents/${id}/dislike`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể không thích tài liệu",
                     errors: error.response.data.errors,
                 };
             }

@@ -20,6 +20,11 @@ import {
     Share2,
     Edit,
     Trash2,
+    Users,
+    BookOpen,
+    Eye,
+    Heart,
+    Star,
 } from "lucide-react";
 import Image from "next/image";
 import SGTthumbnail from "@/public/GiaoTrinh_thumbnail.jpg";
@@ -40,6 +45,11 @@ export default function DocumentDetailModal({
     onEdit,
     onDelete,
 }: DocumentDetailModalProps) {
+    const handleDownload = () => {
+        if (document && document.fileUrl) {
+            window.open(document.fileUrl, "_blank");
+        }
+    };
     if (!document) return null;
 
     const getTagNames = (tags: { id: string; name: string }[] | undefined) => {
@@ -106,6 +116,14 @@ export default function DocumentDetailModal({
                             </h3>
                             <div className="space-y-2 text-sm">
                                 <div className="flex items-center">
+                                    <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>
+                                        Tải lên bởi:{" "}
+                                        {document.createdByName ||
+                                            "Không xác định"}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
                                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                                     <span>
                                         Tải lên:{" "}
@@ -125,9 +143,50 @@ export default function DocumentDetailModal({
                                     </span>
                                 </div>
                                 <div className="flex items-center">
+                                    <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>
+                                        Số trang:{" "}
+                                        {document.pageCount || "Không xác định"}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Tag className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>
+                                        Danh mục:{" "}
+                                        {document.categoryName ||
+                                            "Không xác định"}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
                                     <Tag className="h-4 w-4 mr-2 text-muted-foreground" />
                                     <span>
                                         Trạng thái: {document.accessType}
+                                    </span>
+                                </div>
+                                {document.accessType === "GROUP" &&
+                                    document.groupName && (
+                                        <div className="flex items-center">
+                                            <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+                                            <span>
+                                                Nhóm: {document.groupName}
+                                            </span>
+                                        </div>
+                                    )}
+                                <div className="flex items-center">
+                                    <Eye className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>Lượt xem: {document.view || 0}</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Heart className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>
+                                        Lượt thích: {document.likeCount || 0}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Star className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>
+                                        Đánh giá: {document.rating || 0} (
+                                        {document.ratingCount || 0} lượt)
                                     </span>
                                 </div>
                             </div>
@@ -136,7 +195,11 @@ export default function DocumentDetailModal({
                 </div>
                 <AlertDialogFooter className="flex justify-between sm:justify-between">
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDownload}
+                        >
                             <Download className="h-4 w-4 mr-1" />
                             Tải xuống
                         </Button>

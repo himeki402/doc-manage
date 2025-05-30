@@ -1,24 +1,36 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Document } from "@/lib/types/document";
 import { formatDateToFullOptions } from "@/lib/utils";
 import {
     Calendar,
-    Clock,
     Eye,
     FileText,
     FolderClosed,
-    Star,
     Tag,
     ThumbsUp,
+    ThumbsDown,
     UserCheck2,
+    Loader2,
 } from "lucide-react";
+import { useState } from "react";
 
 interface DocumentMetadataProps {
     document: Document;
+    onRating?: (rating: "like" | "dislike") => void;
+    isLoading?: boolean;
 }
 
-export function DocumentMetadata({ document }: DocumentMetadataProps) {
+export function DocumentMetadata({
+    document,
+    onRating,
+    isLoading,
+}: DocumentMetadataProps) {
+    const [userRating, setUserRating] = useState<"like" | "dislike" | null>(
+        null
+    );
+
     const getTagNames = (tags: { id: string; name: string }[] | undefined) => {
         if (!tags || !Array.isArray(tags)) {
             return [];
@@ -29,6 +41,15 @@ export function DocumentMetadata({ document }: DocumentMetadataProps) {
             )
             .map((tag) => tag.name);
     };
+
+    const handleRating = (rating: "like" | "dislike") => {
+        const newRating = userRating === rating ? null : rating;
+        setUserRating(newRating);
+        if (onRating && newRating) {
+            onRating(newRating);
+        }
+    };
+
     return (
         <div className="sticky top-16">
             <div className="space-y-6 min-h-svh bg-slate-100 px-6 py-2">
@@ -53,13 +74,15 @@ export function DocumentMetadata({ document }: DocumentMetadataProps) {
                             <div className="flex justify-between">
                                 <span className="text-sm">Type:</span>
                                 <Badge variant="outline">
-                                    {document.mimeType}
+                                    {document.mimeType === "application/pdf"
+                                        ? "PDF"
+                                        : "Word"}
                                 </Badge>
                             </div>
 
                             <FolderClosed className="h-4 w-4 text-muted-foreground" />
                             <div className="flex justify-between">
-                                <span className="text-sm">Category:</span>
+                                <span className="text-sm">Danh mục:</span>
                                 <span className="text-sm font-medium">
                                     {document.categoryName}
                                 </span>
@@ -90,7 +113,9 @@ export function DocumentMetadata({ document }: DocumentMetadataProps) {
                             </div>
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                             <div className="flex justify-between">
-                                <span className="text-sm">Được tải lên vào:</span>
+                                <span className="text-sm">
+                                    Được tải lên vào:
+                                </span>
                                 <span className="text-sm font-medium">
                                     {formatDateToFullOptions(
                                         document.created_at
@@ -107,9 +132,10 @@ export function DocumentMetadata({ document }: DocumentMetadataProps) {
                         </div>
                     </CardContent>
                 </Card>
+
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-base">Tags</CardTitle>
+                        <CardTitle className="text-base">Thẻ</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex flex-wrap gap-2">
@@ -132,7 +158,67 @@ export function DocumentMetadata({ document }: DocumentMetadataProps) {
                         </div>
                     </CardContent>
                 </Card>
-            </div>{" "}
+
+                {/* Card đánh giá mới */}
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-base">
+                            Đánh giá tài liệu
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-3 justify-center">
+                            <Button
+                                variant={
+                                    userRating === "like"
+                                        ? "default"
+                                        : "outline"
+                                }
+                                size="sm"
+                                onClick={() => handleRating("like")}
+                                className={`flex items-center gap-2 ${
+                                    userRating === "like"
+                                        ? "bg-green-600 hover:bg-green-700"
+                                        : "hover:bg-green-50 hover:text-green-600 hover:border-green-600"
+                                }`}
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <ThumbsUp className="h-4 w-4" />
+                                )}
+                                Hữu ích
+                            </Button>
+                            <Button
+                                variant={
+                                    userRating === "dislike"
+                                        ? "default"
+                                        : "outline"
+                                }
+                                size="sm"
+                                onClick={() => handleRating("dislike")}
+                                className={`flex items-center gap-2 ${
+                                    userRating === "dislike"
+                                        ? "bg-red-600 hover:bg-red-700"
+                                        : "hover:bg-red-50 hover:text-red-600 hover:border-red-600"
+                                }`}
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <ThumbsDown className="h-4 w-4" />
+                                )}
+                                Không hữu ích
+                            </Button>
+                        </div>
+                        {userRating && (
+                            <p className="text-sm text-center mt-3 text-muted-foreground">
+                                Cảm ơn bạn đã đánh giá tài liệu này!
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }

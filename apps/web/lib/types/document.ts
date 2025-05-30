@@ -83,3 +83,12 @@ export type DocumentStats = {
     growthPercentage: number;
     growthCount: number;
 };
+export interface UploadDocumentFormData {
+  file: File | null;
+  title: string;
+  description: string;
+  accessType: AccessType;
+  categoryId: string;
+  selectedTags: string[];
+  groupId?: string;
+}

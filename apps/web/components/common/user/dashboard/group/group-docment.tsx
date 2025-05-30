@@ -36,10 +36,10 @@ import groupApi from "@/lib/apis/groupApi";
 import { Group } from "@/lib/types/group";
 import { GroupDetail } from "./group-detail";
 import { toast } from "sonner";
+import { useDashboardContext } from "@/contexts/dashboardContext";
 
 export function GroupDocumentTab() {
-    const [groups, setGroups] = useState<Group[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { groups, setGroups } = useDashboardContext();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [showCreateGroupDialog, setShowCreateGroupDialog] = useState(false);
@@ -50,36 +50,22 @@ export function GroupDocumentTab() {
     const [creating, setCreating] = useState(false);
     const [inviting, setInviting] = useState(false);
 
-    useEffect(() => {
-        getGroups();
-    }, []);
-
     const loadGroupDetails = async (groupId: string) => {
         try {
             const group = await groupApi.getGroupById(groupId);
             setSelectedGroup(group);
         } catch (error) {
+            console.error("Error loading group details:", error);
             toast.error("Không thể tải chi tiết nhóm");
         }
     };
 
-    const getGroups = async () => {
-        try {
-            setLoading(true);
-            const response = await groupApi.getMygroups();
-            setGroups(response.data);
-            setLoading(false);
-            return response;
-        } catch (error) {
-            setLoading(false);
-            console.log(error);
-        }
-    };
+    const safeGroups = Array.isArray(groups) ? groups : [];
 
-    const filteredGroups = groups.filter(
+    const filteredGroups = safeGroups.filter(
         (group) =>
-            group.name.includes(searchTerm) ||
-            group.description.includes(searchTerm)
+            group.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            group.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleCreateGroup = async () => {
@@ -95,7 +81,13 @@ export function GroupDocumentTab() {
                 description: newGroupDescription,
             });
 
-            setGroups((prev) => [...prev, response]);
+            setGroups((prevGroups) => {
+                const currentGroups = Array.isArray(prevGroups)
+                    ? prevGroups
+                    : [];
+                return [...currentGroups, response];
+            });
+
             setNewGroupName("");
             setNewGroupDescription("");
             setShowCreateGroupDialog(false);
@@ -107,12 +99,13 @@ export function GroupDocumentTab() {
             setCreating(false);
         }
     };
-    // Xử lý mời thành viên
+
     const handleInviteMember = async () => {
         if (!inviteEmail.trim() || !selectedGroup) {
             toast.error("Vui lòng nhập email");
             return;
         }
+
         try {
             setInviting(true);
             const updatedGroup = await groupApi.addMultipleMember(
@@ -121,9 +114,16 @@ export function GroupDocumentTab() {
             );
 
             setSelectedGroup(updatedGroup);
-            setGroups((prev) =>
-                prev.map((g) => (g.id === updatedGroup.id ? updatedGroup : g))
-            );
+
+            setGroups((prevGroups) => {
+                const currentGroups = Array.isArray(prevGroups)
+                    ? prevGroups
+                    : [];
+                return currentGroups.map((g) =>
+                    g.id === updatedGroup.id ? updatedGroup : g
+                );
+            });
+
             setInviteEmail("");
             setShowInviteDialog(false);
             toast.success("Mời thành viên thành công");
@@ -150,27 +150,25 @@ export function GroupDocumentTab() {
         }
     };
 
-    const getRoleText = (role: string) => {
-        switch (role) {
-            case "OWNER":
-                return "Chủ nhóm";
-            case "ADMIN":
-                return "Quản trị viên";
-            case "MEMBER":
-                return "Thành viên";
-            default:
-                return "Thành viên";
+    const handleDeleteGroup = async () => {
+        if (!selectedGroup) return;
+
+        try {
+            await groupApi.deleteGroup(selectedGroup.id);
+            setGroups((prevGroups) => {
+                const currentGroups = Array.isArray(prevGroups)
+                    ? prevGroups
+                    : [];
+                return currentGroups.filter((g) => g.id !== selectedGroup.id);
+            });
+
+            setSelectedGroup(null);
+            toast.success("Xóa nhóm thành công");
+        } catch (error) {
+            console.error("Error deleting group:", error);
+            toast.error("Không thể xóa nhóm");
         }
     };
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <span className="ml-2">Đang tải...</span>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-4">
@@ -271,6 +269,7 @@ export function GroupDocumentTab() {
                     onBack={() => setSelectedGroup(null)}
                     onShowInviteDialog={() => setShowInviteDialog(true)}
                     onRemoveMember={handleRemoveMember}
+                    onDeleteGroup={handleDeleteGroup}
                 />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -299,13 +298,13 @@ export function GroupDocumentTab() {
                                     <div className="flex items-center">
                                         <Users className="h-4 w-4 mr-1" />
                                         <span>
-                                            {group.memberCount} thành viên
+                                            {group.memberCount || 0} thành viên
                                         </span>
                                     </div>
                                     <div className="flex items-center">
                                         <FileText className="h-4 w-4 mr-1" />
                                         <span>
-                                            {group.documentCount} tài liệu
+                                            {group.documentCount || 0} tài liệu
                                         </span>
                                     </div>
                                 </div>

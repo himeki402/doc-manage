@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
 import { Document, GetDocumentsResponse } from "@/lib/types/document";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import DocumentItem from "./document-item";
 import DocumentDetailModal from "./document-detail-modal";
@@ -31,13 +31,14 @@ export default function DocumentList({
     documentsResponse,
     onFetchDocuments,
 }: DocumentListProps) {
-    const [selectedDocument, setSelectedDocument] = useState<Document | null>(
-        null
+    const [selectedDocument, setSelectedDocument] = useState<Document>(
+        {} as Document
     );
     const [isLoadingPage, setIsLoadingPage] = useState(false);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
     const handleNextPage = async () => {
         if (
             documentsResponse &&
@@ -104,7 +105,7 @@ export default function DocumentList({
     const confirmDelete = async () => {
         if (!selectedDocument || !selectedDocument.id) return;
         try {
-            await documentApi.deleteDocument(selectedDocument.id);
+            await documentApi.deleteDocument(selectedDocument.id);      
             setIsDeleteConfirmOpen(false);
             toast.success("Xóa tài liệu thành công");
         } catch (error) {
@@ -113,13 +114,6 @@ export default function DocumentList({
         } finally {
             setIsDeleteConfirmOpen(false);
         }
-    };
-
-    const saveEdit = () => {
-        // Implement save edit logic here
-        console.log("Saving edited document:", selectedDocument);
-        setIsEditOpen(false);
-        // After saving, you would typically refresh the document list
     };
 
     return (
@@ -208,8 +202,7 @@ export default function DocumentList({
             <DocumentEditModal
                 document={selectedDocument}
                 isOpen={isEditOpen}
-                onClose={() => setIsEditOpen(false)}
-                onSave={saveEdit}
+                onOpenChange={setIsEditOpen}
             />
             <DocumentDeleteModal
                 document={selectedDocument}

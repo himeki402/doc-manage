@@ -32,6 +32,7 @@ import WelcomeSection from "@/components/common/user/dashboard/welcome-section";
 import OverviewCards from "@/components/common/user/dashboard/overview-card";
 import OcrDocumentTab from "@/components/common/user/dashboard/ocr/ocr-document-tab";
 import { GroupDocumentTab } from "@/components/common/user/dashboard/group/group-docment";
+import { UploadDocumentTab } from "@/components/common/user/dashboard/upload/upload-document-tab";
 
 export default function Dashboard() {
     const { isAuthenticated, isLoading, user } = useAuth();
@@ -84,7 +85,8 @@ export default function Dashboard() {
                         <TabsTrigger value="documents">Tài liệu</TabsTrigger>
                         <TabsTrigger value="analytics">Thống kê</TabsTrigger>
                         <TabsTrigger value="group">Nhóm</TabsTrigger>
-                        <TabsTrigger value="OCR">OCR</TabsTrigger>
+                        <TabsTrigger value="OCR">OCR tài liệu ảnh</TabsTrigger>
+                        <TabsTrigger value="upload">Tải lên tài liệu</TabsTrigger>
                     </TabsList>
                     <TabsContent value="documents" className="space-y-4">
                         <DocumentsTab
@@ -232,6 +234,9 @@ export default function Dashboard() {
 
                     <TabsContent value="group" className="space-y-4">
                         <GroupDocumentTab />
+                    </TabsContent>
+                    <TabsContent value="upload" className="space-y-4">
+                        <UploadDocumentTab />
                     </TabsContent>
                 </Tabs>
             </div>

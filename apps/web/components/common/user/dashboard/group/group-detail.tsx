@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,28 +6,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Document, Group, Member } from "@/lib/types/group"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Document, Group, Member } from "@/lib/types/group";
 import { convertBytesToMB } from "@/lib/utils";
-import { FileText, Plus, Search, UserPlus, Users, X } from "lucide-react";
+import { FileText, Plus, Search, UserPlus, Users, X, Trash2 } from "lucide-react";
 
 interface GroupDetailProps {
   group: Group;
   documents: Document[];
   members: Member[];
-  onBack: () => void
-  onShowInviteDialog: () => void
-  onRemoveMember: (memberId: string) => void
+  onBack: () => void;
+  onShowInviteDialog: () => void;
+  onRemoveMember: (memberId: string) => void;
+  onDeleteGroup: (groupId: string) => void;
 }
 
-export function GroupDetail({ group, documents, members, onBack, onShowInviteDialog, onRemoveMember }: GroupDetailProps) {
+export function GroupDetail({ group, documents, members, onBack, onShowInviteDialog, onRemoveMember, onDeleteGroup }: GroupDetailProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+
   const getRoleText = (role: string) => {
     switch (role) {
-      case 'OWNER': return 'Chủ nhóm'
-      case 'ADMIN': return 'Quản trị viên'
-      case 'MEMBER': return 'Thành viên'
-      default: return 'Thành viên'
+      case 'ADMIN': return 'Quản trị viên';
+      case 'MEMBER': return 'Thành viên';
+      default: return 'Thành viên';
     }
-  }
+  };
+
+  const handleDeleteGroup = () => {
+    if (deleteConfirmText === group.name) {
+      onDeleteGroup(group.id);
+      setIsDeleteDialogOpen(false);
+      setDeleteConfirmText("");
+    }
+  };
+
+  const canDeleteGroup = deleteConfirmText === group.name;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -34,9 +50,59 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
           ← Quay lại
         </Button>
         {group.isAdmin && (
-          <Button variant="outline" size="sm">
-            Chỉnh sửa nhóm
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              Chỉnh sửa nhóm
+            </Button>
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Xóa nhóm
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Xác nhận xóa nhóm</AlertDialogTitle>
+                </AlertDialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    Bạn có chắc chắn muốn xóa nhóm "{group.name}" không?
+                  </div>
+                  <div className="text-red-600 font-medium">
+                    ⚠️ Hành động này không thể hoàn tác và sẽ:
+                  </div>
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    <div>• Xóa vĩnh viễn tất cả {group.documentCount} tài liệu trong nhóm</div>
+                    <div>• Loại bỏ {group.memberCount} thành viên khỏi nhóm</div>
+                    <div>• Xóa toàn bộ dữ liệu và lịch sử nhóm</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium mb-2">
+                      Để xác nhận, vui lòng nhập tên nhóm: {group.name}
+                    </div>
+                    <Input
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      placeholder="Nhập tên nhóm để xác nhận"
+                    />
+                  </div>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmText("")}>
+                    Hủy
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteGroup}
+                    disabled={!canDeleteGroup}
+                    className="bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Xóa nhóm vĩnh viễn
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         )}
       </div>
 
@@ -47,11 +113,6 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
               <CardTitle>{group.name}</CardTitle>
               <CardDescription>{group.description}</CardDescription>
             </div>
-            {group.isAdmin && (
-              <Button onClick={onShowInviteDialog}>
-                <UserPlus className="mr-2 h-4 w-4" /> Mời thành viên
-              </Button>
-            )}
           </div>
           <div className="flex items-center text-sm text-muted-foreground mt-2">
             <div className="flex items-center mr-4">
@@ -170,13 +231,13 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
                             className={
                               member.role === "ADMIN"
                                 ? "bg-blue-50 text-blue-700 border-blue-200"
-                                  : "bg-gray-50 text-gray-700 border-gray-200"
+                                : "bg-gray-50 text-gray-700 border-gray-200"
                             }
                           >
-                            {member.role}
+                            {getRoleText(member.role)}
                           </Badge>
                           {group.isAdmin && member.role !== "ADMIN" && (
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onRemoveMember(member.user_id)}>
                               <X className="h-4 w-4" />
                             </Button>
                           )}
@@ -191,5 +252,5 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, FileEdit, Eye, Edit, Trash2 } from "lucide-react";
+import { FileText, FileEdit, Eye, Edit, Trash2, Share2 } from "lucide-react";
 import { Document } from "@/lib/types/document";
 import { formatDateToFullOptions } from "@/lib/utils";
+import { useState } from "react";
+import documentApi from "@/lib/apis/documentApi";
+import { toast } from "sonner";
 
 interface DocumentItemProps {
     document: Document;
@@ -17,6 +20,28 @@ export default function DocumentItem({
     onEdit,
     onDelete,
 }: DocumentItemProps) {
+    const [isRequesting, setIsRequesting] = useState(false);
+    const handleRequestPublic = async () => {
+        setIsRequesting(true);
+        try {
+            await documentApi.requestApproveDocument(document.id);
+            toast.success(
+                "Yêu cầu chuyển trạng thái thành Công khai đã được gửi đến admin"
+            );
+        } catch (error: any) {
+            console.error("Lỗi khi gửi yêu cầu công khai:", error);
+            if (error.status === 403) {
+                toast.error("Bạn không có quyền gửi yêu cầu này");
+            } else if (error.status === 404) {
+                toast.error("Tài liệu không tồn tại");
+            } else {
+                toast.error(error.message || "Không thể gửi yêu cầu công khai");
+            }
+        } finally {
+            setIsRequesting(false);
+        }
+    };
+
     return (
         <div className="flex items-center justify-between p-4 hover:bg-slate-50">
             <div className="flex items-center gap-3">
@@ -52,7 +77,8 @@ export default function DocumentItem({
                         </span>
                         <span>•</span>
                         <span>
-                            Cập nhật {formatDateToFullOptions(document.updated_at)}
+                            Cập nhật{" "}
+                            {formatDateToFullOptions(document.updated_at)}
                         </span>
                     </div>
                 </div>
@@ -71,10 +97,22 @@ export default function DocumentItem({
                     {document.accessType}
                 </Badge>
                 <div className="flex gap-1">
+                    {document.accessType !== "PUBLIC" && document.accessType !== "GROUP" && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleRequestPublic}
+                            disabled={isRequesting}
+                            title="Yêu cầu chuyển thành Công khai"
+                        >
+                            <Share2 size={16} />
+                        </Button>
+                    )}
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => onViewDetail(document)}
+                        title="Xem chi tiết tài liệu"
                     >
                         <Eye size={16} />
                     </Button>
@@ -82,6 +120,7 @@ export default function DocumentItem({
                         variant="ghost"
                         size="icon"
                         onClick={() => onEdit(document)}
+                        title="Chỉnh sửa tài liệu"
                     >
                         <Edit size={16} />
                     </Button>
@@ -89,6 +128,7 @@ export default function DocumentItem({
                         variant="ghost"
                         size="icon"
                         onClick={() => onDelete(document)}
+                        title="Xóa tài liệu"
                     >
                         <Trash2 size={16} />
                     </Button>
