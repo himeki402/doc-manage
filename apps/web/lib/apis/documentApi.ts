@@ -31,6 +31,20 @@ export interface SearchDocumentParams {
     tag?: string | "all";
 }
 
+interface SearchSuggestionResponse {
+    suggestions: string[];
+    documents: Array<{
+        id: string;
+        title: string;
+        description: string;
+        categoryName?: string;
+        createdByName?: string;
+        thumbnailUrl?: string;
+        accessType: string;
+        relevanceScore?: number;
+    }>;
+}
+
 const documentApi = {
     getPublicDocuments: async (
         params: DocumentQueryParams = {}
@@ -151,6 +165,14 @@ const documentApi = {
             const response = await apiClient.post("/documents/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round(
+                        (progressEvent.loaded * 100) /
+                            (progressEvent.total || 1)
+                    );
+                    console.log(`Upload Progress: ${percentCompleted}%`);
                 },
             });
             return response.data;
@@ -277,9 +299,7 @@ const documentApi = {
             };
         }
     },
-    requestApproveDocument: async (
-        id: string
-    ): Promise<void> => {
+    requestApproveDocument: async (id: string): Promise<void> => {
         try {
             await apiClient.post(`/documents/${id}/request-approval`);
         } catch (error: any) {
@@ -364,7 +384,8 @@ const documentApi = {
                 throw {
                     status: error.response.status,
                     message:
-                        error.response.data.message || "Không thể thích tài liệu",
+                        error.response.data.message ||
+                        "Không thể thích tài liệu",
                     errors: error.response.data.errors,
                 };
             }
@@ -391,6 +412,20 @@ const documentApi = {
                 status: 500,
                 message: error.message || "Lỗi máy chủ nội bộ",
             };
+        }
+    },
+    getFTSSearchSuggestions: async (
+        query: string,
+        limit?: number
+    ): Promise<SearchSuggestionResponse> => {
+        try {
+            const response = await apiClient.get(
+                `/documents/fts-search-suggestions?query=${encodeURIComponent(query)}${limit ? `&limit=${limit}` : ""}`
+            );
+            return response.data.data || { suggestions: [], documents: [] };
+        } catch (error: any) {
+            console.error("Error fetching advanced search suggestions:", error);
+            return { suggestions: [], documents: [] };
         }
     },
 };

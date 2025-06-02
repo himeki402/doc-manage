@@ -1,5 +1,10 @@
 import { add } from "date-fns";
-import { AddMember, CreateGroupRequest, Group, GroupResponse } from "../types/group";
+import {
+    AddMember,
+    CreateGroupRequest,
+    Group,
+    GroupResponse,
+} from "../types/group";
 import apiClient from "./config";
 
 const groupApi = {
@@ -21,7 +26,7 @@ const groupApi = {
             };
         }
     },
-    createGroup: async ( data: CreateGroupRequest): Promise<Group> => {
+    createGroup: async (data: CreateGroupRequest): Promise<Group> => {
         try {
             const response = await apiClient.post("/groups", data);
             return response.data;
@@ -173,7 +178,8 @@ const groupApi = {
                 throw {
                     status: error.response.status,
                     message:
-                        error.response.data.message || "Không thể gỡ tài liệu khỏi nhóm",
+                        error.response.data.message ||
+                        "Không thể gỡ tài liệu khỏi nhóm",
                     errors: error.response.data.errors,
                 };
             }

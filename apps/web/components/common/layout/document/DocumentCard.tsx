@@ -11,6 +11,7 @@ type DocumentItem = {
     thumbnailUrl?: string;
     created_at: string;
     createdByName: string;
+    likeCount: number;
     slug: string;
     view: number;
     rating: number;
@@ -43,16 +44,23 @@ export function DocumentCard({ document }: { document: DocumentItem }) {
                     <h4 className="font-bold mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
                         {document.title}
                     </h4>
-                    <p className="text-sm text-slate-600 mb-2">
-                        Added by {document.createdByName}
+                    <p className="text-sm text-slate-600 mb-2 line-clamp-1">
+                        Tải lên bởi {document.createdByName}
                     </p>
-                    <div className="flex items-center text-sm text-slate-600">
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        <span>
-                            {document.rating.toFixed(0)} ({document.ratingCount}{" "}
-                            đánh giá)
-                        </span>
-                    </div>
+                    {document.ratingCount > 0 ? (
+                        <div className="flex items-center text-sm text-slate-600">
+                            <ThumbsUp className="h-4 w-4 mr-1" />
+                            <span>
+                                {`${((document.likeCount / document.ratingCount) * 100).toFixed(0)}%`}{" "}
+                                ({document.ratingCount} đánh giá)
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center text-sm text-slate-600">
+                            <ThumbsUp className="h-4 w-4 mr-1" />
+                            <p> 0 đánh giá</p>
+                        </div>
+                    )}
                 </CardContent>
                 <CardFooter className="p-4 pt-0">
                     <div className="flex items-center text-sm text-slate-500">

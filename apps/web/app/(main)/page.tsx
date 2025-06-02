@@ -5,19 +5,6 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { SearchBar } from "@/components/home/MainSearchBar";
 import { DocumentGrid } from "@/components/home/DocumentGrid";
 
-async function getPublicDocuments(): Promise<Document[]> {
-    try {
-        const response = await documentApi.getPublicDocuments({
-            page: 1,
-            limit: 10,
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Không thể lấy danh sách tài liệu:", error);
-        return [];
-    }
-}
-
 async function getSGTDocuments(): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
