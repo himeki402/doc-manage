@@ -126,7 +126,12 @@ export function DocumentMetadata({
                             <div className="flex justify-between">
                                 <span className="text-sm">Đánh giá:</span>
                                 <span className="text-sm font-medium">
-                                    {document.rating}
+                                    <span className="flex items-center gap-2">
+                                        <ThumbsUp className="h-4 w-4 text-green-600" />
+                                        {document.likeCount ?? 0}
+                                        <ThumbsDown className="h-4 w-4 text-red-600 ml-2" />
+                                        {document.dislikeCount ?? 0}
+                                    </span>
                                 </span>
                             </div>
                         </div>

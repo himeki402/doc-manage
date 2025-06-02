@@ -19,6 +19,7 @@ export type Document = {
     created_at: string;
     updated_at: string;
     likeCount: number;
+    dislikeCount: number;
     ratingCount: number;
     view: number;
     rating: number;

@@ -4,8 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import {
     Dialog,
     DialogContent,
-    DialogFooter,
-    DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
 import {

@@ -21,16 +21,20 @@ export function DocumentViewer({
     const handleRating = async (rating: "like" | "dislike") => {
         try {
             setIsLoading(true);
-            let updatedDocument;
-
             if (rating === "like") {
-                updatedDocument = await documentApi.likeDocument(document.id);
+                await documentApi.likeDocument(document.id);
+                setDocument((prev) => ({
+                    ...prev,
+                    likeCount: prev.likeCount + 1,
+                }));
             } else {
-                updatedDocument = await documentApi.dislikeDocument(
-                    document.id
-                );
+                await documentApi.dislikeDocument(document.id);
+                setDocument((prev) => ({
+                    ...prev,
+                    dislikeCount: prev.dislikeCount + 1,
+                }));
             }
-            toast.success('Cập nhật đánh giá tài liệu thành công!');
+            toast.success("Cập nhật đánh giá tài liệu thành công!");
         } catch (error: any) {
             toast.error("Lỗi khi cập nhật đánh giá tài liệu: ");
         } finally {

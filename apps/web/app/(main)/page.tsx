@@ -135,7 +135,7 @@ export default async function HomePage() {
                     {/* Category Tài liệu ngoại ngữ */}
                     <DocumentGrid
                         title="Tài liệu ngoại ngữ"
-                        categorySlug="Ngoai-ngu"
+                        categorySlug="Tai-lieu-ngoai-ngu"
                         iconBgColor="bg-green-100"
                         iconColor="text-green-600"
                         documents={NNDocument}
