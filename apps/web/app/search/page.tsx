@@ -1,3 +1,4 @@
+
 import { DocumentGrid } from "@/components/common/search/document-grid";
 import SearchHeader from "@/components/common/search/search-header";
 import documentApi, {
@@ -21,24 +22,6 @@ async function getDocumentBySearch(
         console.error("Không thể lấy danh sách tài liệu:", error);
         throw error;
     }
-}
-
-function DocumentList({ documents }: { documents: GetDocumentsResponse }) {
-    return (
-        <div>
-            {documents.data.length === 0 ? (
-                <p>Không tìm thấy tài liệu nào.</p>
-            ) : (
-                <ul className="space-y-2">
-                    {documents.data.map((doc) => (
-                        <li key={doc.id} className="p-2 border rounded">
-                            {doc.title}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
 }
 
 export default async function SearchPage({

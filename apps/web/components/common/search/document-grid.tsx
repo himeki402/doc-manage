@@ -7,6 +7,7 @@ type DocumentGridProps = {
         thumbnailUrl?: string;
         created_at: string;
         createdByName: string;
+        likeCount: number;
         slug: string;
         view: number;
         rating: number;

@@ -428,6 +428,20 @@ const documentApi = {
             return { suggestions: [], documents: [] };
         }
     },
+    getSearchCategories: async (query?: string) => {
+        try {
+            const params = new URLSearchParams();
+            if (query) params.append("query", query);
+
+            const response = await apiClient.get(
+                `/documents/search-categories?${params.toString()}`
+            );
+            return response.data.data || [];
+        } catch (error) {
+            console.error("Error fetching search categories:", error);
+            return [];
+        }
+    },
 };
 
 export default documentApi;
