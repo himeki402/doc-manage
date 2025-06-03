@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -13,42 +12,53 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { Category } from "@/lib/types/category";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import documentApi from "@/lib/apis/documentApi";
 
-export function SearchFilters() {
+interface SearchFiltersProps {
+    availableCategories?: Category[];
+}
+
+interface Category {
+    id: string;
+    name: string;
+}
+
+export function SearchFilters({ availableCategories }: SearchFiltersProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<Category[]>(availableCategories ?? []);
     const [selectedCategory, setSelectedCategory] = useState(
-        searchParams.get("category") || ""
+        searchParams.get("category") || "all"
     );
     const [selectedSortBy, setSelectedSortBy] = useState(
         searchParams.get("sortBy") || "relevance"
     );
     const [selectedSortOrder, setSelectedSortOrder] = useState(
-        searchParams.get("sortOrder") || "desc"
+        searchParams.get("sortOrder") || "DESC"
     );
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const query = searchParams.get("q") || "";
-                const response = await documentApi.getSearchCategories(query);
-                setCategories(response);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-        fetchCategories();
-    }, [searchParams]);
+        if (availableCategories && availableCategories.length > 0) {
+            setCategories(availableCategories);
+        } else {
+            const fetchCategories = async () => {
+                try {
+                    const query = searchParams.get("q") || "";
+                    const response = await documentApi.getSearchCategories(query);
+                    setCategories(response);
+                } catch (error) {
+                    console.error("Error fetching categories:", error);
+                }
+            };
+            fetchCategories();
+        }
+    }, [availableCategories, searchParams]);
 
     const applyFilters = () => {
         const params = new URLSearchParams(searchParams);
 
-        if (selectedCategory) {
+        if (selectedCategory && selectedCategory !== "all") {
             params.set("category", selectedCategory);
         } else {
             params.delete("category");
@@ -68,7 +78,7 @@ export function SearchFilters() {
         params.set("sortOrder", "desc");
         params.set("page", "1");
 
-        setSelectedCategory("");
+        setSelectedCategory("all");
         setSelectedSortBy("relevance");
         setSelectedSortOrder("desc");
 
@@ -82,15 +92,6 @@ export function SearchFilters() {
                     <CardTitle className="text-lg">Bộ lọc tìm kiếm</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {/* Search */}
-                    <div className="space-y-2">
-                        <Label>Tìm kiếm</Label>
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="Tìm kiếm..." className="pl-9" />
-                        </div>
-                    </div>
-
                     {/* Category Filter */}
                     <div className="space-y-2">
                         <Label>Danh mục</Label>
@@ -102,7 +103,7 @@ export function SearchFilters() {
                                 <SelectValue placeholder="Tất cả danh mục" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="">
+                                <SelectItem value="all">
                                     Tất cả danh mục
                                 </SelectItem>
                                 {categories.map((category) => (
@@ -131,7 +132,7 @@ export function SearchFilters() {
                                 <SelectItem value="relevance">
                                     Độ liên quan
                                 </SelectItem>
-                                <SelectItem value="createdAt">
+                                <SelectItem value="created_at">
                                     Ngày tạo
                                 </SelectItem>
                                 <SelectItem value="title">
@@ -148,11 +149,11 @@ export function SearchFilters() {
                             onValueChange={setSelectedSortOrder}
                         >
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="desc" id="desc" />
+                                <RadioGroupItem value="DESC" id="desc" />
                                 <Label htmlFor="desc">Giảm dần</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="asc" id="asc" />
+                                <RadioGroupItem value="ASC" id="asc" />
                                 <Label htmlFor="asc">Tăng dần</Label>
                             </div>
                         </RadioGroup>

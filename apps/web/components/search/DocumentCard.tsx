@@ -50,12 +50,6 @@ export function DocumentCard({ document }: DocumentCardProps) {
                                 {document.title}
                             </h3>
                         </Link>
-                        <Badge
-                            variant="outline"
-                            className="text-xs flex-shrink-0"
-                        >
-                            {document.accessType}
-                        </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
                         {document.description}
@@ -98,29 +92,6 @@ export function DocumentCard({ document }: DocumentCardProps) {
                             </Badge>
                         )}
                     </div>
-                    {document.fileUrl ? (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            asChild
-                        >
-                            <Link href={document.fileUrl} target="_blank">
-                                <Download className="h-4 w-4 mr-2" />
-                                Tải xuống
-                            </Link>
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            disabled
-                        >
-                            <Download className="h-4 w-4 mr-2" />
-                            Không có file
-                        </Button>
-                    )}
                 </div>
             </CardFooter>
         </Card>

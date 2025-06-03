@@ -3,8 +3,7 @@
 import { Document } from "@/lib/types/document";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { FileText, Download, Eye, Clock, User, Folder } from "lucide-react";
+import { FileText, Clock, User, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -53,26 +52,6 @@ export function DocumentListItem({ document }: DocumentListItemProps) {
                                 <p className="text-sm text-muted-foreground line-clamp-2">
                                     {document.description}
                                 </p>
-                            </div>
-                            <div className="flex items-center gap-2 flex-shrink-0">
-                                <Badge variant="outline" className="text-xs">
-                                    {document.accessType}
-                                </Badge>
-                                {document.fileUrl && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8"
-                                        asChild
-                                    >
-                                        <Link
-                                            href={document.fileUrl}
-                                            target="_blank"
-                                        >
-                                            <Download className="h-4 w-4" />
-                                        </Link>
-                                    </Button>
-                                )}
                             </div>
                         </div>
 
