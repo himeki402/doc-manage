@@ -142,7 +142,7 @@ export function UploadDocumentDialog({
                 formDataToSend.append("groupId", groupId);
             }
 
-            await documentApi.createDocument(formDataToSend);
+            await documentApi.uploadDocument(formDataToSend);
 
             toast.success("Tài liệu đã được tải lên thành công");
             resetForm();

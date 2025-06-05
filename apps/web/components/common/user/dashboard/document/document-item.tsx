@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, FileEdit, Eye, Edit, Trash2, Share2 } from "lucide-react";
+import { FileText, FileEdit, Eye, Edit, Trash2, Share2, Image, Video, File } from "lucide-react";
 import { Document } from "@/lib/types/document";
 import { formatDateToFullOptions } from "@/lib/utils";
 import { useState } from "react";
 import documentApi from "@/lib/apis/documentApi";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface DocumentItemProps {
     document: Document;
@@ -21,6 +22,7 @@ export default function DocumentItem({
     onDelete,
 }: DocumentItemProps) {
     const [isRequesting, setIsRequesting] = useState(false);
+    const router = useRouter();
     const handleRequestPublic = async () => {
         setIsRequesting(true);
         try {
@@ -42,6 +44,34 @@ export default function DocumentItem({
         }
     };
 
+    // Xác định biểu tượng và text dựa trên mimeType
+    const getFileIconAndType = (mimeType: string) => {
+        switch (mimeType) {
+            case "application/pdf":
+                return { icon: <FileText size={20} />, type: "PDF" };
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                return { icon: <FileEdit size={20} />, type: "Word" };
+            case "image/jpeg":
+            case "image/png":
+            case "image/gif":
+            case "image/webp":
+            case "image/svg+xml":
+            case "image/tiff":
+            case "image/bmp":
+            case "image/jpg":
+                return { icon: <Image size={20} />, type: "Image" };
+            default:
+                return { icon: <File size={20} />, type: "File" };
+        }
+    };
+
+    const handleTitleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        router.push(`/doc/${document.id}`);
+    };
+
+    const { icon, type } = getFileIconAndType(document.mimeType);
+
     return (
         <div className="flex items-center justify-between p-4 hover:bg-slate-50">
             <div className="flex items-center gap-3">
@@ -49,28 +79,27 @@ export default function DocumentItem({
                     className={`w-10 h-10 rounded-md flex items-center justify-center ${
                         document.mimeType === "application/pdf"
                             ? "bg-red-100 text-red-700"
-                            : "bg-blue-100 text-blue-700"
+                            : document.mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              ? "bg-blue-100 text-blue-700"
+                              : document.mimeType.startsWith("image/")
+                                ? "bg-green-100 text-green-700"
+                                : document.mimeType.startsWith("video/")
+                                  ? "bg-purple-100 text-purple-700"
+                                  : "bg-gray-100 text-gray-700"
                     }`}
                 >
-                    {document.mimeType === "application/pdf" ? (
-                        <FileText size={20} />
-                    ) : (
-                        <FileEdit size={20} />
-                    )}
+                    {icon}
                 </div>
                 <div>
                     <p
-                        className="text-sm font-medium truncate max-w-[500px]"
+                        className="text-sm font-medium truncate max-w-[500px] cursor-pointer"
                         title={document.title}
+                        onClick={handleTitleClick}
                     >
                         {document.title}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>
-                            {document.mimeType === "application/pdf"
-                                ? "PDF"
-                                : "Word"}
-                        </span>
+                        <span>{type}</span>
                         <span>•</span>
                         <span>
                             {document.categoryName || "Không có danh mục"}

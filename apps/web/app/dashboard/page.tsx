@@ -8,24 +8,17 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    BookText,
     CalendarDays,
     FileEdit,
-    FileText,
-    GraduationCap,
-    History,
-    Plus,
     Share2,
     Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/authContext";
-import { GetDocumentsResponse } from "@/lib/types/document";
+import { DocumentStatsResponseDto, GetDocumentsResponse } from "@/lib/types/document";
 import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
 import DocumentsTab from "@/components/common/user/dashboard/document/document-tab";
 import WelcomeSection from "@/components/common/user/dashboard/welcome-section";
@@ -39,6 +32,7 @@ export default function Dashboard() {
     const router = useRouter();
     const [documentsResponse, setDocumentsResponse] =
         useState<GetDocumentsResponse | null>(null);
+        const [documentsStats, setDocumentsStats] = useState<DocumentStatsResponseDto | null>(null);
     const [loadingDocuments, setLoadingDocuments] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +42,7 @@ export default function Dashboard() {
         }
         if (isAuthenticated && !isLoading) {
             fetchMyDocuments();
+            fetchDocumentsStats();
         }
     }, [isAuthenticated, isLoading, router]);
 
@@ -58,6 +53,7 @@ export default function Dashboard() {
             </div>
         );
     }
+
     const fetchMyDocuments = async (
         params: DocumentQueryParams = { limit: 5 }
     ) => {
@@ -73,11 +69,22 @@ export default function Dashboard() {
             setLoadingDocuments(false);
         }
     };
+
+    const fetchDocumentsStats = async () => {
+        try {
+            const data = await documentApi.getUserDocumentStats();
+            setDocumentsStats(data);
+        } catch (err: any) {
+            console.error("Error fetching documents stats:", err);
+        }
+    }
+
+
     return (
         <div className="flex flex-col min-h-screen bg-slate-100 max-w-screen-2xl mx-auto">
             <div className="flex-1 p-4 md:p-6 space-y-6">
                 <WelcomeSection name={user?.name || ""} />
-                <OverviewCards documentsResponse={documentsResponse} />
+                <OverviewCards documentsResponse={documentsResponse} documentsStats={documentsStats} />
 
                 {/* Main Dashboard Content */}
                 <Tabs defaultValue="documents" className="space-y-4">
@@ -86,7 +93,9 @@ export default function Dashboard() {
                         <TabsTrigger value="analytics">Thống kê</TabsTrigger>
                         <TabsTrigger value="group">Nhóm</TabsTrigger>
                         <TabsTrigger value="OCR">OCR tài liệu ảnh</TabsTrigger>
-                        <TabsTrigger value="upload">Tải lên tài liệu</TabsTrigger>
+                        <TabsTrigger value="upload">
+                            Tải lên tài liệu
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value="documents" className="space-y-4">
                         <DocumentsTab

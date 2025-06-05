@@ -5,79 +5,74 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { SearchBar } from "@/components/home/MainSearchBar";
 import { DocumentGrid } from "@/components/home/DocumentGrid";
 
-async function getSGTDocuments(): Promise<Document[]> {
+interface Category {
+    title: string;
+    slug: string;
+    iconBgColor: string;
+    iconColor: string;
+}
+
+const categories: Category[] = [
+    {
+        title: "Sách giáo trình",
+        slug: "Sach-giao-trinh",
+        iconBgColor: "bg-green-100",
+        iconColor: "text-green-600"
+    },
+    {
+        title: "Tài liệu tham khảo",
+        slug: "Tai-lieu-tham-khao",
+        iconBgColor: "bg-orange-100",
+        iconColor: "text-green-600"
+    },
+    {
+        title: "Tài liệu Chuyên ngành",
+        slug: "tai-lieu-chuyen-nganh",
+        iconBgColor: "bg-blue-100",
+        iconColor: "text-green-600"
+    },
+    {
+        title: "Tài liệu ngoại ngữ",
+        slug: "Tai-lieu-ngoai-ngu",
+        iconBgColor: "bg-green-100",
+        iconColor: "text-green-600"
+    }
+];
+
+// Hàm generic để lấy documents theo category
+async function getDocumentsByCategory(slug: string): Promise<Document[]> {
     try {
         const response = await documentApi.getDocumentByCategory({
             page: 1,
             limit: 6,
-            slug: "Sach-giao-trinh",
+            slug: slug,
         });
         return response.data;
     } catch (error) {
         console.error(
-            "Không thể lấy danh sách tài liệu sách giáo trình:",
+            `Không thể lấy danh sách tài liệu cho category ${slug}:`,
             error
         );
         return [];
     }
 }
 
-async function getNNDocuments(): Promise<Document[]> {
-    try {
-        const response = await documentApi.getDocumentByCategory({
-            page: 1,
-            limit: 6,
-            slug: "Tai-lieu-ngoai-ngu",
-        });
-        return response.data;
-    } catch (error) {
-        console.error(
-            "Không thể lấy danh sách tài liệu ngoại ngữ",
-            error
-        );
-        return [];
-    }
-}
+// Hàm lấy tất cả documents cho các categories
+async function getAllCategoryDocuments(): Promise<{ [key: string]: Document[] }> {
+    const documentsPromises = categories.map(async (category) => {
+        const documents = await getDocumentsByCategory(category.slug);
+        return { [category.slug]: documents };
+    });
 
-async function getTLTKDocuments(): Promise<Document[]> {
-    try {
-        const response = await documentApi.getDocumentByCategory({
-            page: 1,
-            limit: 6,
-            slug: "Tai-lieu-tham-khao",
-        });
-        return response.data;
-    } catch (error) {
-        console.error(
-            "Không thể lấy danh sách tài liệu",
-            error
-        );
-        return [];
-    }
-}
-
-async function getTLCNDocuments(): Promise<Document[]> {
-    try {
-        const response = await documentApi.getDocumentByCategory({
-            page: 1,
-            limit: 6,
-            slug: "tai-lieu-chuyen-nganh",
-        });
-        return response.data;
-    } catch (error) {
-        console.error(
-            "Không thể lấy danh sách tài liệu",
-            error
-        );
-        return [];
-    }
+    const documentsArrays = await Promise.all(documentsPromises);
+    
+    // Merge tất cả objects thành một object duy nhất
+    return documentsArrays.reduce((acc, curr) => ({ ...acc, ...curr }), {});
 }
 
 export default async function HomePage() {
-    const TLCNDocument = await getTLCNDocuments();
-    const NNDocument = await getNNDocuments();
-    const SGTDocument = await getSGTDocuments();
-    const TLTKDocument = await getTLTKDocuments();
+    const allDocuments = await getAllCategoryDocuments();
+
     return (
         <div className="flex flex-col min-h-screen">
             <section className=" py-2">
@@ -92,42 +87,18 @@ export default async function HomePage() {
                     <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
                         DANH MỤC TÀI LIỆU MIỄN PHÍ
                     </h2>
-                    {/* Category 1: Textbooks */}
-                    <DocumentGrid
-                        title="Sách giáo trình"
-                        categorySlug="Sach-giao-trinh"
-                        iconBgColor="bg-green-100"
-                        iconColor="text-green-600"
-                        documents={SGTDocument}
-                        // onBookmark={handleBookmark}
-                    />
-                    {/* Category 2 */}
-                    <DocumentGrid
-                        title="Tài liệu tham khảo"
-                        categorySlug="Tai-lieu-tham-khao"
-                        iconBgColor="bg-orange-100"
-                        iconColor="text-green-600"
-                        documents={TLTKDocument}
-                        // onBookmark={handleBookmark}
-                    />       
-                    {/* Category Tài liệu chuyên ngành */}
-                    <DocumentGrid
-                        title="Tài liệu Chuyên ngành"
-                        categorySlug="tai-lieu-chuyen-nganh"
-                        iconBgColor="bg-blue-100"
-                        iconColor="text-green-600"
-                        documents={TLCNDocument}
-                        // onBookmark={handleBookmark}
-                    />       
-                    {/* Category Tài liệu ngoại ngữ */}
-                    <DocumentGrid
-                        title="Tài liệu ngoại ngữ"
-                        categorySlug="Tai-lieu-ngoai-ngu"
-                        iconBgColor="bg-green-100"
-                        iconColor="text-green-600"
-                        documents={NNDocument}
-                        // onBookmark={handleBookmark}
-                    />
+
+                    {categories.map((category, index) => (
+                        <DocumentGrid
+                            key={category.slug}
+                            title={category.title}
+                            categorySlug={category.slug}
+                            iconBgColor={category.iconBgColor}
+                            iconColor={category.iconColor}
+                            documents={allDocuments[category.slug] || []}
+                            // onBookmark={handleBookmark}
+                        />
+                    ))}
                 </div>
             </section>
         </div>

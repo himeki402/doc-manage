@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '/**', 
       },
+      {
+        protocol: 'https',
+        hostname: 'datn-storagefile.s3.ap-southeast-2.amazonaws.com',
+        pathname: '/**',
+      }
     ],
   },
 };

@@ -1,5 +1,5 @@
-'use client'
-import { AccessType, Document } from "@/lib/types/document"; 
+"use client";
+import { AccessType, Document } from "@/lib/types/document";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,7 @@ export default function DocumentEditModal({
         document.accessType
     );
     const [categoryId, setCategoryId] = useState(document.categoryId || "");
+    const [content, setContent] = useState(document.content || "");
     const [selectedGroupId, setSelectedGroupId] = useState<string>(
         document.groupId || ""
     );
@@ -60,14 +61,18 @@ export default function DocumentEditModal({
             setDescription(document.description || "");
             setAccessType(document.accessType || "PRIVATE");
             setCategoryId(document.categoryId || "");
+            setContent(document.content || "");
             setSelectedGroupId(document.groupId || "");
             setSelectedTagIds(
-                document.tags?.filter((tag: Tag) => tag.id).map((tag: Tag) => tag.id) ||
-                    []
+                document.tags
+                    ?.filter((tag: Tag) => tag.id)
+                    .map((tag: Tag) => tag.id) || []
             );
             setTagInput("");
         }
     }, [isOpen, document]);
+
+    const isImage = document.mimeType?.startsWith("image/");
 
     const handleAddTag = () => {
         if (!tagInput.trim()) {
@@ -83,9 +88,10 @@ export default function DocumentEditModal({
         } else if (tag && selectedTagIds.includes(tag.id)) {
             toast.info("Thẻ này đã được chọn.");
             setTagInput("");
-        }
-         else if (!tag) {
-            toast.error("Thẻ không tồn tại. Vui lòng chọn từ danh sách thẻ có sẵn hoặc tạo thẻ mới (nếu có chức năng).");
+        } else if (!tag) {
+            toast.error(
+                "Thẻ không tồn tại. Vui lòng chọn từ danh sách thẻ có sẵn hoặc tạo thẻ mới (nếu có chức năng)."
+            );
         }
     };
 
@@ -111,6 +117,7 @@ export default function DocumentEditModal({
                 description: description.trim(),
                 accessType,
                 categoryId: categoryId ? categoryId : "",
+                content: content ? content.trim() : null,
                 tagIds: selectedTagIds,
                 groupId: accessType === "GROUP" ? selectedGroupId : undefined,
             };
@@ -120,7 +127,9 @@ export default function DocumentEditModal({
                 payload
             );
             if (!updatedDocument) {
-                throw new Error("Không nhận được dữ liệu tài liệu đã cập nhật từ máy chủ.");
+                throw new Error(
+                    "Không nhận được dữ liệu tài liệu đã cập nhật từ máy chủ."
+                );
             }
 
             toast.success("Tài liệu đã được cập nhật thành công!");
@@ -134,14 +143,17 @@ export default function DocumentEditModal({
             } else if (error.response && error.response.status === 404) {
                 toast.error("Tài liệu hoặc danh mục/nhóm không tồn tại.");
             } else {
-                toast.error(error.message || "Không thể cập nhật tài liệu. Vui lòng thử lại.");
+                toast.error(
+                    error.message ||
+                        "Không thể cập nhật tài liệu. Vui lòng thử lại."
+                );
             }
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const selectedGroup = groups.find(g => g.id === selectedGroupId);
+    const selectedGroup = groups.find((g) => g.id === selectedGroupId);
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -149,7 +161,7 @@ export default function DocumentEditModal({
                 <DialogHeader>
                     <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-6 py-4 px-1"> 
+                <div className="grid gap-6 py-4 px-1">
                     <div className="grid gap-2">
                         <Label htmlFor="title">Tiêu đề</Label>
                         <Input
@@ -171,6 +183,19 @@ export default function DocumentEditModal({
                         />
                     </div>
 
+                    {isImage && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="content">Nội dung</Label>
+                            <Textarea
+                                id="content"
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                placeholder="Nhập nội dung trích xuất từ hình ảnh (nếu có)..."
+                                className="min-h-28"
+                            />
+                        </div>
+                    )}
+
                     <div className="grid gap-2">
                         <Label htmlFor="category">Danh mục</Label>
                         <Select
@@ -187,7 +212,8 @@ export default function DocumentEditModal({
                                             key={category.id}
                                             value={category.id}
                                         >
-                                            {category.name || "Danh mục không tên"}
+                                            {category.name ||
+                                                "Danh mục không tên"}
                                         </SelectItem>
                                     ))
                                 ) : (
@@ -255,11 +281,15 @@ export default function DocumentEditModal({
                                         {selectedGroup.name || "Nhóm không tên"}
                                         <Button
                                             variant="ghost"
-                                            size="sm" 
+                                            size="sm"
                                             className="h-4 w-4 rounded-full p-0 ml-1 hover:bg-destructive/20"
-                                            onClick={() => setSelectedGroupId("")}
+                                            onClick={() =>
+                                                setSelectedGroupId("")
+                                            }
                                         >
-                                            <span className="sr-only">Bỏ chọn nhóm</span>
+                                            <span className="sr-only">
+                                                Bỏ chọn nhóm
+                                            </span>
                                             ×
                                         </Button>
                                     </Badge>
@@ -284,15 +314,21 @@ export default function DocumentEditModal({
                                     }
                                 }}
                             />
-                            <Button type="button" onClick={handleAddTag} variant="outline">
+                            <Button
+                                type="button"
+                                onClick={handleAddTag}
+                                variant="outline"
+                            >
                                 Thêm thẻ
                             </Button>
                         </div>
 
                         {/* Available Tags for selection */}
                         {tags.length > 0 && (
-                             <div className="mt-1">
-                                <Label className="text-xs font-normal text-muted-foreground mb-1 block">Thẻ có sẵn (nhấn để chọn/bỏ chọn):</Label>
+                            <div className="mt-1">
+                                <Label className="text-xs font-normal text-muted-foreground mb-1 block">
+                                    Thẻ có sẵn (nhấn để chọn/bỏ chọn):
+                                </Label>
                                 <div className="flex flex-wrap gap-2 p-2 border rounded-md max-h-32 overflow-y-auto">
                                     {tags.map((tag) => (
                                         <Badge
@@ -304,7 +340,11 @@ export default function DocumentEditModal({
                                             }
                                             className="cursor-pointer hover:bg-accent"
                                             onClick={() => {
-                                                if (selectedTagIds.includes(tag.id)) {
+                                                if (
+                                                    selectedTagIds.includes(
+                                                        tag.id
+                                                    )
+                                                ) {
                                                     handleRemoveTag(tag.id);
                                                 } else {
                                                     setSelectedTagIds([
@@ -320,14 +360,18 @@ export default function DocumentEditModal({
                                 </div>
                             </div>
                         )}
-                        
+
                         {/* Selected Tags Display */}
                         {selectedTagIds.length > 0 && (
                             <div className="mt-1">
-                                <Label className="text-xs font-medium mb-1 block">Thẻ đã chọn:</Label>
+                                <Label className="text-xs font-medium mb-1 block">
+                                    Thẻ đã chọn:
+                                </Label>
                                 <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-muted/30">
                                     {selectedTagIds.map((tagId) => {
-                                        const tag = tags.find((t) => t.id === tagId);
+                                        const tag = tags.find(
+                                            (t) => t.id === tagId
+                                        );
                                         return tag ? (
                                             <Badge
                                                 key={tagId}
@@ -337,11 +381,16 @@ export default function DocumentEditModal({
                                                 {tag.name || "Thẻ không tên"}
                                                 <Button
                                                     variant="ghost"
-                                                    size="sm" 
+                                                    size="sm"
                                                     className="h-4 w-4 rounded-full p-0 ml-1 hover:bg-destructive/20"
-                                                    onClick={() => handleRemoveTag(tagId)}
+                                                    onClick={() =>
+                                                        handleRemoveTag(tagId)
+                                                    }
                                                 >
-                                                    <span className="sr-only">Xóa thẻ {tag.name}</span>×
+                                                    <span className="sr-only">
+                                                        Xóa thẻ {tag.name}
+                                                    </span>
+                                                    ×
                                                 </Button>
                                             </Badge>
                                         ) : null;
@@ -349,8 +398,10 @@ export default function DocumentEditModal({
                                 </div>
                             </div>
                         )}
-                         {(tags.length === 0 && selectedTagIds.length === 0) && (
-                            <p className="text-sm text-muted-foreground mt-2">Không có thẻ nào khả dụng hoặc đã được chọn.</p>
+                        {tags.length === 0 && selectedTagIds.length === 0 && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                                Không có thẻ nào khả dụng hoặc đã được chọn.
+                            </p>
                         )}
                     </div>
                 </div>

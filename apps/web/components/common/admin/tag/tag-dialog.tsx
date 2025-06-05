@@ -32,7 +32,7 @@ interface Tag {
 }
 
 const tagSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Tên tag phải có ít nhất 2 ký tự"),
     description: z.string().optional(),
 });
 
@@ -89,11 +89,11 @@ export function TagDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
-                    <DialogTitle>{tag ? "Edit Tag" : "Add Tag"}</DialogTitle>
+                    <DialogTitle>{tag ? "Sửa Tag" : "Thêm Tag"}</DialogTitle>
                     <DialogDescription>
                         {tag
-                            ? "Edit the details for this tag."
-                            : "Create a new tag for organizing documents."}
+                            ? "Chỉnh sửa thông tin cho tag này."
+                            : "Tạo một tag mới để tổ chức tài liệu."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -124,10 +124,10 @@ export function TagDialog({
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel>Mô tả</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder="Brief description of this tag (optional)"
+                                            placeholder="Mô tả ngắn gọn về tag này (tùy chọn)"
                                             className="resize-none"
                                             {...field}
                                         />
@@ -143,10 +143,10 @@ export function TagDialog({
                                 variant="outline"
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                Hủy
                             </Button>
                             <Button type="submit">
-                                {tag ? "Save changes" : "Create tag"}
+                                {tag ? "Lưu thay đổi" : "Tạo tag"}
                             </Button>
                         </DialogFooter>
                     </form>

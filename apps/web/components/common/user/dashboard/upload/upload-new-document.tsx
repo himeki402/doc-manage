@@ -227,8 +227,7 @@ export function UploadNewDocument({
             }
 
             const newDocument =
-                await documentApi.createDocument(formDataToSend);
-            console.log("API Response:", newDocument, typeof newDocument);
+                await documentApi.uploadDocument(formDataToSend);
             if (!newDocument) {
                 throw new Error("Không thể tạo tài liệu");
             }

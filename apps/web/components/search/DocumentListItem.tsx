@@ -3,7 +3,7 @@
 import { Document } from "@/lib/types/document";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Clock, User, Folder } from "lucide-react";
+import { FileText, Clock, User, Folder, Eye, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -76,6 +76,18 @@ export function DocumentListItem({ document }: DocumentListItemProps) {
                                 <div className="flex items-center gap-1">
                                     <User className="h-4 w-4" />
                                     {document.createdByName}
+                                </div>
+                            )}
+                            {document.view !== undefined && (
+                                <div className="flex items-center gap-1">
+                                    <Eye className="h-4 w-4" />
+                                    {document.view.toLocaleString()} lượt xem
+                                </div>
+                            )}
+                            {document.pageCount !== undefined && (
+                                <div className="flex items-center gap-1">
+                                    <BookOpen className="h-4 w-4" />
+                                    {document.pageCount} trang
                                 </div>
                             )}
                         </div>

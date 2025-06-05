@@ -24,12 +24,9 @@ import {
     AlertCircle,
     Mail,
     FileText,
-    Download,
     Trash2,
     File,
     Image,
-    Video,
-    Music,
     Archive,
 } from "lucide-react";
 import { useAdminContext } from "@/contexts/adminContext";
@@ -47,7 +44,6 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { formatDateToFullOptions } from "@/lib/utils";
-import Link from "next/link";
 
 interface GroupDetailDialogProps {
     open: boolean;
@@ -183,7 +179,8 @@ export function GroupDetailDialog({
     };
 
     const getUserById = (userId: string) => {
-        return users.find((user) => user.id === userId);
+        const user = users.find((user) => user.id === userId);
+        return user;
     };
 
     const getRoleIcon = (role: string) => {
@@ -206,8 +203,6 @@ export function GroupDetailDialog({
 
     const getFileIcon = (mimeType: string) => {
         if (mimeType.startsWith("image/")) return <Image className="h-4 w-4" />;
-        if (mimeType.startsWith("video/")) return <Video className="h-4 w-4" />;
-        if (mimeType.startsWith("audio/")) return <Music className="h-4 w-4" />;
         if (mimeType.includes("zip") || mimeType.includes("rar"))
             return <Archive className="h-4 w-4" />;
         return <File className="h-4 w-4" />;
@@ -487,7 +482,7 @@ export function GroupDetailDialog({
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-1">                                                          
+                                                            <div className="flex items-center gap-1">
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"

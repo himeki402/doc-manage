@@ -135,6 +135,12 @@ export function SearchFilters({ availableCategories }: SearchFiltersProps) {
                                 <SelectItem value="created_at">
                                     Ngày tạo
                                 </SelectItem>
+                                <SelectItem value="views">
+                                    Lượt xem
+                                </SelectItem>
+                                <SelectItem value="pageCount">
+                                    Số trang
+                                </SelectItem>
                                 <SelectItem value="title">
                                     Tên tài liệu
                                 </SelectItem>

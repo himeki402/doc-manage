@@ -9,6 +9,7 @@ type DocumentItem = {
     id: string;
     title: string;
     thumbnailUrl?: string;
+    fileUrl?: string; // Đảm bảo type DocumentItem có field fileUrl
     created_at: string;
     createdByName: string;
     likeCount: number;
@@ -20,20 +21,52 @@ type DocumentItem = {
 };
 
 export function DocumentCard({ document }: { document: DocumentItem }) {
+    const getFileTypeBadge = (mimeType: string) => {
+        switch (true) {
+            case mimeType === "application/pdf":
+                return "PDF";
+            case mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                return "Word";
+            case mimeType.startsWith("image/"):
+                return "Image";
+            case mimeType.startsWith("video/"):
+                return "Video";
+            default:
+                return "File";
+        }
+    };
+
+    const fileType = getFileTypeBadge(document.mimeType);
+
+    // Xác định nguồn hình ảnh
+    const imageSrc = document.mimeType.startsWith("image/")
+        ? document.fileUrl || SGTthumbnail
+        : document.thumbnailUrl || SGTthumbnail;
+
     return (
         <Link href={`/doc/${document.id}`} className="block">
             <Card className="h-[400px] overflow-hidden group hover:shadow-md hover:border-slate-400 transition-shadow cursor-pointer">
                 <div className="relative flex justify-center">
-                    <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 text-xs font-medium rounded">
-                        {document.mimeType === "application/pdf"
-                            ? "PDF"
-                            : "DOCUMENT"}
+                    <div
+                        className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded ${
+                            fileType === "PDF"
+                                ? "bg-red-600"
+                                : fileType === "Word"
+                                ? "bg-blue-600"
+                                : fileType === "Image"
+                                ? "bg-green-600"
+                                : fileType === "Video"
+                                ? "bg-purple-600"
+                                : "bg-gray-600"
+                        } text-white`}
+                    >
+                        {fileType}
                     </div>
                     <div className="absolute top-2 left-2 bg-orange-600 text-white px-3 py-1 text-sm font-medium z-10">
                         {formatDateToDDMMMM(document.created_at)}
                     </div>
                     <Image
-                        src={document.thumbnailUrl || SGTthumbnail}
+                        src={imageSrc}
                         alt={document.title}
                         width={300}
                         height={400}

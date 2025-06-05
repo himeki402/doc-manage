@@ -160,9 +160,40 @@ const documentApi = {
             };
         }
     },
-    createDocument: async (data: FormData): Promise<void> => {
+    uploadDocument: async (data: FormData): Promise<Document> => {
         try {
             const response = await apiClient.post("/documents/upload", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round(
+                        (progressEvent.loaded * 100) /
+                            (progressEvent.total || 1)
+                    );
+                    console.log(`Upload Progress: ${percentCompleted}%`);
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message || "Không thể tạo tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    uploadImageDocument: async (data: FormData): Promise<Document> => {
+        try {
+            const response = await apiClient.post("/documents/upload-image-document", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -442,6 +473,26 @@ const documentApi = {
             return [];
         }
     },
+    getUserDocumentStats: async (): Promise<DocumentStatsResponseDto> => {
+        try {
+            const response = await apiClient.get(`/documents/user/stats`);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy thống kê tài liệu của người dùng",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    }
 };
 
 export default documentApi;

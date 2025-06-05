@@ -11,15 +11,13 @@ import {
     SettingsIcon,
     HomeIcon,
     TagIcon,
-    GroupIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { title } from "process";
 
 const sidebarLinks = [
     {
-        title: "Trang chủ Admin",
+        title: "Tổng quan quản trị",
         href: "/admin",
         icon: LayoutDashboardIcon,
     },
@@ -132,16 +130,15 @@ export function AdminSidebar() {
                     )}
                 >
                     <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 px-3"
-                >
-                    <HomeIcon className="h-5 w-5" />
-                    <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
-                        Quay lại trang chủ
-                    </span>
-                </Button>
+                        variant="ghost"
+                        className="w-full justify-start gap-3 px-3"
+                    >
+                        <HomeIcon className="h-5 w-5" />
+                        <span className="invisible whitespace-nowrap group-hover/sidebar:visible md:visible">
+                            Quay lại trang chủ
+                        </span>
+                    </Button>
                 </Link>
-                
             </div>
         </div>
     );

@@ -136,7 +136,7 @@ export function TagsTable({
             header: "Mô tả",
             cell: ({ row }) => (
                 <div className="line-clamp-2 max-w-[350px]">
-                    {row.original.description || "No description"}
+                    {row.original.description || "Không có mô tả"}
                 </div>
             ),
         },
@@ -180,7 +180,7 @@ export function TagsTable({
                             className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                             onClick={() => onEdit(tag)}
                         >
-                            <span className="sr-only">Edit</span>
+                            <span className="sr-only">Chỉnh sửa</span>
                             <PenIcon className="h-4 w-4" />
                         </Button>
                         <Button
@@ -189,7 +189,7 @@ export function TagsTable({
                             className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleDeleteClick(tag)}
                         >
-                            <span className="sr-only">Delete</span>
+                            <span className="sr-only">Xóa</span>
                             <TrashIcon className="h-4 w-4" />
                         </Button>
                     </div>
@@ -242,7 +242,7 @@ export function TagsTable({
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <Input
-                    placeholder="Filter tags..."
+                    placeholder="Tìm kiếm tag..."
                     value={
                         (table.getColumn("name")?.getFilterValue() as string) ??
                         ""
@@ -318,7 +318,7 @@ export function TagsTable({
                 </div>
                 <div className="flex items-center space-x-6 lg:space-x-8">
                     <div className="flex items-center space-x-2">
-                        <p className="text-sm font-medium">Rows per page</p>
+                        <p className="text-sm font-medium">Số hàng mỗi trang</p>
                         <Select
                             value={`${table.getState().pagination.pageSize}`}
                             onValueChange={(value) => {
@@ -355,7 +355,7 @@ export function TagsTable({
                             onClick={() => table.setPageIndex(0)}
                             disabled={!table.getCanPreviousPage()}
                         >
-                            <span className="sr-only">Go to first page</span>
+                            <span className="sr-only">Về trang đầu</span>
                             <ChevronsLeftIcon className="h-4 w-4" />
                         </Button>
                         <Button
@@ -364,7 +364,7 @@ export function TagsTable({
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
                         >
-                            <span className="sr-only">Go to previous page</span>
+                            <span className="sr-only">Trang trước</span>
                             <ChevronLeftIcon className="h-4 w-4" />
                         </Button>
                         <Button
@@ -373,7 +373,7 @@ export function TagsTable({
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
                         >
-                            <span className="sr-only">Go to next page</span>
+                            <span className="sr-only">Trang tiếp theo</span>
                             <ChevronRightIcon className="h-4 w-4" />
                         </Button>
                         <Button
@@ -384,7 +384,7 @@ export function TagsTable({
                             }
                             disabled={!table.getCanNextPage()}
                         >
-                            <span className="sr-only">Go to last page</span>
+                            <span className="sr-only">Tới trang cuối</span>
                             <ChevronsRightIcon className="h-4 w-4" />
                         </Button>
                     </div>
@@ -410,7 +410,7 @@ export function TagsTable({
                             onClick={handleConfirmDelete}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                            Delete
+                            Xóa
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

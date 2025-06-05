@@ -160,7 +160,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 }),
                 documentApi.getDocumentStats(),
                 categoriesApi.getCategoriesforAdmin(),
-                userApi.getAllUsers({ limit: 10 }),
+                userApi.getAllUsers({ limit: 50 }),
                 userApi.getUsersStats(),
                 tagApi.getAllTags(),
                 groupApi.getAllGroup(),

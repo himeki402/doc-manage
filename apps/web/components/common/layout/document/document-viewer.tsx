@@ -7,6 +7,7 @@ import { DocumentRelated } from "./related-document";
 import documentApi from "@/lib/apis/documentApi";
 import { useState } from "react";
 import { toast } from "sonner";
+import { DocumentImageContent } from "./document-image-content";
 
 interface DocumentViewerProps {
     document: Document;
@@ -42,24 +43,48 @@ export function DocumentViewer({
         }
     };
 
+    const isPDF = document.mimeType === "application/pdf";
+    const isImage = document.mimeType?.startsWith("image/");
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            <div className="flex-grow container mx-auto px-4">
-                <div className="grid grid-cols-12 gap-6 h-full">
-                    <div className="col-span-3">
-                        <DocumentMetadata
-                            document={document}
-                            onRating={(rating) => handleRating(rating)}
-                            isLoading={isLoading}
-                        />
+            <div className="flex-grow container mx-auto px-4 py-4">
+                {isImage ? (
+                    <div className="grid grid-cols-12 gap-4 h-[calc(100vh-2rem)]">
+                        <div className="col-span-3">
+                            <DocumentMetadata
+                                document={document}
+                                onRating={(rating) => handleRating(rating)}
+                                isLoading={isLoading}
+                            />
+                        </div>
+                        <div className="col-span-9 h-full">
+                            <DocumentImageContent document={document} />
+                        </div>
                     </div>
-                    <div className="col-span-7 h-full">
-                        <DocumentContent document={document} />
+                ) : (
+                    <div className="grid grid-cols-12 gap-6 h-full">
+                        <div className="col-span-3">
+                            <DocumentMetadata
+                                document={document}
+                                onRating={(rating) => handleRating(rating)}
+                                isLoading={isLoading}
+                            />
+                        </div>
+                        <div className="col-span-7 h-full">
+                            {isPDF ? (
+                                <DocumentContent document={document} />
+                            ) : (
+                                <div className="text-center text-muted-foreground">
+                                    Loại tài liệu không được hỗ trợ để hiển thị.
+                                </div>
+                            )}
+                        </div>
+                        <div className="col-span-2 h-full">
+                            <DocumentRelated documentCatId={document.categoryId} />
+                        </div>
                     </div>
-                    <div className="col-span-2 h-full">
-                        <DocumentRelated documentCatId={document.categoryId} />
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );

@@ -1,30 +1,31 @@
 "use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { GetDocumentsResponse } from "@/lib/types/document";
+import { DocumentStatsResponseDto, GetDocumentsResponse } from "@/lib/types/document";
 import { FileText, GraduationCap, Share2, History } from "lucide-react"
 
 
 interface OverviewCardsProps {
     documentsResponse: GetDocumentsResponse | null;
+    documentsStats: DocumentStatsResponseDto | null;
 }
 
-export default function OverviewCards({ documentsResponse } : OverviewCardsProps) {
+export default function OverviewCards({ documentsResponse, documentsStats } : OverviewCardsProps) {
   const overviewData = [
     {
       title: "Tổng tài liệu",
       value: documentsResponse?.meta.total || 0,
-      description: "+8 tài liệu trong tháng này",
+      description: `${documentsStats?.data.newDocumentsThisMonth || 0} tài liệu mới trong tháng này`,
       icon: FileText,
     },
     {
       title: "Tài liệu được chia sẻ",
-      value: 28,
-      description: "5 chia sẻ mới trong tuần này",
+      value: documentsStats?.data.sharedDocuments || 0,
+      description: `${documentsStats?.data.newSharedDocumentsThisWeek || 0} chia sẻ mới trong tuần này`,
       icon: Share2,
     },
     {
       title: "Tài liệu gần đây",
-      value: 15,
+      value: documentsStats?.data.recentDocuments || 0,
       description: "Cập nhật trong 7 ngày qua",
       icon: History,
     },

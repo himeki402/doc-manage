@@ -4,7 +4,7 @@ import { Document } from "@/lib/types/document";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Eye, Clock, User, Folder } from "lucide-react";
+import { FileText, Eye, Clock, Folder, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -73,6 +73,18 @@ export function DocumentCard({ document }: DocumentCardProps) {
                             <div className="flex items-center gap-1">
                                 <Folder className="h-4 w-4" />
                                 {document.categoryName}
+                            </div>
+                        )}
+                        {document.view !== undefined && (
+                            <div className="flex items-center gap-1">
+                                <Eye className="h-4 w-4" />
+                                {document.view.toLocaleString()}
+                            </div>
+                        )}
+                        {document.pageCount !== undefined && (
+                            <div className="flex items-center gap-1">
+                                <BookOpen className="h-4 w-4" />
+                                {document.pageCount}
                             </div>
                         )}
                     </div>

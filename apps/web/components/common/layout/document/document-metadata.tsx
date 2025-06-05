@@ -50,6 +50,25 @@ export function DocumentMetadata({
         }
     };
 
+    // Xác định loại file dựa trên mimeType
+    const getFileType = (mimeType: string) => {
+        switch (true) {
+            case mimeType === "application/pdf":
+                return "PDF";
+            case mimeType ===
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                return "Word";
+            case mimeType.startsWith("image/"):
+                return "Image";
+            case mimeType.startsWith("video/"):
+                return "Video";
+            default:
+                return "File";
+        }
+    };
+
+    const fileType = getFileType(document.mimeType);
+
     return (
         <div className="sticky top-16">
             <div className="space-y-6 min-h-svh bg-slate-100 px-6 py-2">
@@ -73,10 +92,21 @@ export function DocumentMetadata({
                             <FileText className="h-4 w-4 text-muted-foreground" />
                             <div className="flex justify-between">
                                 <span className="text-sm">Type:</span>
-                                <Badge variant="outline">
-                                    {document.mimeType === "application/pdf"
-                                        ? "PDF"
-                                        : "Word"}
+                                <Badge
+                                    variant="outline"
+                                    className={`${
+                                        fileType === "PDF"
+                                            ? "border-red-600 text-red-600"
+                                            : fileType === "Word"
+                                              ? "border-blue-600 text-blue-600"
+                                              : fileType === "Image"
+                                                ? "border-green-600 text-green-600"
+                                                : fileType === "Video"
+                                                  ? "border-purple-600 text-purple-600"
+                                                  : "border-gray-600 text-gray-600"
+                                    }`}
+                                >
+                                    {fileType}
                                 </Badge>
                             </div>
 
