@@ -79,6 +79,9 @@ const documentApi = {
                 limit: params.limit,
             };
 
+            if (params.search) {
+                filteredParams.search = params.search;
+            }
             if (params.accessType && params.accessType !== "all") {
                 filteredParams.accessType = params.accessType;
             }
@@ -193,19 +196,23 @@ const documentApi = {
     },
     uploadImageDocument: async (data: FormData): Promise<Document> => {
         try {
-            const response = await apiClient.post("/documents/upload-image-document", data, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 120000,
-                onUploadProgress: (progressEvent) => {
-                    const percentCompleted = Math.round(
-                        (progressEvent.loaded * 100) /
-                            (progressEvent.total || 1)
-                    );
-                    console.log(`Upload Progress: ${percentCompleted}%`);
-                },
-            });
+            const response = await apiClient.post(
+                "/documents/upload-image-document",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    timeout: 120000,
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round(
+                            (progressEvent.loaded * 100) /
+                                (progressEvent.total || 1)
+                        );
+                        console.log(`Upload Progress: ${percentCompleted}%`);
+                    },
+                }
+            );
             return response.data;
         } catch (error: any) {
             if (error.response) {
@@ -493,11 +500,11 @@ const documentApi = {
             };
         }
     },
-    getDocumentContentAndSummary: async (
-        id: string
-    ): Promise<any> => {
+    getDocumentContentAndSummary: async (id: string): Promise<any> => {
         try {
-            const response = await apiClient.get(`/documents/${id}/summary-content`);
+            const response = await apiClient.get(
+                `/documents/${id}/summary-content`
+            );
             return response.data;
         } catch (error: any) {
             if (error.response) {
@@ -515,14 +522,14 @@ const documentApi = {
             };
         }
     },
-    getDocumentAuditLogs: async (
-        documentId: string
-    ): Promise<any> => {
+    getDocumentAuditLogs: async (documentId: string): Promise<any> => {
         if (!documentId) {
             throw new Error("Document ID is required");
         }
         try {
-            const response = await apiClient.get(`/documents/audit-logs/${documentId}`);
+            const response = await apiClient.get(
+                `/documents/audit-logs/${documentId}`
+            );
             return response.data;
         } catch (error: any) {
             if (error.response) {

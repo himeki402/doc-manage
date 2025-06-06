@@ -25,13 +25,11 @@ export function DocumentsFilters() {
     [filters.search, setFilters]
   )
 
-  // Handle search input changes
   useEffect(() => {
     const timer = debouncedSearch(searchInput)
     return () => clearTimeout(timer)
   }, [searchInput, debouncedSearch])
 
-  // Update search input when filters.search changes externally
   useEffect(() => {
     if (filters.search !== searchInput) {
       setSearchInput(filters.search)

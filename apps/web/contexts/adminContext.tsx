@@ -49,7 +49,7 @@ interface AdminContextType {
         category: string | "all";
         tag: string | "all";
         group: string | "all";
-        search: string; 
+        search: string;
     };
     setFilters: (filters: {
         accessType?: AccessType | "all";
@@ -137,59 +137,59 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-    const fetchInitialData = async () => {
-        setIsLoading(true);
-        try {
-            const [
-                documentsResponse,
-                pendingResponse,
-                documentStatsResponse,
-                categoriesResponse,
-                usersResponse,
-                userStatsResponse,
-                tagsResponse,
-                groupsResponse,
-            ] = await Promise.all([
-                documentApi.getAllDocuments({
-                    page: pagination.pageIndex + 1,
-                    limit: pagination.pageSize,
-                }),
-                documentApi.getPendingDocuments({
-                    page: 1,
-                    limit: 4,
-                }),
-                documentApi.getDocumentStats(),
-                categoriesApi.getCategoriesforAdmin(),
-                userApi.getAllUsers({ limit: 50 }),
-                userApi.getUsersStats(),
-                tagApi.getAllTags(),
-                groupApi.getAllGroup(),
-            ]);
+        const fetchInitialData = async () => {
+            setIsLoading(true);
+            try {
+                const [
+                    documentsResponse,
+                    pendingResponse,
+                    documentStatsResponse,
+                    categoriesResponse,
+                    usersResponse,
+                    userStatsResponse,
+                    tagsResponse,
+                    groupsResponse,
+                ] = await Promise.all([
+                    documentApi.getAllDocuments({
+                        page: pagination.pageIndex + 1,
+                        limit: pagination.pageSize,
+                    }),
+                    documentApi.getPendingDocuments({
+                        page: 1,
+                        limit: 4,
+                    }),
+                    documentApi.getDocumentStats(),
+                    categoriesApi.getCategoriesforAdmin(),
+                    userApi.getAllUsers({ limit: 50 }),
+                    userApi.getUsersStats(),
+                    tagApi.getAllTags(),
+                    groupApi.getAllGroup(),
+                ]);
 
-            // Cập nhật trạng thái sau khi tất cả API hoàn thành
-            setDocuments(documentsResponse.data);
-            setFilteredDocuments(documentsResponse.data);
-            setTotalDocuments(documentsResponse.meta.total);
+                // Cập nhật trạng thái sau khi tất cả API hoàn thành
+                setDocuments(documentsResponse.data);
+                setFilteredDocuments(documentsResponse.data);
+                setTotalDocuments(documentsResponse.meta.total);
 
-            setPendingDocuments(pendingResponse.data);
-            setTotalPendingDocuments(pendingResponse.meta.total);
+                setPendingDocuments(pendingResponse.data);
+                setTotalPendingDocuments(pendingResponse.meta.total);
 
-            setDocumentStats(documentStatsResponse.data);
-            setCategories(categoriesResponse.data);
-            setUsers(usersResponse.data);
-            setUserStats(userStatsResponse.data);
-            setTags(tagsResponse.data);
-            setGroups(groupsResponse.data);
-        } catch (error) {
-            console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
-            toast.error("Không thể tải dữ liệu ban đầu");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+                setDocumentStats(documentStatsResponse.data);
+                setCategories(categoriesResponse.data);
+                setUsers(usersResponse.data);
+                setUserStats(userStatsResponse.data);
+                setTags(tagsResponse.data);
+                setGroups(groupsResponse.data);
+            } catch (error) {
+                console.error("Gặp lỗi khi tải dữ liệu ban đầu:", error);
+                toast.error("Không thể tải dữ liệu ban đầu");
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    fetchInitialData();
-}, []);
+        fetchInitialData();
+    }, []);
 
     useEffect(() => {
         const fetchFilteredDocuments = async () => {
@@ -216,6 +216,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 if (filters.search && filters.search.trim() !== "") {
                     apiParams.search = filters.search.trim();
                 }
+                console.log("filters.search:", filters.search);
+                console.log("apiParams:", apiParams);
 
                 const response = await documentApi.getAllDocuments(apiParams);
                 setFilteredDocuments(response.data);
