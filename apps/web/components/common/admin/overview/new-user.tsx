@@ -87,9 +87,9 @@ export default function NewUserTable() {
                               </div>
                           ))}
                 </div>
-                <Button variant="outline" className="mt-4 w-full">
+                {/* <Button variant="outline" className="mt-4 w-full">
                     Xem tất cả
-                </Button>
+                </Button> */}
             </CardContent>
         </Card>
     );

@@ -492,7 +492,54 @@ const documentApi = {
                 message: error.message || "Lỗi máy chủ nội bộ",
             };
         }
-    }
+    },
+    getDocumentContentAndSummary: async (
+        id: string
+    ): Promise<any> => {
+        try {
+            const response = await apiClient.get(`/documents/${id}/summary-content`);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy nội dung và tóm tắt tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    getDocumentAuditLogs: async (
+        documentId: string
+    ): Promise<any> => {
+        if (!documentId) {
+            throw new Error("Document ID is required");
+        }
+        try {
+            const response = await apiClient.get(`/documents/audit-logs/${documentId}`);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message:
+                        error.response.data.message ||
+                        "Không thể lấy nhật ký kiểm toán tài liệu",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
 };
 
 export default documentApi;
