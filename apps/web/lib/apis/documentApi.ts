@@ -296,6 +296,7 @@ const documentApi = {
             const response = await apiClient.get("/documents/search", {
                 params,
             });
+            console.log("params", params);
             return response.data.data;
         } catch (error: any) {
             if (error.response) {

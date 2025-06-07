@@ -116,9 +116,9 @@ export function DocumentsFilters() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Quyền truy cập</SelectItem>
-              <SelectItem value="PRIVATE">Private</SelectItem>
-              <SelectItem value="PUBLIC">Public</SelectItem>
-              <SelectItem value="GROUP">Group</SelectItem>
+              <SelectItem value="PRIVATE">Riêng tư</SelectItem>
+              <SelectItem value="PUBLIC">Công khai</SelectItem>
+              <SelectItem value="GROUP">Nhóm</SelectItem>
             </SelectContent>
           </Select>
 

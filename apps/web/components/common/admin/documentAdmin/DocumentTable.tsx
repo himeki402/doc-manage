@@ -198,7 +198,7 @@ export function DocumentsTable({ onEdit, onDelete }: DocumentsTableProps) {
                 return (
                     <div className="flex items-center gap-1">
                         {getAccessTypeIcon(accessType)}
-                        <span className="capitalize">{accessType}</span>
+                        <span className="capitalize">{accessType === "PRIVATE" ? "Riêng tư" : accessType === "PUBLIC" ? "Công khai" : "Nhóm"}</span>
                     </div>
                 );
             },

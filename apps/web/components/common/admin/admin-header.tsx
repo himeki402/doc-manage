@@ -1,14 +1,5 @@
 "use client";
-
-import { useState } from "react";
-import {
-    BellIcon,
-    MessageSquareIcon,
-    SearchIcon,
-    MenuIcon,
-    XIcon,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { BellIcon, MessageSquareIcon, MenuIcon, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,15 +10,14 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AdminSidebar } from "./admin-sidebar";
+import { useAuth } from "@/contexts/authContext";
 
 export function AdminHeader() {
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+    const { user } = useAuth();
     return (
-        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background px-4 md:px-6">
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-end border-b bg-background px-4 md:px-6">
             <div className="flex items-center gap-2 lg:hidden">
                 <Sheet>
                     <SheetTrigger asChild>
@@ -46,45 +36,7 @@ export function AdminHeader() {
                 </Sheet>
             </div>
 
-            <div
-                className={cn(
-                    "hidden transition-all sm:flex items-center",
-                    isSearchOpen ? "w-full" : "w-auto"
-                )}
-            >
-                {isSearchOpen ? (
-                    <div className="relative w-full max-w-md">
-                        <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Search..."
-                            className="w-full rounded-md bg-muted pl-8 focus:bg-background"
-                            autoFocus
-                            onBlur={() => setIsSearchOpen(false)}
-                        />
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0"
-                            onClick={() => setIsSearchOpen(false)}
-                        >
-                            <XIcon className="h-4 w-4" />
-                            <span className="sr-only">Close search</span>
-                        </Button>
-                    </div>
-                ) : (
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setIsSearchOpen(true)}
-                    >
-                        <SearchIcon className="h-4 w-4" />
-                        <span className="sr-only">Search</span>
-                    </Button>
-                )}
-            </div>
-
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-6 ml-auto">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -135,23 +87,27 @@ export function AdminHeader() {
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="ghost"
-                            size="icon"
                             className="relative h-8 w-8 rounded-full"
                         >
                             <Avatar className="h-8 w-8">
                                 <AvatarImage
-                                    src="https://avatars.githubusercontent.com/u/124599?v=4"
-                                    alt="User"
+                                    src={user?.avatar}
+                                    alt={user?.name || "User"}
                                 />
-                                <AvatarFallback>AD</AvatarFallback>
+                                <AvatarFallback>
+                                    {user?.name ? (
+                                        user.name.charAt(0).toUpperCase()
+                                    ) : (
+                                        <User className="h-4 w-4" />
+                                    )}
+                                </AvatarFallback>
                             </Avatar>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Settings</DropdownMenuItem>
+                        <DropdownMenuLabel>
+                            <span className="text-muted-foreground">Admin</span>
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
                             <a href="/logout">Log out</a>

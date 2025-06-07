@@ -321,6 +321,18 @@ const AuditLogComponent = ({ documentId }: AuditLogProps) => {
 
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center gap-2">
+                        <Activity className="h-5 w-5 text-gray-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">
+                            Nhật ký kiểm tra
+                        </h3>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                        Theo dõi tất cả các hoạt động và thay đổi liên quan đến
+                        tài liệu này.
+                    </p>
+                </div>
             {/* Filters */}
             <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <div className="flex flex-col sm:flex-row gap-4">

@@ -216,8 +216,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
                 if (filters.search && filters.search.trim() !== "") {
                     apiParams.search = filters.search.trim();
                 }
-                console.log("filters.search:", filters.search);
-                console.log("apiParams:", apiParams);
 
                 const response = await documentApi.getAllDocuments(apiParams);
                 setFilteredDocuments(response.data);

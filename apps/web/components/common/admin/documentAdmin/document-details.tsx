@@ -37,6 +37,7 @@ import { useAdminContext } from "@/contexts/adminContext";
 import { Document } from "@/lib/types/document";
 import { formatDateToFullOptions } from "@/lib/utils";
 import AuditLogComponent from "./document-audit-log";
+import { DocumentVersion } from "./document-version";
 
 // Enhanced file size formatting with better error handling
 const formatFileSize = (bytes: number | undefined): string => {
@@ -115,10 +116,7 @@ export function DocumentDetailsDialog({
     document,
 }: DocumentDetailsDialogProps) {
     const {
-        categories,
-        tags,
         groups,
-        users,
         setIsShareModalOpen,
         setIsVersionModalOpen,
     } = useAdminContext();
@@ -339,7 +337,7 @@ export function DocumentDetailsDialog({
                                             Phiên bản:
                                         </span>
                                         <Badge variant="secondary">
-                                            v{document.version || "1.0"}
+                                            v{document.version || "1"}
                                         </Badge>
                                     </div>
                                     <div className="flex justify-between items-center">
@@ -525,32 +523,7 @@ export function DocumentDetailsDialog({
                     </TabsContent>
 
                     <TabsContent value="versions" className="space-y-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <History className="h-5 w-5" />
-                                    Lịch sử phiên bản
-                                </CardTitle>
-                                <p className="text-sm text-muted-foreground">
-                                    Xem và quản lý các phiên bản trước đó của
-                                    tài liệu này.
-                                </p>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-center py-12">
-                                    <History className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                                    <h3 className="text-lg font-medium mb-2">
-                                        Chức năng đang phát triển
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                                        Tính năng quản lý phiên bản sẽ cho phép
-                                        bạn xem lịch sử thay đổi, so sánh các
-                                        phiên bản và khôi phục phiên bản trước
-                                        đó.
-                                    </p>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <DocumentVersion document={document} />
                     </TabsContent>
 
                     <TabsContent value="audit" className="space-y-4">

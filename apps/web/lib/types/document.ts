@@ -96,3 +96,20 @@ export interface UploadDocumentFormData {
   selectedTags: string[];
   groupId?: string;
 }
+
+export interface DocumentVersion {
+    id: string;
+    documentId: string;
+    version: number;
+    content?: string;
+    file_path?: string;
+    fileSize?: number;
+    fileUrl?: string;
+    mimeType: string;
+    created_at: string;
+    modified_by: {
+        id: string;
+        name: string;
+    };
+    change_description?: string;
+}
