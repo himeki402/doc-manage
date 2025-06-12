@@ -6,10 +6,10 @@ import { Document } from "@/lib/types/document";
 import {
     Loader2,
     Copy,
-    Download,
     ZoomIn,
     ZoomOut,
     RotateCw,
+    Download,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,7 +21,7 @@ interface DocumentImageContentProps {
 
 export function DocumentImageContent({ document }: DocumentImageContentProps) {
     const [isOcrLoading, setIsOcrLoading] = useState(false);
-    const [ocrContent, setOcrContent] = useState<string | null>(null);
+    const [ocrContent, setOcrContent] = useState<string | null>(document.content || null);
     const [imageScale, setImageScale] = useState(1);
     const [imageRotation, setImageRotation] = useState(0);
 
@@ -71,6 +71,41 @@ export function DocumentImageContent({ document }: DocumentImageContentProps) {
             } catch (error) {
                 toast.error("Không thể sao chép nội dung");
             }
+        }
+    };
+
+    const exportToTextFile = () => {
+        if (!ocrContent) {
+            toast.error("Không có nội dung để xuất");
+            return;
+        }
+
+        try {
+            // Tạo blob với nội dung text
+            const blob = new Blob([ocrContent], { type: 'text/plain;charset=utf-8' });
+            
+            // Tạo URL cho blob
+            const url = URL.createObjectURL(blob);
+            
+            // Tạo element link tạm thời để download
+            const link = window.document.createElement('a');
+            link.href = url;
+            
+            // Tạo tên file từ tên document hoặc mặc định
+            const fileName = `${document.title || 'ocr-content'}_${new Date().toISOString().slice(0, 10)}.txt`;
+            link.download = fileName;
+            
+            // Thêm vào DOM, click và xóa
+            window.document.body.appendChild(link);
+            link.click();
+            window.document.body.removeChild(link);
+            
+            // Giải phóng URL
+            URL.revokeObjectURL(url);
+            
+            toast.success("Đã xuất file thành công!");
+        } catch (error) {
+            toast.error("Không thể xuất file");
         }
     };
 
@@ -169,6 +204,14 @@ export function DocumentImageContent({ document }: DocumentImageContentProps) {
                                     >
                                         <Copy className="h-4 w-4 mr-1" />
                                         Sao chép
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={exportToTextFile}
+                                    >
+                                        <Download className="h-4 w-4 mr-1" />
+                                        Xuất file
                                     </Button>
                                 </>
                             )}

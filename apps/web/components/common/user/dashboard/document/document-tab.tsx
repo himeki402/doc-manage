@@ -1,4 +1,6 @@
 "use client";
+// THÊM MỚI: import KeyboardEvent để type-hint cho sự kiện nhấn phím
+import { useEffect, useState, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileSearch, Tag } from "lucide-react";
@@ -7,20 +9,46 @@ import CategoriesSidebar from "./category-sidebar";
 import ActivitySection from "./activity-section";
 import { GetDocumentsResponse } from "@/lib/types/document";
 import ImportantDocuments from "./important-document";
+import documentApi, { DocumentQueryParams } from "@/lib/apis/documentApi";
 
-interface DocumentsTabProps {
-    documentsResponse: GetDocumentsResponse | null;
-    loading: boolean;
-    error: string | null;
-    onFetchDocuments?: () => void;
-}
+export default function DocumentsTab() {
+    const [documentsResponse, setDocumentsResponse] =
+        useState<GetDocumentsResponse | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-export default function DocumentsTab({
-    documentsResponse,
-    loading,
-    error,
-    onFetchDocuments,
-}: DocumentsTabProps) {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const fetchMyDocuments = async (
+        params: DocumentQueryParams = { limit: 5 }
+    ) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await documentApi.getMyDocuments(params);
+            setDocumentsResponse(data);
+        } catch (err: any) {
+            setError(err.message || "Failed to fetch documents");
+            console.error("Error fetching documents:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMyDocuments();
+    }, []);
+
+    const handleSearch = () => {
+        fetchMyDocuments({ search: searchTerm, limit: 5 });
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
     if (loading && !documentsResponse) {
         return <div className="text-center">Đang tải tài liệu...</div>;
     }
@@ -35,8 +63,11 @@ export default function DocumentsTab({
                     <Input
                         placeholder="Tìm kiếm tài liệu..."
                         className="w-64"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleSearch}>
                         <FileSearch className="h-4 w-4 mr-1" /> Tìm kiếm
                     </Button>
                 </div>
@@ -50,16 +81,14 @@ export default function DocumentsTab({
                 </div>
             </div>
 
-            {/* Documents and Categories */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <DocumentList
                     documentsResponse={documentsResponse}
-                    onFetchDocuments={onFetchDocuments}
+                    onFetchDocuments={fetchMyDocuments}
                 />
                 <CategoriesSidebar />
             </div>
 
-            {/* Additional Sections */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <ActivitySection />
                 <ImportantDocuments />

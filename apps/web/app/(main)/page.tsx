@@ -65,8 +65,7 @@ async function getAllCategoryDocuments(): Promise<{ [key: string]: Document[] }>
     });
 
     const documentsArrays = await Promise.all(documentsPromises);
-    
-    // Merge tất cả objects thành một object duy nhất
+
     return documentsArrays.reduce((acc, curr) => ({ ...acc, ...curr }), {});
 }
 

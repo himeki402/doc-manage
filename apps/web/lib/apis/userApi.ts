@@ -1,3 +1,4 @@
+import { verify } from "crypto";
 import { UsersResponse, UserStatsResponse } from "../types/user";
 import apiClient from "./config";
 
@@ -7,6 +8,13 @@ export interface UserQueryParams {
     sortBy?: string;
     sortOrder?: "ASC" | "DESC";
     search?: string;
+}
+
+export interface UserUpdateDTO {
+  name?: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
 }
 
 const userApi = {
@@ -65,6 +73,41 @@ const userApi = {
                 throw {
                     status: error.response.status,
                     message: error.response.data.message || "Không thể tải lên ảnh đại diện",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    updateProfile: async (userData: UserUpdateDTO) => {
+        try {
+            const response = await apiClient.patch("/users/profile", userData);
+            return response.data;
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message: error.response.data.message || "Không thể cập nhật hồ sơ",
+                    errors: error.response.data.errors,
+                };
+            }
+            throw {
+                status: 500,
+                message: error.message || "Lỗi máy chủ nội bộ",
+            };
+        }
+    },
+    verifyEmail: async (token: string): Promise<void> => {
+        try {
+            await apiClient.get(`/users/verify-email/${token}`);
+        } catch (error: any) {
+            if (error.response) {
+                throw {
+                    status: error.response.status,
+                    message: error.response.data.message || "Không thể xác minh email",
                     errors: error.response.data.errors,
                 };
             }

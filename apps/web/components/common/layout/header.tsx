@@ -218,7 +218,7 @@ export function Header({ showSearch = true }: MainHeaderProps) {
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href="#">
+                                        <Link href="https://mail.google.com/mail/?view=cm&fs=1&to=sonhz123@gmail.com">
                                             <GlobeIcon className="h-5 w-5 mr-2" />
                                             <span className="text-base font-semibold text-foreground">
                                                 Hỗ trợ

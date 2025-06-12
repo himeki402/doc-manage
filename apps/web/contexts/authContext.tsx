@@ -19,7 +19,9 @@ interface AuthContextType {
     isLoading: boolean;
     login: (data: LoginInput) => Promise<FormState>;
     logout: () => Promise<void>;
+    updateUser: (updatedUser: User) => void;
     error: string | null;
+    clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,7 +39,10 @@ interface AuthProviderProps {
     initialUser?: User | null; 
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUser = null }) => { // 
+export const AuthProvider: React.FC<AuthProviderProps> = ({ 
+    children, 
+    initialUser = null 
+}) => {
     const [user, setUser] = useState<User | null>(initialUser);
     const [isLoading, setIsLoading] = useState<boolean>(true); 
     const [error, setError] = useState<string | null>(null);
@@ -46,36 +51,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUse
         if (initialUser) {
             setIsLoading(false); 
         } else {
-            const checkAuth = async () => {
-                if (hasAuthToken()) {
-                    try {
-                      const fetchedUser = await fetchUserInfo();
-                      if (!fetchedUser) {
-                        setUser(null);
-                      }
-                    } catch (e) {
-                      setUser(null);
-                    } finally {
-                      setIsLoading(false);
-                    }
-                  } else {
-                    // Không có token, coi như chưa đăng nhập
-                    setUser(null);
-                    setIsLoading(false);
-                  }
-                };
-                checkAuth();
-            
+            checkAuth();
         }
     }, [initialUser]);
+
+    const checkAuth = async () => {
+        if (hasAuthToken()) {
+            try {
+                const fetchedUser = await fetchUserInfo();
+                if (!fetchedUser) {
+                    setUser(null);
+                }
+            } catch (e) {
+                console.error("Error checking auth:", e);
+                setUser(null);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            // Không có token, coi như chưa đăng nhập
+            setUser(null);
+            setIsLoading(false);
+        }
+    };
 
     const fetchUserInfo = async (): Promise<User | null> => {
         try {
             const result = await authService.getMe();
             console.log("fetchUserInfo result:", result);
-            if (result) {
-                setUser(result.data.data as User);
-                return result.data.data as User;
+            
+            if (result && result.data && result.data.data) {
+                const userData = result.data.data as User;
+                setUser(userData);
+                return userData;
             } else {
                 setUser(null);
                 return null;
@@ -102,7 +110,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUse
             if (result && result.success) {
                 const fetchedUser = await fetchUserInfo();
                 if (!fetchedUser) {
-                  setUser(null);
+                    setUser(null);
+                    setError("Không thể lấy thông tin người dùng");
                 }
             } else {
                 setError(result?.message || "Đăng nhập thất bại");
@@ -113,7 +122,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUse
             const errorMessage = error.message || "Đăng nhập thất bại";
             setError(errorMessage);
 
-            // Trả về một FormState mặc định khi có lỗi
             return {
                 success: false,
                 message: errorMessage,
@@ -136,10 +144,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUse
                 throw new Error(result?.message || "Đăng xuất thất bại");
             }
         } catch (error: any) {
+            console.error("Logout error:", error);
             setError(error.message || "Đăng xuất thất bại");
+            // Vẫn clear user ngay cả khi logout API thất bại
+            setUser(null);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    // Hàm cập nhật thông tin user trong context
+    const updateUser = (updatedUser: User) => {
+        setUser(updatedUser);
+        setError(null);
+    };
+
+    // Hàm refresh thông tin user từ server
+    const refreshUser = async () => {
+        if (!hasAuthToken()) {
+            setUser(null);
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await fetchUserInfo();
+        } catch (error) {
+            console.error("Error refreshing user:", error);
+            setError("Không thể làm mới thông tin người dùng");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Hàm clear error
+    const clearError = () => {
+        setError(null);
     };
 
     const value = {
@@ -148,10 +188,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialUse
         isLoading,
         login,
         logout,
+        updateUser,
         error,
+        clearError,
     };
 
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
     );
 };

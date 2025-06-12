@@ -22,9 +22,6 @@ interface RecentUploadsProps {
 }
 
 export function RecentUploads({ recentUploads, onUploadNew }: RecentUploadsProps) {
-    console.log('recentUploads:', recentUploads);
-    console.log('IDs:', recentUploads.map(doc => doc?.id));
-    console.log('Duplicate IDs:', recentUploads.map(doc => doc?.id).filter((id, index, arr) => arr.indexOf(id) !== index));
     return (
         <Card>
             <CardHeader>

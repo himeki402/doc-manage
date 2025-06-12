@@ -27,10 +27,10 @@ export function Footer() {
                                 Email:
                             </span>
                             <Link
-                                href="mailto:email@email.com"
+                                href="mailto:sonhz123@gmail.com"
                                 className="text-muted-foreground hover:text-primary"
                             >
-                                email@email.com
+                                sonhz123@gmail.com
                             </Link>
                         </div>
                         <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export function Footer() {
                                 href="tel:024xxxxxxxx"
                                 className="text-muted-foreground hover:text-primary"
                             >
-                                024xxxxxxxx
+                                0972651015
                             </Link>
                         </div>
                     </div>
@@ -53,10 +53,10 @@ export function Footer() {
                                 Hôm nay:{" "}
                                 {new Date().toLocaleDateString("vi-VN")}
                             </p>
-                            <p>Người dùng online: xxx</p>
-                            <p>Ngày hôm nay: xxxx</p>
-                            <p>Tháng này: xxxxx</p>
-                            <p>Tổng lượt truy cập: xxxxx</p>
+                            <p>Người dùng online: 20</p>
+                            <p>Ngày hôm nay: 100</p>
+                            <p>Tháng này: 500</p>
+                            <p>Tổng lượt truy cập: 1000</p>
                         </div>
 
                         {/* Social Links */}
