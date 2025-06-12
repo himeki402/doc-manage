@@ -40,8 +40,8 @@ export default function AdminDashboard() {
             <Tabs defaultValue="overview" className="space-y-4">
                 <TabsList>
                     <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-                    <TabsTrigger value="analytics">Phân tích</TabsTrigger>
-                    <TabsTrigger value="reports">Báo cáo</TabsTrigger>
+                    {/* <TabsTrigger value="analytics">Phân tích</TabsTrigger>
+                    <TabsTrigger value="reports">Báo cáo</TabsTrigger> */}
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
                         <NewUserTable />
                     </div>
                 </TabsContent>
-                <TabsContent value="analytics" className="space-y-4">
+                {/* <TabsContent value="analytics" className="space-y-4">
                     <Card>
                         <CardHeader>
                             <CardTitle>Phân tích chi tiết</CardTitle>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
                             </p>
                         </CardContent>
                     </Card>
-                </TabsContent>
+                </TabsContent> */}
             </Tabs>
         </div>
     );

@@ -78,15 +78,22 @@ export type DocumentStatsResponseDto = {
 };
 
 export type DocumentStats = {
-    totalDocuments?: number;
-    newDocumentsThisMonth?: number;
-    newDocumentsLastMonth?: number;
-    growthPercentage?: number;
-    growthCount?: number;
-    newSharedDocumentsThisWeek?: number;
-    sharedDocuments?: number;
-    recentDocuments?: number;
+    totalDocuments: number;
+    newDocumentsThisMonth: number;
+    newDocumentsLastMonth: number;
+    growthPercentage: number;
+    growthCount: number;
+    newSharedDocumentsThisWeek: number;
+    sharedDocuments: number;
+    recentDocuments: number;
+    documentsByDay: DocumentsByDay[];
 };
+
+export interface DocumentsByDay {
+  date: string;
+  count: number;
+}
+
 export interface UploadDocumentFormData {
   file: File | null;
   title: string;

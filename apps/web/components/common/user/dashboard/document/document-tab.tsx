@@ -1,5 +1,4 @@
 "use client";
-// THÊM MỚI: import KeyboardEvent để type-hint cho sự kiện nhấn phím
 import { useEffect, useState, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
