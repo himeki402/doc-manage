@@ -30,7 +30,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="site-name">Tên trang web</Label>
-                <Input id="site-name" defaultValue="Hệ thống quản lý tài liệu học tập" />
+                <Input id="site-name" defaultValue="Tài liệu KMA" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="site-description">Mô tả trang web</Label>
@@ -42,7 +42,7 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contact-email">Email liên hệ</Label>
-                <Input id="contact-email" type="email" defaultValue="admin@example.com" />
+                <Input id="contact-email" type="email" defaultValue="sonhz123@gmail.com" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="timezone">Múi giờ</Label>

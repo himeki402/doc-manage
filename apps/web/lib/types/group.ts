@@ -3,6 +3,7 @@ export type Document = {
     id: string;
     title: string;
     mimeType: string;
+    fileUrl: string;
     fileSize: number;
     created_at: string;
     createdBy: { id: string; name: string };

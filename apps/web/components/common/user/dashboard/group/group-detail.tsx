@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Document, Group, Member } from "@/lib/types/group";
 import { convertBytesToMB } from "@/lib/utils";
-import { FileText, Plus, Search, UserPlus, Users, X, Trash2 } from "lucide-react";
+import { FileText, Plus, Search, UserPlus, Users, X, Trash2, Image, FileTextIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface GroupDetailProps {
   group: Group;
@@ -24,12 +25,30 @@ interface GroupDetailProps {
 export function GroupDetail({ group, documents, members, onBack, onShowInviteDialog, onRemoveMember, onDeleteGroup }: GroupDetailProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const router = useRouter();
 
   const getRoleText = (role: string) => {
     switch (role) {
       case 'ADMIN': return 'Quản trị viên';
       case 'MEMBER': return 'Thành viên';
       default: return 'Thành viên';
+    }
+  };
+
+  const getFileIcon = (mimeType: string) => {
+    switch (mimeType) {
+      case "application/pdf":
+        return { icon: <FileText size={20} />, label: "PDF", bgColor: "bg-red-100", textColor: "text-red-700" };
+      case "text/plain":
+      case "application/msword":
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return { icon: <FileText size={20} />, label: "DOCX", bgColor: "bg-blue-100", textColor: "text-blue-700" };
+      case "image/jpeg":
+      case "image/png":
+      case "image/gif":
+        return { icon: <Image size={20} />, label: "IMAGE", bgColor: "bg-green-100", textColor: "text-green-700" };
+      default:
+        return { icon: <FileTextIcon size={20} />, label: "Khác", bgColor: "bg-amber-100", textColor: "text-amber-700" };
     }
   };
 
@@ -40,6 +59,11 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
       setDeleteConfirmText("");
     }
   };
+
+  const handleViewDocumentClick = (e: React.MouseEvent, doc: Document) => {
+        e.preventDefault();
+        router.push(`/doc/${doc.id}`);
+    };
 
   const canDeleteGroup = deleteConfirmText === group.name;
 
@@ -155,41 +179,36 @@ export function GroupDetail({ group, documents, members, onBack, onShowInviteDia
               <div className="rounded-md border">
                 <ScrollArea className="h-[400px]">
                   <div className="divide-y">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-4 hover:bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-md flex items-center justify-center ${
-                              doc.mimeType === "application/pdf"
-                                ? "bg-red-100 text-red-700"
-                                : doc.mimeType === "text/plain"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-amber-100 text-amber-700"
-                            }`}
-                          >
-                            <FileText size={20} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">{doc.title}</p>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <span>{doc.mimeType === "application/pdf" ? "PDF" : doc.mimeType === "text/plain" ? "DOCX" : "Khác"}</span>
-                              <span>•</span>
-                              <span>Tải lên bởi {doc.createdBy.name}</span>
-                              <span>•</span>
-                              <span>{convertBytesToMB(doc.fileSize)} MB</span>
+                    {documents.map((doc) => {
+                      const { icon, label, bgColor, textColor } = getFileIcon(doc.mimeType);
+                      return (
+                        <div key={doc.id} className="flex items-center justify-between p-4 hover:bg-muted/50">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-md flex items-center justify-center ${bgColor} ${textColor}`}>
+                              {icon}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{doc.title}</p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{label}</span>
+                                <span>•</span>
+                                <span>Tải lên bởi {doc.createdBy.name}</span>
+                                <span>•</span>
+                                <span>{convertBytesToMB(doc.fileSize)} MB</span>
+                              </div>
                             </div>
                           </div>
+                          <div className="flex items-center gap-2">                      
+                            <Button variant="ghost" size="sm" onClick={(e) => handleViewDocumentClick(e, doc)}>
+                              Xem
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => window.location.href = doc.fileUrl}>
+                              Tải xuống
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm">
-                            Xem
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            Tải xuống
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </ScrollArea>
               </div>
