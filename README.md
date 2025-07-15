@@ -21,11 +21,11 @@ This is a monorepo built with Turborepo containing:
   
 ### Packages  
 - **`@repo/ui`**: Shared React component library 
-- **`@repo/eslint-config`**: Shared ESLint configuration [4]
-- **`@repo/typescript-config`**: Shared TypeScript configuration [5]
+- **`@repo/eslint-config`**: Shared ESLint configuration 
+- **`@repo/typescript-config`**: Shared TypeScript configuration
   
 ### Microservices  
-- **`microservice/`**: FastAPI service for PDF text extraction [6]
+- **`microservice/`**: FastAPI service for PDF text extraction
   
 ## Technology Stack  
   
@@ -34,7 +34,7 @@ This is a monorepo built with Turborepo containing:
 - React 19 with TypeScript  
 - Tailwind CSS with Radix UI components  
 - React Hook Form with Zod validation  
-- Framer Motion for animations [7]
+- Framer Motion for animations
   
 ### Backend  
 - NestJS with TypeScript  
