@@ -16,16 +16,16 @@ A modern document management system built with Next.js, TypeScript, and a micros
 This is a monorepo built with Turborepo containing:  
   
 ### Applications  
-- **`apps/web`**: Next.js 15 web application with React 19 [2](#0-1)   
+- **`apps/web`**: Next.js 15 web application with React 19    
 - **`apps/api`**: NestJS backend API with TypeORM and PostgreSQL  
   
 ### Packages  
-- **`@repo/ui`**: Shared React component library [3](#0-2)   
-- **`@repo/eslint-config`**: Shared ESLint configuration [4](#0-3)   
-- **`@repo/typescript-config`**: Shared TypeScript configuration [5](#0-4)   
+- **`@repo/ui`**: Shared React component library 
+- **`@repo/eslint-config`**: Shared ESLint configuration [4]
+- **`@repo/typescript-config`**: Shared TypeScript configuration [5]
   
 ### Microservices  
-- **`microservice/`**: FastAPI service for PDF text extraction [6](#0-5)   
+- **`microservice/`**: FastAPI service for PDF text extraction [6]
   
 ## Technology Stack  
   
@@ -34,7 +34,7 @@ This is a monorepo built with Turborepo containing:
 - React 19 with TypeScript  
 - Tailwind CSS with Radix UI components  
 - React Hook Form with Zod validation  
-- Framer Motion for animations [7](#0-6)   
+- Framer Motion for animations [7]
   
 ### Backend  
 - NestJS with TypeScript  
