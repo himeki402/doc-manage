@@ -9,8 +9,7 @@ A modern document management system built with Next.js, TypeScript, and a micros
 - **Search & Discovery**: Full-text search across document content and metadata  
 - **Document Organization**: Categories, tags, and groups for efficient organization  
 - **Admin Panel**: Comprehensive administrative interface for system management  
-- **Real-time Collaboration**: Document sharing and version control  
-- **Mobile Support**: Cross-platform mobile application built with React Native  
+- **Real-time Collaboration**: Document sharing and version control (In Development)
   
 ## Architecture  
   
@@ -19,8 +18,6 @@ This is a monorepo built with Turborepo containing:
 ### Applications  
 - **`apps/web`**: Next.js 15 web application with React 19 [2](#0-1)   
 - **`apps/api`**: NestJS backend API with TypeORM and PostgreSQL  
-- **`apps/mobile`**: React Native mobile application with Expo  
-- **`apps/docs`**: Documentation site  
   
 ### Packages  
 - **`@repo/ui`**: Shared React component library [3](#0-2)   
@@ -44,7 +41,7 @@ This is a monorepo built with Turborepo containing:
 - PostgreSQL with TypeORM  
 - JWT authentication  
 - AWS S3 for file storage  
-- FastAPI microservice for OCR processing  
+- FastAPI microservice for extract text processing  
   
 ### Development Tools  
 - Turborepo for monorepo management  
@@ -57,7 +54,7 @@ This is a monorepo built with Turborepo containing:
 - Node.js 18+ and pnpm  
 - PostgreSQL database  
 - AWS S3 bucket (for file storage)  
-- Python 3.8+ (for OCR microservice)
+- Python 3.8+ (for extract microservice)
 
 ### Installation  
   
@@ -65,3 +62,19 @@ This is a monorepo built with Turborepo containing:
 ```bash  
 git clone https://github.com/himeki402/doc-manage.git  
 cd doc-manage
+```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables:
+```bash
+# Copy environment files and configure  [2](#header-2)
+cp apps/web/.env.example apps/web/.env.local  
+cp apps/api/.env.example apps/api/.env
+```
+4. Start the development servers:
+```bash
+npm run dev
+```
+  
