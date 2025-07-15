@@ -64,9 +64,9 @@ git clone https://github.com/himeki402/doc-manage.git
 cd doc-manage
 ```
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 3. Set up environment variables:
 ```bash
 # Copy environment files and configure  [2](#header-2)
