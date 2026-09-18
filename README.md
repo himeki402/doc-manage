@@ -49,7 +49,34 @@ This is a monorepo built with Turborepo containing:
 - TypeScript for type safety  
   
 ## Getting Started  
-  
+
+### Run the complete local environment with Docker
+
+Docker Compose runs the web application, API, OCR service and PostgreSQL together.
+TurboRepo remains responsible for the Node.js workspaces inside the web and API containers.
+
+```bash
+cp .env.example .env
+# Edit .env and set JWT_SECRET plus any external storage credentials you need.
+docker compose up --build
+```
+
+Open the application at `http://localhost:3000`, API Swagger at
+`http://localhost:8080/api`, and OCR at `http://localhost:8000`.
+
+For subsequent starts, use `npm run docker:up`. PostgreSQL data is retained in
+the named `postgres_data` Docker volume. Stop the stack with `npm run docker:down`.
+Do not use `docker compose down -v` unless you intentionally want to delete local
+database data.
+
+Database schema changes are applied by the one-shot `migrate` service before the
+API starts. To apply pending migrations manually, run `npm run db:migrate`.
+Do not enable TypeORM `synchronize` or make schema changes directly in the
+database; create and commit a TypeORM migration for every entity change.
+
+The containers are configured for development hot reload. Source files are mounted
+into the web, API and OCR containers; dependencies remain in Linux Docker volumes.
+
 ### Prerequisites  
 - Node.js 18+ and pnpm  
 - PostgreSQL database  
